@@ -1,0 +1,191 @@
+/* ============================================================
+   theme-dense.css
+   Fast and tight — compressed durations, minimal movement
+   Layer 1: Primitive tokens — raw values
+   Layer 2: Alias tokens — Tailwind v4 animate-* utilities
+   ============================================================ */
+
+
+/* ----------------------------------------------------------
+   @keyframes — dense prefix (safe for multi-theme coexistence)
+   Minimal transforms: 2px max slide, scale 0.99/1.01
+   ---------------------------------------------------------- */
+
+@keyframes dense-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dense-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes dense-slide-up-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dense-slide-up-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-2px); }
+}
+
+@keyframes dense-slide-down-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dense-slide-down-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(2px); }
+}
+
+@keyframes dense-expand-in {
+  from { opacity: 0; transform: scale(0.99); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dense-expand-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.01); }
+}
+
+@keyframes dense-collapse-in {
+  from { opacity: 0; transform: scale(1.01); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dense-collapse-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.99); }
+}
+
+@keyframes dense-page-enter {
+  from { opacity: 0; transform: translateX(-2px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes dense-page-exit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(2px); }
+}
+
+@keyframes dense-reduced-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ----------------------------------------------------------
+   Layer 1 — Primitive tokens
+   Compressed duration scale; curves biased toward snappy settle
+   ---------------------------------------------------------- */
+
+[data-motion-theme="dense"] {
+  /* Duration scale — compressed */
+  --motion-duration-ultra-fast: 30ms;
+  --motion-duration-fast:       60ms;
+  --motion-duration-normal:     100ms;
+  --motion-duration-moderate:   130ms;
+  --motion-duration-slow:       160ms;
+  --motion-duration-slower:     200ms;
+  --motion-duration-ultra-slow: 250ms;
+
+  /* Easing curves — snappy, accelerate-heavy */
+  --motion-curve-accelerate-max: cubic-bezier(0.95, 0.05, 1, 0.1);
+  --motion-curve-accelerate-mid: cubic-bezier(1, 0, 1, 1);
+  --motion-curve-accelerate-min: cubic-bezier(0.85, 0, 0.82, 1);
+  --motion-curve-decelerate-max: cubic-bezier(0.05, 0.95, 0.1, 1);
+  --motion-curve-decelerate-mid: cubic-bezier(0, 0, 0, 1);
+  --motion-curve-decelerate-min: cubic-bezier(0.35, 0, 0.08, 1);
+  --motion-curve-easy-ease-max:  cubic-bezier(0.85, 0, 0.15, 1);
+  --motion-curve-easy-ease:      cubic-bezier(0.3, 0, 0.7, 1);
+  --motion-curve-linear:         cubic-bezier(0, 0, 1, 1);
+}
+
+
+/* ----------------------------------------------------------
+   Layer 2 — Alias tokens → Tailwind v4 animate-* utilities
+   Enter: decelerate curve  |  Exit: accelerate curve
+   ---------------------------------------------------------- */
+
+@theme {
+  /* Fade */
+  --animate-dense-fade-in:          dense-fade-in           var(--motion-duration-ultra-fast)  var(--motion-curve-decelerate-mid) both;
+  --animate-dense-fade-out:         dense-fade-out          var(--motion-duration-ultra-fast)  var(--motion-curve-accelerate-mid) both;
+
+  /* Slide up */
+  --animate-dense-slide-up-in:      dense-slide-up-in       var(--motion-duration-fast)        var(--motion-curve-decelerate-max) both;
+  --animate-dense-slide-up-out:     dense-slide-up-out      var(--motion-duration-ultra-fast)  var(--motion-curve-accelerate-max) both;
+
+  /* Slide down */
+  --animate-dense-slide-down-in:    dense-slide-down-in     var(--motion-duration-fast)        var(--motion-curve-decelerate-max) both;
+  --animate-dense-slide-down-out:   dense-slide-down-out    var(--motion-duration-ultra-fast)  var(--motion-curve-accelerate-max) both;
+
+  /* Expand */
+  --animate-dense-expand-in:        dense-expand-in         var(--motion-duration-fast)        var(--motion-curve-decelerate-mid) both;
+  --animate-dense-expand-out:       dense-expand-out        var(--motion-duration-ultra-fast)  var(--motion-curve-accelerate-mid) both;
+
+  /* Collapse */
+  --animate-dense-collapse-in:      dense-collapse-in       var(--motion-duration-fast)        var(--motion-curve-decelerate-mid) both;
+  --animate-dense-collapse-out:     dense-collapse-out      var(--motion-duration-ultra-fast)  var(--motion-curve-accelerate-mid) both;
+
+  /* Page */
+  --animate-dense-page-enter:       dense-page-enter        var(--motion-duration-normal)      var(--motion-curve-decelerate-max) both;
+  --animate-dense-page-exit:        dense-page-exit         var(--motion-duration-fast)        var(--motion-curve-accelerate-mid) both;
+}
+
+
+/* ----------------------------------------------------------
+   Reduced motion
+   All durations → 1ms, all transforms removed, fade only
+   ---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-theme="dense"] {
+    --motion-duration-ultra-fast: 1ms;
+    --motion-duration-fast:       1ms;
+    --motion-duration-normal:     1ms;
+    --motion-duration-moderate:   1ms;
+    --motion-duration-slow:       1ms;
+    --motion-duration-slower:     1ms;
+    --motion-duration-ultra-slow: 1ms;
+
+    --animate-dense-fade-in:        dense-reduced-fade 1ms linear both;
+    --animate-dense-fade-out:       dense-reduced-fade 1ms linear both;
+    --animate-dense-slide-up-in:    dense-reduced-fade 1ms linear both;
+    --animate-dense-slide-up-out:   dense-reduced-fade 1ms linear both;
+    --animate-dense-slide-down-in:  dense-reduced-fade 1ms linear both;
+    --animate-dense-slide-down-out: dense-reduced-fade 1ms linear both;
+    --animate-dense-expand-in:      dense-reduced-fade 1ms linear both;
+    --animate-dense-expand-out:     dense-reduced-fade 1ms linear both;
+    --animate-dense-collapse-in:    dense-reduced-fade 1ms linear both;
+    --animate-dense-collapse-out:   dense-reduced-fade 1ms linear both;
+    --animate-dense-page-enter:     dense-reduced-fade 1ms linear both;
+    --animate-dense-page-exit:      dense-reduced-fade 1ms linear both;
+  }
+}
+
+[data-motion-theme="reduced"] {
+  --motion-duration-ultra-fast: 1ms;
+  --motion-duration-fast:       1ms;
+  --motion-duration-normal:     1ms;
+  --motion-duration-moderate:   1ms;
+  --motion-duration-slow:       1ms;
+  --motion-duration-slower:     1ms;
+  --motion-duration-ultra-slow: 1ms;
+
+  --animate-dense-fade-in:        dense-reduced-fade 1ms linear both;
+  --animate-dense-fade-out:       dense-reduced-fade 1ms linear both;
+  --animate-dense-slide-up-in:    dense-reduced-fade 1ms linear both;
+  --animate-dense-slide-up-out:   dense-reduced-fade 1ms linear both;
+  --animate-dense-slide-down-in:  dense-reduced-fade 1ms linear both;
+  --animate-dense-slide-down-out: dense-reduced-fade 1ms linear both;
+  --animate-dense-expand-in:      dense-reduced-fade 1ms linear both;
+  --animate-dense-expand-out:     dense-reduced-fade 1ms linear both;
+  --animate-dense-collapse-in:    dense-reduced-fade 1ms linear both;
+  --animate-dense-collapse-out:   dense-reduced-fade 1ms linear both;
+  --animate-dense-page-enter:     dense-reduced-fade 1ms linear both;
+  --animate-dense-page-exit:      dense-reduced-fade 1ms linear both;
+}

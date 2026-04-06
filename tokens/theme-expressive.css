@@ -1,0 +1,196 @@
+/* ============================================================
+   theme-expressive.css
+   Emotive and personality-forward — larger movement, longer arcs
+   Layer 1: Primitive tokens — raw values
+   Layer 2: Alias tokens — Tailwind v4 animate-* utilities
+   ============================================================ */
+
+
+/* ----------------------------------------------------------
+   @keyframes — expressive prefix (safe for multi-theme coexistence)
+   Generous transforms: 12px slides, scale 0.92/1.08
+   Expand/collapse use bounce curve for personality moments
+   ---------------------------------------------------------- */
+
+@keyframes expressive-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes expressive-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes expressive-slide-up-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes expressive-slide-up-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+
+@keyframes expressive-slide-down-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes expressive-slide-down-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(12px); }
+}
+
+@keyframes expressive-expand-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes expressive-expand-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.08); }
+}
+
+@keyframes expressive-collapse-in {
+  from { opacity: 0; transform: scale(1.08); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes expressive-collapse-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.92); }
+}
+
+@keyframes expressive-page-enter {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes expressive-page-exit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(12px); }
+}
+
+@keyframes expressive-reduced-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ----------------------------------------------------------
+   Layer 1 — Primitive tokens
+   Long durations; EasyEaseMax for enters; bounce for special moments
+   ---------------------------------------------------------- */
+
+[data-motion-theme="expressive"] {
+  /* Duration scale — generous */
+  --motion-duration-ultra-fast: 100ms;
+  --motion-duration-fast:       200ms;
+  --motion-duration-normal:     300ms;
+  --motion-duration-moderate:   400ms;
+  --motion-duration-slow:       500ms;
+  --motion-duration-slower:     600ms;
+  --motion-duration-ultra-slow: 700ms;
+
+  /* Easing curves */
+  --motion-curve-accelerate-max: cubic-bezier(0.9, 0.1, 1, 0.2);
+  --motion-curve-accelerate-mid: cubic-bezier(1, 0, 1, 1);
+  --motion-curve-accelerate-min: cubic-bezier(0.8, 0, 0.78, 1);
+  --motion-curve-decelerate-max: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --motion-curve-decelerate-mid: cubic-bezier(0, 0, 0, 1);
+  --motion-curve-decelerate-min: cubic-bezier(0.33, 0, 0.1, 1);
+  --motion-curve-easy-ease-max:  cubic-bezier(0.8, 0, 0.2, 1);
+  --motion-curve-easy-ease:      cubic-bezier(0.33, 0, 0.67, 1);
+  --motion-curve-linear:         cubic-bezier(0, 0, 1, 1);
+
+  /* Expressive-only: overshoot bounce for personality moments */
+  --motion-curve-bounce:         cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+/* ----------------------------------------------------------
+   Layer 2 — Alias tokens → Tailwind v4 animate-* utilities
+   Enter: easy-ease-max  |  Exit: accelerate curve
+   Expand/collapse: bounce curve for emotive moments
+   ---------------------------------------------------------- */
+
+@theme {
+  /* Fade */
+  --animate-expressive-fade-in:         expressive-fade-in         var(--motion-duration-fast)       var(--motion-curve-easy-ease-max)  both;
+  --animate-expressive-fade-out:        expressive-fade-out        var(--motion-duration-fast)       var(--motion-curve-accelerate-mid) both;
+
+  /* Slide up */
+  --animate-expressive-slide-up-in:     expressive-slide-up-in     var(--motion-duration-moderate)   var(--motion-curve-easy-ease-max)  both;
+  --animate-expressive-slide-up-out:    expressive-slide-up-out    var(--motion-duration-normal)     var(--motion-curve-accelerate-max) both;
+
+  /* Slide down */
+  --animate-expressive-slide-down-in:   expressive-slide-down-in   var(--motion-duration-moderate)   var(--motion-curve-easy-ease-max)  both;
+  --animate-expressive-slide-down-out:  expressive-slide-down-out  var(--motion-duration-normal)     var(--motion-curve-accelerate-max) both;
+
+  /* Expand — bounce enter for personality */
+  --animate-expressive-expand-in:       expressive-expand-in       var(--motion-duration-slow)       var(--motion-curve-bounce)         both;
+  --animate-expressive-expand-out:      expressive-expand-out      var(--motion-duration-normal)     var(--motion-curve-accelerate-mid) both;
+
+  /* Collapse — bounce enter for personality */
+  --animate-expressive-collapse-in:     expressive-collapse-in     var(--motion-duration-slow)       var(--motion-curve-bounce)         both;
+  --animate-expressive-collapse-out:    expressive-collapse-out    var(--motion-duration-normal)     var(--motion-curve-accelerate-mid) both;
+
+  /* Page */
+  --animate-expressive-page-enter:      expressive-page-enter      var(--motion-duration-slower)     var(--motion-curve-easy-ease-max)  both;
+  --animate-expressive-page-exit:       expressive-page-exit       var(--motion-duration-slow)       var(--motion-curve-accelerate-mid) both;
+}
+
+
+/* ----------------------------------------------------------
+   Reduced motion
+   All durations → 1ms, all transforms removed, fade only
+   ---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-theme="expressive"] {
+    --motion-duration-ultra-fast: 1ms;
+    --motion-duration-fast:       1ms;
+    --motion-duration-normal:     1ms;
+    --motion-duration-moderate:   1ms;
+    --motion-duration-slow:       1ms;
+    --motion-duration-slower:     1ms;
+    --motion-duration-ultra-slow: 1ms;
+
+    --animate-expressive-fade-in:        expressive-reduced-fade 1ms linear both;
+    --animate-expressive-fade-out:       expressive-reduced-fade 1ms linear both;
+    --animate-expressive-slide-up-in:    expressive-reduced-fade 1ms linear both;
+    --animate-expressive-slide-up-out:   expressive-reduced-fade 1ms linear both;
+    --animate-expressive-slide-down-in:  expressive-reduced-fade 1ms linear both;
+    --animate-expressive-slide-down-out: expressive-reduced-fade 1ms linear both;
+    --animate-expressive-expand-in:      expressive-reduced-fade 1ms linear both;
+    --animate-expressive-expand-out:     expressive-reduced-fade 1ms linear both;
+    --animate-expressive-collapse-in:    expressive-reduced-fade 1ms linear both;
+    --animate-expressive-collapse-out:   expressive-reduced-fade 1ms linear both;
+    --animate-expressive-page-enter:     expressive-reduced-fade 1ms linear both;
+    --animate-expressive-page-exit:      expressive-reduced-fade 1ms linear both;
+  }
+}
+
+[data-motion-theme="reduced"] {
+  --motion-duration-ultra-fast: 1ms;
+  --motion-duration-fast:       1ms;
+  --motion-duration-normal:     1ms;
+  --motion-duration-moderate:   1ms;
+  --motion-duration-slow:       1ms;
+  --motion-duration-slower:     1ms;
+  --motion-duration-ultra-slow: 1ms;
+
+  --animate-expressive-fade-in:        expressive-reduced-fade 1ms linear both;
+  --animate-expressive-fade-out:       expressive-reduced-fade 1ms linear both;
+  --animate-expressive-slide-up-in:    expressive-reduced-fade 1ms linear both;
+  --animate-expressive-slide-up-out:   expressive-reduced-fade 1ms linear both;
+  --animate-expressive-slide-down-in:  expressive-reduced-fade 1ms linear both;
+  --animate-expressive-slide-down-out: expressive-reduced-fade 1ms linear both;
+  --animate-expressive-expand-in:      expressive-reduced-fade 1ms linear both;
+  --animate-expressive-expand-out:     expressive-reduced-fade 1ms linear both;
+  --animate-expressive-collapse-in:    expressive-reduced-fade 1ms linear both;
+  --animate-expressive-collapse-out:   expressive-reduced-fade 1ms linear both;
+  --animate-expressive-page-enter:     expressive-reduced-fade 1ms linear both;
+  --animate-expressive-page-exit:      expressive-reduced-fade 1ms linear both;
+}
