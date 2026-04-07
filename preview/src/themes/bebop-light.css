@@ -1,0 +1,44 @@
+/* Bebop Light — Microsoft Copilot–inspired violet theme, light surface.
+   Copilot violet primary (hue 291), 8px radius, purple-tinted shadows. */
+[data-theme="bebop-light"] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.175 0.01 272);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.175 0.01 272);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.175 0.01 272);
+  --primary: oklch(0.505 0.258 291);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.958 0.024 291);
+  --secondary-foreground: oklch(0.365 0.12 291);
+  --muted: oklch(0.968 0.01 291);
+  --muted-foreground: oklch(0.52 0.018 272);
+  --accent: oklch(0.942 0.038 291);
+  --accent-foreground: oklch(0.365 0.12 291);
+  --destructive: oklch(0.512 0.188 20.5);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.902 0.015 291);
+  --input: oklch(0.902 0.015 291);
+  --ring: oklch(0.505 0.258 291);
+  --sidebar: oklch(0.978 0.012 291);
+  --sidebar-foreground: oklch(0.175 0.01 272);
+  --sidebar-primary: oklch(0.505 0.258 291);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.942 0.038 291);
+  --sidebar-accent-foreground: oklch(0.175 0.01 272);
+  --sidebar-border: oklch(0.902 0.015 291);
+  --sidebar-ring: oklch(0.505 0.258 291);
+  --chart-1: oklch(0.505 0.258 291);
+  --chart-2: oklch(0.545 0.185 230);
+  --chart-3: oklch(0.598 0.165 195);
+  --chart-4: oklch(0.622 0.178 330);
+  --chart-5: oklch(0.562 0.218 255);
+  --radius: 0.5rem;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --shadow-sm: 0 1px 3px rgba(90, 50, 200, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 8px rgba(90, 50, 200, 0.10), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 16px rgba(90, 50, 200, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 16px 28px rgba(90, 50, 200, 0.14), 0 8px 16px rgba(0, 0, 0, 0.10);
+  color-scheme: light;
+}

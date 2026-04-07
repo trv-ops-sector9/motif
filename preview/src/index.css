@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+@import "../../tokens/theme-fluent2.css";
+@import "../../tokens/theme-balanced.css";
+@import "../../tokens/theme-dense.css";
+@import "../../tokens/theme-expressive.css";
+
+/* ── Motion bridge ──────────────────────────────────────────────────────── */
+/* Maps --anim-* to the active theme so components stay theme-agnostic.     */
+/* Switching data-motion-theme automatically picks up the right keyframes   */
+/* AND the right durations / easing curves.                                 */
+
+:root,
+[data-motion-theme="fluent2"] {
+  --motion-curve-press-release:  var(--motion-curve-easy-ease);
+  --motion-curve-navigation:     var(--motion-curve-decelerate-max);
+  --motion-curve-expand-in:      var(--motion-curve-decelerate-mid);
+  --motion-curve-expand-out:     var(--motion-curve-accelerate-mid);
+  --motion-curve-accordion:      var(--motion-curve-easy-ease);
+  --anim-fade-in:        var(--animate-fluent2-fade-in);
+  --anim-fade-out:       var(--animate-fluent2-fade-out);
+  --anim-slide-up-in:    var(--animate-fluent2-slide-up-in);
+  --anim-slide-up-out:   var(--animate-fluent2-slide-up-out);
+  --anim-slide-down-in:  var(--animate-fluent2-slide-down-in);
+  --anim-slide-down-out: var(--animate-fluent2-slide-down-out);
+  --anim-expand-in:      var(--animate-fluent2-expand-in);
+  --anim-expand-out:     var(--animate-fluent2-expand-out);
+  --anim-collapse-in:    var(--animate-fluent2-collapse-in);
+  --anim-collapse-out:   var(--animate-fluent2-collapse-out);
+  --anim-page-enter:     var(--animate-fluent2-page-enter);
+  --anim-page-exit:      var(--animate-fluent2-page-exit);
+}
+
+[data-motion-theme="balanced"] {
+  --motion-curve-press-release:  var(--motion-curve-easy-ease);
+  --motion-curve-navigation:     var(--motion-curve-decelerate-mid);
+  --motion-curve-expand-in:      var(--motion-curve-decelerate-min);
+  --motion-curve-expand-out:     var(--motion-curve-accelerate-min);
+  --motion-curve-accordion:      var(--motion-curve-easy-ease);
+  --anim-fade-in:        var(--animate-balanced-fade-in);
+  --anim-fade-out:       var(--animate-balanced-fade-out);
+  --anim-slide-up-in:    var(--animate-balanced-slide-up-in);
+  --anim-slide-up-out:   var(--animate-balanced-slide-up-out);
+  --anim-slide-down-in:  var(--animate-balanced-slide-down-in);
+  --anim-slide-down-out: var(--animate-balanced-slide-down-out);
+  --anim-expand-in:      var(--animate-balanced-expand-in);
+  --anim-expand-out:     var(--animate-balanced-expand-out);
+  --anim-collapse-in:    var(--animate-balanced-collapse-in);
+  --anim-collapse-out:   var(--animate-balanced-collapse-out);
+  --anim-page-enter:     var(--animate-balanced-page-enter);
+  --anim-page-exit:      var(--animate-balanced-page-exit);
+}
+
+[data-motion-theme="dense"] {
+  --motion-curve-press-release:  var(--motion-curve-linear);
+  --motion-curve-navigation:     var(--motion-curve-linear);
+  --motion-curve-expand-in:      var(--motion-curve-linear);
+  --motion-curve-expand-out:     var(--motion-curve-linear);
+  --motion-curve-accordion:      var(--motion-curve-linear);
+  --anim-fade-in:        var(--animate-dense-fade-in);
+  --anim-fade-out:       var(--animate-dense-fade-out);
+  --anim-slide-up-in:    var(--animate-dense-slide-up-in);
+  --anim-slide-up-out:   var(--animate-dense-slide-up-out);
+  --anim-slide-down-in:  var(--animate-dense-slide-down-in);
+  --anim-slide-down-out: var(--animate-dense-slide-down-out);
+  --anim-expand-in:      var(--animate-dense-expand-in);
+  --anim-expand-out:     var(--animate-dense-expand-out);
+  --anim-collapse-in:    var(--animate-dense-collapse-in);
+  --anim-collapse-out:   var(--animate-dense-collapse-out);
+  --anim-page-enter:     var(--animate-dense-page-enter);
+  --anim-page-exit:      var(--animate-dense-page-exit);
+}
+
+[data-motion-theme="expressive"] {
+  --motion-curve-press-release:  var(--motion-curve-bounce);
+  --motion-curve-navigation:     var(--motion-curve-spring);
+  --motion-curve-expand-in:      var(--motion-curve-spring);
+  --motion-curve-expand-out:     var(--motion-curve-accelerate-max);
+  --motion-curve-accordion:      var(--motion-curve-easy-ease-max);
+  --anim-fade-in:        var(--animate-expressive-fade-in);
+  --anim-fade-out:       var(--animate-expressive-fade-out);
+  --anim-slide-up-in:    var(--animate-expressive-slide-up-in);
+  --anim-slide-up-out:   var(--animate-expressive-slide-up-out);
+  --anim-slide-down-in:  var(--animate-expressive-slide-down-in);
+  --anim-slide-down-out: var(--animate-expressive-slide-down-out);
+  --anim-expand-in:      var(--animate-expressive-expand-in);
+  --anim-expand-out:     var(--animate-expressive-expand-out);
+  --anim-collapse-in:    var(--animate-expressive-collapse-in);
+  --anim-collapse-out:   var(--animate-expressive-collapse-out);
+  --anim-page-enter:     var(--animate-expressive-page-enter);
+  --anim-page-exit:      var(--animate-expressive-page-exit);
+}
+
+[data-motion-theme="reduced"] {
+  --motion-curve-press-release:  var(--motion-curve-linear);
+  --motion-curve-navigation:     var(--motion-curve-linear);
+  --motion-curve-expand-in:      var(--motion-curve-linear);
+  --motion-curve-expand-out:     var(--motion-curve-linear);
+  --motion-curve-accordion:      var(--motion-curve-linear);
+  --anim-fade-in:        var(--animate-fluent2-fade-in);
+  --anim-fade-out:       var(--animate-fluent2-fade-out);
+  --anim-slide-up-in:    var(--animate-fluent2-slide-up-in);
+  --anim-slide-up-out:   var(--animate-fluent2-slide-up-out);
+  --anim-slide-down-in:  var(--animate-fluent2-slide-down-in);
+  --anim-slide-down-out: var(--animate-fluent2-slide-down-out);
+  --anim-expand-in:      var(--animate-fluent2-expand-in);
+  --anim-expand-out:     var(--animate-fluent2-expand-out);
+  --anim-collapse-in:    var(--animate-fluent2-collapse-in);
+  --anim-collapse-out:   var(--animate-fluent2-collapse-out);
+  --anim-page-enter:     var(--animate-fluent2-page-enter);
+  --anim-page-exit:      var(--animate-fluent2-page-exit);
+}
+
+/* ── Sonner toast — motion token overrides ───────────────────────────────── */
+/* Sonner hardcodes 400ms/ease. Override with active motion theme primitives. */
+
+[data-sonner-toast] {
+  transition:
+    transform  var(--motion-duration-normal) var(--motion-curve-navigation),
+    opacity    var(--motion-duration-normal) var(--motion-curve-decelerate-mid),
+    height     var(--motion-duration-normal) var(--motion-curve-easy-ease),
+    box-shadow var(--motion-duration-fast)   var(--motion-curve-easy-ease) !important;
+}
+
+[data-sonner-toast][data-removed="true"] {
+  transition:
+    transform  var(--motion-duration-fast) var(--motion-curve-accelerate-mid),
+    opacity    var(--motion-duration-fast) var(--motion-curve-accelerate-mid),
+    height     var(--motion-duration-fast) var(--motion-curve-accelerate-mid) !important;
+}
+
+@import "./themes/default.css";
+@import "./themes/dark-minimal.css";
+@import "./themes/fluent-light.css";
+@import "./themes/fluent-dark.css";
+@import "./themes/bebop-light.css";
+@import "./themes/bebop-dark.css";
+@import "./themes/nova-dark.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@keyframes accordion-down {
+  from { height: 0; opacity: 0; }
+  to   { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+
+@layer base {
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.04);
+  color-scheme: light;
+  /* Tailwind v4 spacing base — all spacing utilities use calc(var(--spacing) * N).
+     Changing this value at runtime scales every gap, padding, margin, and size
+     token proportionally across the entire UI. */
+  --spacing: 0.25rem;
+}
+
+* {
+  border-color: var(--border);
+  outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+} /* end @layer base */
