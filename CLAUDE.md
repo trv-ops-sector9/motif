@@ -189,3 +189,23 @@ Switched via `data-theme` attribute on `document.documentElement`. Independent o
 
 ## Spacing
 `--spacing` CSS variable on `:root` controls all Tailwind v4 spacing utilities (`calc(var(--spacing) * N)`). The sidebar slider adjusts this at runtime, scaling all gap/padding/margin simultaneously.
+
+---
+
+## MarketingBlock — Workspace (second) page
+
+The `WorkspacePage` inside `MarketingBlock.tsx` is a full dashboard demo page. Clicking any element on the marketing landing page navigates to it via a page-transition animation.
+
+### Sections (top to bottom)
+1. **Stat cards** — 4-up grid (Total tasks, Completed, Overdue, Contributors)
+2. **Active projects + Team** — project list with progress bars / status badges; team roster with active indicators
+3. **Weekly velocity + Activity feed** — 2-col row:
+   - Velocity: `RadialBarChart` from recharts via `ChartContainer` (5 weekdays, `--chart-1` → `--chart-5`)
+   - Activity: icon + text feed with per-event accent colours
+4. **Priority queue + Deadlines + By category** — 3-col row:
+   - Priority: P0–P3 labelled task list with assignee avatars
+   - Deadlines: milestone list with day-countdown pills + linear progress bars
+   - By category: horizontal bar chart (CSS only, no recharts)
+
+### Recharts pattern in MarketingBlock
+Uses `RadialBarChart` + `RadialBar` with `background` prop. Config follows the same `ChartConfig` / `ChartContainer` pattern as `DashboardBlock`. Chart colors reference `var(--chart-N)` via config keys mapped to `var(--color-<key>)` inside `ChartContainer`.

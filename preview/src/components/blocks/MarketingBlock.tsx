@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
-import { ArrowRight, Zap, Shield, Layers, Plus, CheckCheck, AlertTriangle, Activity, Users2 } from "lucide-react";
+import { ArrowRight, Zap, Shield, Layers, Plus, CheckCheck, AlertTriangle, Activity, Users2, Flame, Clock, TrendingUp, GitMerge, MessageSquare } from "lucide-react";
+import { RadialBar, RadialBarChart } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
 
 // ── Page transition state ─────────────────────────────────────────────────────
@@ -74,6 +76,71 @@ const TEAM = [
   { name: "Jordan Lee",    role: "Product",     initials: "JL", active: false },
   { name: "Casey Nguyen",  role: "Backend",     initials: "CN", active: false },
   { name: "Morgan Chen",   role: "Design",      initials: "MC", active: false },
+];
+
+const ACTIVITY = [
+  { icon: CheckCheck,    text: "Accessibility audit shipped to production",  user: "MC", time: "just now", accent: "text-green-500"       },
+  { icon: AlertTriangle, text: "API migration blocked on auth handshake",     user: "CN", time: "1h ago",   accent: "text-destructive"     },
+  { icon: GitMerge,      text: "PR #42 merged — component library v3 RC",    user: "SR", time: "2h ago",   accent: "text-primary"         },
+  { icon: Plus,          text: "New task: dark mode token audit",             user: "AK", time: "3h ago",   accent: "text-primary"         },
+  { icon: MessageSquare, text: "Comment thread on mobile onboarding flow",    user: "JL", time: "5h ago",   accent: "text-muted-foreground" },
+  { icon: Activity,      text: "Component library review session started",    user: "SR", time: "1d ago",   accent: "text-muted-foreground" },
+];
+
+// Radial chart data — one bar per weekday
+const velocityChartData = [
+  { day: "Mon", completed: 8,  fill: "var(--color-mon)" },
+  { day: "Tue", completed: 11, fill: "var(--color-tue)" },
+  { day: "Wed", completed: 6,  fill: "var(--color-wed)" },
+  { day: "Thu", completed: 13, fill: "var(--color-thu)" },
+  { day: "Fri", completed: 9,  fill: "var(--color-fri)" },
+];
+
+const velocityChartConfig = {
+  completed: { label: "Tasks completed" },
+  mon: { label: "Monday",    color: "var(--chart-1)" },
+  tue: { label: "Tuesday",   color: "var(--chart-2)" },
+  wed: { label: "Wednesday", color: "var(--chart-3)" },
+  thu: { label: "Thursday",  color: "var(--chart-4)" },
+  fri: { label: "Friday",    color: "var(--chart-5)" },
+} satisfies ChartConfig;
+
+type Priority = "P0" | "P1" | "P2" | "P3";
+const PRIORITY_COLOR: Record<Priority, string> = {
+  P0: "bg-destructive text-destructive-foreground",
+  P1: "bg-orange-500 text-white",
+  P2: "bg-primary text-primary-foreground",
+  P3: "bg-muted text-muted-foreground",
+};
+
+const PRIORITIES: { label: string; priority: Priority; due: string; assignee: string }[] = [
+  { label: "Ship token documentation",         priority: "P0", due: "Today",     assignee: "AK" },
+  { label: "Fix accordion in dense theme",     priority: "P1", due: "Tomorrow",  assignee: "SR" },
+  { label: "Write v1 migration guide",         priority: "P1", due: "This week", assignee: "MC" },
+  { label: "Add integration tests for tokens", priority: "P2", due: "Next week", assignee: "CN" },
+  { label: "Performance benchmark suite",      priority: "P3", due: "Backlog",   assignee: "JL" },
+];
+
+type DeadlineStatus = "on-track" | "at-risk" | "overdue";
+const DEADLINE_COLOR: Record<DeadlineStatus, string> = {
+  "on-track": "bg-green-500/15 text-green-600",
+  "at-risk":  "bg-orange-500/15 text-orange-600",
+  "overdue":  "bg-destructive/15 text-destructive",
+};
+
+const DEADLINES: { name: string; date: string; daysLeft: number; status: DeadlineStatus }[] = [
+  { name: "Beta launch",    date: "Apr 10", daysLeft: 4,  status: "at-risk"  },
+  { name: "Docs freeze",    date: "Apr 12", daysLeft: 6,  status: "on-track" },
+  { name: "v1.0 RC",        date: "Apr 20", daysLeft: 14, status: "on-track" },
+  { name: "Public release", date: "May 1",  daysLeft: 25, status: "on-track" },
+];
+
+const CATEGORY_BREAKDOWN = [
+  { label: "Design systems", count: 18, pct: 72 },
+  { label: "Engineering",    count: 14, pct: 56 },
+  { label: "Product",        count: 9,  pct: 36 },
+  { label: "Backend",        count: 7,  pct: 28 },
+  { label: "QA",             count: 5,  pct: 20 },
 ];
 
 // ── Sub-pages ─────────────────────────────────────────────────────────────────
@@ -209,7 +276,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
       </div>
 
       {/* Projects + Team */}
-      <div className="grid sm:grid-cols-[1fr_220px] gap-4 px-6 pb-6">
+      <div className="grid sm:grid-cols-[1fr_220px] gap-4 px-6 pb-4">
         {/* Project list */}
         <Card>
           <CardHeader className="pb-3">
@@ -289,6 +356,159 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
                 Invite member
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Weekly velocity (radial) + Activity feed */}
+      <div className="grid sm:grid-cols-2 gap-4 px-6 pb-4">
+        {/* Radial bar chart — tasks completed per weekday */}
+        <Card className="flex flex-col cursor-pointer" onClick={onNavigate}>
+          <CardHeader className="items-center pb-0">
+            <CardTitle className="text-sm font-semibold">Weekly velocity</CardTitle>
+            <CardDescription className="text-[11px]">Tasks completed · Mon – Fri</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 pb-0">
+            <ChartContainer
+              config={velocityChartConfig}
+              className="mx-auto aspect-square max-h-[200px]"
+            >
+              <RadialBarChart data={velocityChartData} innerRadius={30} outerRadius={90}>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel nameKey="day" />}
+                />
+                <RadialBar dataKey="completed" background />
+              </RadialBarChart>
+            </ChartContainer>
+          </CardContent>
+          <CardFooter className="flex-col gap-1 pb-4 pt-2 text-xs">
+            <div className="flex items-center gap-1.5 font-medium">
+              Trending up this week <TrendingUp className="h-3.5 w-3.5" />
+            </div>
+            <div className="flex gap-3">
+              {velocityChartData.map((d) => (
+                <span key={d.day} className="flex items-center gap-1 text-muted-foreground">
+                  <span className="h-2 w-2 rounded-full inline-block" style={{ background: d.fill }} />
+                  {d.day}
+                </span>
+              ))}
+            </div>
+          </CardFooter>
+        </Card>
+
+        {/* Activity feed */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold">Recent activity</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 px-2 pb-2">
+            {ACTIVITY.map((a, i) => {
+              const Icon = a.icon;
+              return (
+                <div
+                  key={i}
+                  onClick={onNavigate}
+                  className="flex items-start gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors"
+                >
+                  <Icon className={cn("h-3.5 w-3.5 mt-0.5 shrink-0", a.accent)} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs leading-snug truncate">{a.text}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{a.user} · {a.time}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Priority queue + Deadlines + Category breakdown */}
+      <div className="grid sm:grid-cols-[1fr_200px_200px] gap-4 px-6 pb-6">
+        {/* Priority queue */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold">Priority queue</CardTitle>
+              <Flame className="h-3.5 w-3.5 text-orange-500" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0 px-2 pb-2">
+            {PRIORITIES.map((p, i) => (
+              <div
+                key={i}
+                onClick={onNavigate}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors"
+              >
+                <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0", PRIORITY_COLOR[p.priority])}>
+                  {p.priority}
+                </span>
+                <p className="flex-1 text-xs truncate">{p.label}</p>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] text-muted-foreground">{p.due}</span>
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[9px] font-semibold text-primary">
+                    {p.assignee}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Deadlines */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold">Deadlines</CardTitle>
+              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
+            {DEADLINES.map((d, i) => (
+              <div key={i} onClick={onNavigate} className="cursor-pointer group">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-medium truncate">{d.name}</p>
+                  <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-2 shrink-0", DEADLINE_COLOR[d.status])}>
+                    {d.daysLeft}d
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">{d.date}</span>
+                  <div className="w-20 h-1 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={cn("h-full rounded-full", d.status === "at-risk" ? "bg-orange-500" : "bg-green-500")}
+                      style={{ width: `${Math.max(8, 100 - (d.daysLeft / 30) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Category breakdown */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold">By category</CardTitle>
+              <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
+            {CATEGORY_BREAKDOWN.map((c, i) => (
+              <div key={i} onClick={onNavigate} className="cursor-pointer">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[11px] text-muted-foreground truncate">{c.label}</p>
+                  <span className="text-[11px] font-semibold tabular-nums ml-2 shrink-0">{c.count}</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${c.pct}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
