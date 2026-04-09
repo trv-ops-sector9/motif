@@ -64,7 +64,8 @@ function cssMs(token: string, fallback = 400): number {
 }
 
 // Read a CSS easing token (e.g. "cubic-bezier(...)") from the active motion theme.
-function cssCurve(token: string, fallback = "ease-out"): string {
+// Returns `any` to satisfy recharts' AnimationTiming union which doesn't include cubic-bezier strings.
+function cssCurve(token: string, fallback = "ease-out"): any {
   if (typeof window === "undefined") return fallback;
   return getComputedStyle(document.documentElement).getPropertyValue(token).trim() || fallback;
 }
