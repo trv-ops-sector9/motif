@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   closestCenter,
@@ -66,7 +64,8 @@ function cssMs(token: string, fallback = 400): number {
 }
 
 // Read a CSS easing token (e.g. "cubic-bezier(...)") from the active motion theme.
-function cssCurve(token: string, fallback = "ease-out"): string {
+// Returns `any` to satisfy recharts' AnimationTiming union which doesn't include cubic-bezier strings.
+function cssCurve(token: string, fallback = "ease-out"): any {
   if (typeof window === "undefined") return fallback;
   return getComputedStyle(document.documentElement).getPropertyValue(token).trim() || fallback;
 }
@@ -195,7 +194,7 @@ function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Strong user retention <IconTrendingUp className="size-4 text-green-500" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Engagement exceeds targets</div>
         </CardFooter>
       </Card>
 
@@ -322,7 +321,7 @@ const chartData = [
 const areaChartConfig = {
   visitors: { label: "Visitors" },
   desktop: { label: "Desktop", color: "var(--primary)" },
-  mobile: { label: "Mobile", color: "var(--primary)" },
+  mobile: { label: "Mobile", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
 function ChartAreaInteractive() {
@@ -457,26 +456,26 @@ export const tableSchema = z.object({
 type TableRow = z.infer<typeof tableSchema>;
 
 const TABLE_DATA: TableRow[] = [
-  { id: 1, header: "Cover page", type: "Cover page", status: "In Process", target: "18", limit: "5", reviewer: "Eddie Lake" },
-  { id: 2, header: "Table of contents", type: "Table of contents", status: "Done", target: "29", limit: "24", reviewer: "Eddie Lake" },
-  { id: 3, header: "Executive summary", type: "Narrative", status: "Done", target: "10", limit: "13", reviewer: "Eddie Lake" },
-  { id: 4, header: "Technical approach", type: "Narrative", status: "Done", target: "27", limit: "23", reviewer: "Jamik Tashpulatov" },
-  { id: 5, header: "Design", type: "Narrative", status: "In Process", target: "2", limit: "16", reviewer: "Jamik Tashpulatov" },
-  { id: 6, header: "Capabilities", type: "Narrative", status: "In Process", target: "20", limit: "8", reviewer: "Jamik Tashpulatov" },
-  { id: 7, header: "Integration with existing systems", type: "Narrative", status: "In Process", target: "19", limit: "21", reviewer: "Jamik Tashpulatov" },
-  { id: 8, header: "Innovation and Advantages", type: "Narrative", status: "Done", target: "25", limit: "26", reviewer: "Assign reviewer" },
-  { id: 9, header: "Overview of EMR's Innovative Solutions", type: "Technical content", status: "Done", target: "7", limit: "23", reviewer: "Assign reviewer" },
-  { id: 10, header: "Advanced Algorithms and Machine Learning", type: "Narrative", status: "Done", target: "30", limit: "28", reviewer: "Assign reviewer" },
-  { id: 11, header: "Adaptive Communication Protocols", type: "Narrative", status: "Done", target: "9", limit: "31", reviewer: "Assign reviewer" },
-  { id: 12, header: "Advantages Over Current Technologies", type: "Narrative", status: "Done", target: "12", limit: "0", reviewer: "Assign reviewer" },
-  { id: 13, header: "Past Performance", type: "Narrative", status: "Done", target: "22", limit: "33", reviewer: "Assign reviewer" },
-  { id: 14, header: "Customer Feedback and Satisfaction Levels", type: "Narrative", status: "Done", target: "15", limit: "34", reviewer: "Assign reviewer" },
-  { id: 15, header: "Implementation Challenges and Solutions", type: "Narrative", status: "Done", target: "3", limit: "35", reviewer: "Assign reviewer" },
-  { id: 16, header: "Security Measures and Data Protection Policies", type: "Narrative", status: "In Process", target: "6", limit: "36", reviewer: "Assign reviewer" },
-  { id: 17, header: "Scalability and Future Proofing", type: "Narrative", status: "Done", target: "4", limit: "37", reviewer: "Assign reviewer" },
-  { id: 18, header: "Cost-Benefit Analysis", type: "Plain language", status: "Done", target: "14", limit: "38", reviewer: "Assign reviewer" },
-  { id: 19, header: "User Training and Onboarding Experience", type: "Narrative", status: "Done", target: "17", limit: "39", reviewer: "Assign reviewer" },
-  { id: 20, header: "Future Development Roadmap", type: "Narrative", status: "Done", target: "11", limit: "40", reviewer: "Assign reviewer" },
+  { id: 1, header: "Auth token refresh flow", type: "Backend", status: "In Process", target: "P1", limit: "8", reviewer: "Alex Kim" },
+  { id: 2, header: "Dashboard stat cards", type: "Frontend", status: "Done", target: "P2", limit: "3", reviewer: "Alex Kim" },
+  { id: 3, header: "Rate limiter middleware", type: "Backend", status: "Done", target: "P1", limit: "5", reviewer: "Alex Kim" },
+  { id: 4, header: "Design token audit", type: "Design", status: "Done", target: "P2", limit: "5", reviewer: "Sam Rivera" },
+  { id: 5, header: "Sidebar responsive layout", type: "Frontend", status: "In Process", target: "P2", limit: "3", reviewer: "Sam Rivera" },
+  { id: 6, header: "Notification service", type: "Backend", status: "In Process", target: "P1", limit: "13", reviewer: "Sam Rivera" },
+  { id: 7, header: "CI pipeline for preview deploys", type: "Infrastructure", status: "In Process", target: "P3", limit: "5", reviewer: "Sam Rivera" },
+  { id: 8, header: "Accessible color contrast check", type: "Design", status: "Done", target: "P2", limit: "3", reviewer: "Assign reviewer" },
+  { id: 9, header: "REST → GraphQL migration plan", type: "API", status: "Done", target: "P3", limit: "8", reviewer: "Assign reviewer" },
+  { id: 10, header: "Autocomplete search component", type: "Frontend", status: "Done", target: "P1", limit: "8", reviewer: "Assign reviewer" },
+  { id: 11, header: "WebSocket event bus", type: "Backend", status: "Done", target: "P2", limit: "13", reviewer: "Assign reviewer" },
+  { id: 12, header: "Error boundary + fallback UI", type: "Frontend", status: "Done", target: "P2", limit: "3", reviewer: "Assign reviewer" },
+  { id: 13, header: "Redis cache layer", type: "Infrastructure", status: "Done", target: "P1", limit: "8", reviewer: "Assign reviewer" },
+  { id: 14, header: "Form validation library swap", type: "Frontend", status: "Done", target: "P3", limit: "5", reviewer: "Assign reviewer" },
+  { id: 15, header: "Dark mode token mapping", type: "Design", status: "Done", target: "P2", limit: "5", reviewer: "Assign reviewer" },
+  { id: 16, header: "OAuth2 provider integration", type: "Backend", status: "In Process", target: "P1", limit: "13", reviewer: "Assign reviewer" },
+  { id: 17, header: "CDN asset caching strategy", type: "Infrastructure", status: "Done", target: "P3", limit: "3", reviewer: "Assign reviewer" },
+  { id: 18, header: "Onboarding flow redesign", type: "Design", status: "Done", target: "P2", limit: "8", reviewer: "Assign reviewer" },
+  { id: 19, header: "Keyboard navigation audit", type: "Frontend", status: "Done", target: "P1", limit: "5", reviewer: "Assign reviewer" },
+  { id: 20, header: "Monitoring + alerting setup", type: "Infrastructure", status: "Done", target: "P3", limit: "5", reviewer: "Assign reviewer" },
 ];
 
 const miniChartData = [
@@ -490,7 +489,7 @@ const miniChartData = [
 
 const miniChartConfig = {
   desktop: { label: "Desktop", color: "var(--primary)" },
-  mobile: { label: "Mobile", color: "var(--primary)" },
+  mobile: { label: "Mobile", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
 function TableCellViewer({ item }: { item: TableRow }) {
@@ -506,7 +505,7 @@ function TableCellViewer({ item }: { item: TableRow }) {
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.header}</DrawerTitle>
-          <DrawerDescription>Showing total visitors for the last 6 months</DrawerDescription>
+          <DrawerDescription>Edit feature details, priority, and assignment.</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
           {!isMobile && (
@@ -536,10 +535,10 @@ function TableCellViewer({ item }: { item: TableRow }) {
           )}
           <div className="grid gap-2">
             <div className="flex gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <IconTrendingUp className="size-4" />
+              Velocity trending up 5.2% <IconTrendingUp className="size-4" />
             </div>
             <div className="text-muted-foreground">
-              Showing total visitors for the last 6 months. This is just some random text to test the layout.
+              Completion rate over the last 6 sprints, split by platform.
             </div>
           </div>
           <Separator />
@@ -549,19 +548,17 @@ function TableCellViewer({ item }: { item: TableRow }) {
               <Input id="header" defaultValue={item.header} />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="type">Type</Label>
+              <Label htmlFor="type">Category</Label>
               <Select defaultValue={item.type}>
                 <SelectTrigger id="type" className="w-full">
-                  <SelectValue placeholder="Select a type" />
+                  <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Table of contents">Table of Contents</SelectItem>
-                  <SelectItem value="Executive summary">Executive Summary</SelectItem>
-                  <SelectItem value="Technical approach">Technical Approach</SelectItem>
+                  <SelectItem value="Frontend">Frontend</SelectItem>
+                  <SelectItem value="Backend">Backend</SelectItem>
                   <SelectItem value="Design">Design</SelectItem>
-                  <SelectItem value="Capabilities">Capabilities</SelectItem>
-                  <SelectItem value="Narrative">Narrative</SelectItem>
-                  <SelectItem value="Cover page">Cover Page</SelectItem>
+                  <SelectItem value="Infrastructure">Infrastructure</SelectItem>
+                  <SelectItem value="API">API</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -580,24 +577,24 @@ function TableCellViewer({ item }: { item: TableRow }) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-3">
-                <Label htmlFor="target">Target</Label>
+                <Label htmlFor="target">Priority</Label>
                 <Input id="target" defaultValue={item.target} />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="limit">Limit</Label>
+                <Label htmlFor="limit">Effort</Label>
                 <Input id="limit" defaultValue={item.limit} />
               </div>
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
+              <Label htmlFor="reviewer">Owner</Label>
               <Select defaultValue={item.reviewer}>
                 <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
+                  <SelectValue placeholder="Assign owner" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                  <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
-                  <SelectItem value="Assign reviewer">Assign reviewer</SelectItem>
+                  <SelectItem value="Alex Kim">Alex Kim</SelectItem>
+                  <SelectItem value="Sam Rivera">Sam Rivera</SelectItem>
+                  <SelectItem value="Assign reviewer">Unassigned</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -671,13 +668,13 @@ const tableColumns: ColumnDef<TableRow>[] = [
   },
   {
     accessorKey: "header",
-    header: "Header",
+    header: "Feature",
     cell: ({ row }) => <TableCellViewer item={row.original} />,
     enableHiding: false,
   },
   {
     accessorKey: "type",
-    header: "Section Type",
+    header: "Category",
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
@@ -702,7 +699,7 @@ const tableColumns: ColumnDef<TableRow>[] = [
   },
   {
     accessorKey: "target",
-    header: () => <div className="text-right">Target</div>,
+    header: () => <div className="text-right">Priority</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -725,7 +722,7 @@ const tableColumns: ColumnDef<TableRow>[] = [
   },
   {
     accessorKey: "limit",
-    header: () => <div className="text-right">Limit</div>,
+    header: () => <div className="text-right">Effort</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -748,18 +745,18 @@ const tableColumns: ColumnDef<TableRow>[] = [
   },
   {
     accessorKey: "reviewer",
-    header: "Reviewer",
+    header: "Owner",
     cell: ({ row }) => {
       const isAssigned = row.original.reviewer !== "Assign reviewer";
       if (isAssigned) return <span>{row.original.reviewer}</span>;
       return (
         <Select>
           <SelectTrigger className="h-8 w-40 border-transparent shadow-none hover:bg-input/30 focus:border-border" id={`reviewer-${row.original.id}`}>
-            <SelectValue placeholder="Assign reviewer" />
+            <SelectValue placeholder="Assign owner" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-            <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
+            <SelectItem value="Alex Kim">Alex Kim</SelectItem>
+            <SelectItem value="Sam Rivera">Sam Rivera</SelectItem>
           </SelectContent>
         </Select>
       );
@@ -862,17 +859,17 @@ function DataTable() {
   }
 
   return (
-    <Tabs defaultValue="outline" className="flex w-full flex-col justify-start gap-6">
+    <Tabs defaultValue="all-features" className="flex w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:text-foreground @[767px]/main:flex">
-          <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Past Performance <Badge data-slot="badge" className="ml-1">3</Badge>
+          <TabsTrigger value="all-features">All Features</TabsTrigger>
+          <TabsTrigger value="sprint-review">
+            Sprint Review <Badge data-slot="badge" className="ml-1">3</Badge>
           </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge data-slot="badge" className="ml-1">2</Badge>
+          <TabsTrigger value="team-capacity">
+            Team Capacity <Badge data-slot="badge" className="ml-1">2</Badge>
           </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+          <TabsTrigger value="dependencies">Dependencies</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -902,11 +899,11 @@ function DataTable() {
           </DropdownMenu>
           <Button size="sm">
             <IconPlus className="size-4" />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="hidden lg:inline">Add Feature</span>
           </Button>
         </div>
       </div>
-      <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+      <TabsContent value="all-features" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
@@ -988,14 +985,14 @@ function DataTable() {
           </div>
         </div>
       </TabsContent>
-      <TabsContent value="past-performance" className="flex flex-col px-4 lg:px-6">
-        <div className="flex items-center justify-center py-10 text-muted-foreground">No past performance data available</div>
+      <TabsContent value="sprint-review" className="flex flex-col px-4 lg:px-6">
+        <div className="flex items-center justify-center py-10 text-muted-foreground">Sprint review data will appear here</div>
       </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-        <div className="flex items-center justify-center py-10 text-muted-foreground">No key personnel data available</div>
+      <TabsContent value="team-capacity" className="flex flex-col px-4 lg:px-6">
+        <div className="flex items-center justify-center py-10 text-muted-foreground">Team capacity breakdown will appear here</div>
       </TabsContent>
-      <TabsContent value="focus-documents" className="flex flex-col px-4 lg:px-6">
-        <div className="flex items-center justify-center py-10 text-muted-foreground">No focus documents available</div>
+      <TabsContent value="dependencies" className="flex flex-col px-4 lg:px-6">
+        <div className="flex items-center justify-center py-10 text-muted-foreground">Dependency graph will appear here</div>
       </TabsContent>
     </Tabs>
   );

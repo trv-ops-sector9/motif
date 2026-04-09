@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowRight, Zap, Shield, Layers, Plus, CheckCheck, AlertTriangle, Activity, Users2, Flame, Clock, TrendingUp, GitMerge, MessageSquare } from "lucide-react";
+import { ArrowLeft, ArrowRight, Zap, Shield, Layers, Plus, CheckCheck, AlertTriangle, Activity, Users2, Flame, Clock, TrendingUp, GitMerge, MessageSquare } from "lucide-react";
 import { RadialBar, RadialBarChart } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,13 +34,13 @@ const TESTIMONIALS = [
   {
     quote: "The theme system is exactly what I needed. Switching from Fluent to a dark minimal aesthetic took less than 30 seconds.",
     author: "Alex Kim",
-    role: "Senior Frontend Engineer, Vercel",
+    role: "Senior Frontend Engineer",
     initials: "AK",
   },
   {
     quote: "Finally a component library that doesn't fight you when you want to change the radius or tweak the color palette.",
     author: "Sam Rivera",
-    role: "Design Systems Lead, Linear",
+    role: "Design Systems Lead",
     initials: "SR",
   },
 ];
@@ -129,10 +129,10 @@ const DEADLINE_COLOR: Record<DeadlineStatus, string> = {
 };
 
 const DEADLINES: { name: string; date: string; daysLeft: number; status: DeadlineStatus }[] = [
-  { name: "Beta launch",    date: "Apr 10", daysLeft: 4,  status: "at-risk"  },
-  { name: "Docs freeze",    date: "Apr 12", daysLeft: 6,  status: "on-track" },
-  { name: "v1.0 RC",        date: "Apr 20", daysLeft: 14, status: "on-track" },
-  { name: "Public release", date: "May 1",  daysLeft: 25, status: "on-track" },
+  { name: "Beta launch",    date: "Q2 W1",  daysLeft: 4,  status: "at-risk"  },
+  { name: "Docs freeze",    date: "Q2 W2",  daysLeft: 8,  status: "on-track" },
+  { name: "v1.0 RC",        date: "Q2 W4",  daysLeft: 18, status: "on-track" },
+  { name: "Public release", date: "Q2 W6",  daysLeft: 32, status: "on-track" },
 ];
 
 const CATEGORY_BREAKDOWN = [
@@ -229,7 +229,7 @@ function MarketingPage({ onNavigate }: { onNavigate: () => void }) {
       {/* Footer */}
       <footer className="border-t px-6 py-8">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© 2026 JustThemeSwitcher. MIT license.</p>
+          <p>© 2026 Motif. MIT license.</p>
           <div className="flex gap-5">
             {["Docs", "GitHub", "Changelog", "Privacy"].map((link) => (
               <button key={link} onClick={onNavigate} className="hover:text-foreground transition-colors cursor-pointer">
@@ -248,11 +248,16 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
     <div className="min-h-full overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">Projects</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">5 active · last updated 2h ago</p>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={onNavigate} aria-label="Back to landing page">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight">Projects</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">5 active · last updated 2h ago</p>
+          </div>
         </div>
-        <Button onClick={onNavigate}>
+        <Button>
           <Plus className="h-4 w-4" />
           New project
         </Button>
@@ -263,7 +268,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
         {STATS.map((s) => {
           const Icon = s.icon;
           return (
-            <Card key={s.label} interactive onClick={onNavigate}>
+            <Card key={s.label} interactive>
               <CardHeader className="pb-4">
                 <Icon className="h-4 w-4 text-muted-foreground mb-2" />
                 <CardTitle className="text-2xl font-bold tabular-nums">{s.value}</CardTitle>
@@ -286,8 +291,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
             {PROJECTS.map((p) => (
               <div
                 key={p.name}
-                onClick={onNavigate}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/60 transition-colors group"
               >
                 {/* Owner avatar */}
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
@@ -332,8 +336,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
             {TEAM.map((m) => (
               <div
                 key={m.name}
-                onClick={onNavigate}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors"
               >
                 <div className="relative shrink-0">
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">
@@ -351,7 +354,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
             ))}
 
             <div className="px-3 pt-3 mt-1 border-t">
-              <Button variant="outline" size="sm" className="w-full text-xs" onClick={onNavigate}>
+              <Button variant="outline" size="sm" className="w-full text-xs">
                 <Plus className="h-3 w-3" />
                 Invite member
               </Button>
@@ -363,7 +366,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
       {/* Weekly velocity (radial) + Activity feed */}
       <div className="grid sm:grid-cols-2 gap-4 px-6 pb-4">
         {/* Radial bar chart — tasks completed per weekday */}
-        <Card className="flex flex-col cursor-pointer" onClick={onNavigate}>
+        <Card className="flex flex-col">
           <CardHeader className="items-center pb-0">
             <CardTitle className="text-sm font-semibold">Weekly velocity</CardTitle>
             <CardDescription className="text-[11px]">Tasks completed · Mon – Fri</CardDescription>
@@ -408,8 +411,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
               return (
                 <div
                   key={i}
-                  onClick={onNavigate}
-                  className="flex items-start gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors"
+                  className="flex items-start gap-2.5 px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors"
                 >
                   <Icon className={cn("h-3.5 w-3.5 mt-0.5 shrink-0", a.accent)} />
                   <div className="flex-1 min-w-0">
@@ -437,8 +439,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
             {PRIORITIES.map((p, i) => (
               <div
                 key={i}
-                onClick={onNavigate}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-muted/60 transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors"
               >
                 <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0", PRIORITY_COLOR[p.priority])}>
                   {p.priority}
@@ -465,7 +466,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
             {DEADLINES.map((d, i) => (
-              <div key={i} onClick={onNavigate} className="cursor-pointer group">
+              <div key={i} className="group">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-xs font-medium truncate">{d.name}</p>
                   <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium ml-2 shrink-0", DEADLINE_COLOR[d.status])}>
@@ -496,7 +497,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
             {CATEGORY_BREAKDOWN.map((c, i) => (
-              <div key={i} onClick={onNavigate} className="cursor-pointer">
+              <div key={i}>
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-[11px] text-muted-foreground truncate">{c.label}</p>
                   <span className="text-[11px] font-semibold tabular-nums ml-2 shrink-0">{c.count}</span>
