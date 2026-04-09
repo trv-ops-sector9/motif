@@ -58,10 +58,10 @@ export function AppSidebar({ activeView, onViewChange }: AppSidebarProps) {
         {!collapsed && (
           <div className="flex-1 min-w-0">
             <span className="block truncate text-sm font-semibold text-sidebar-foreground leading-tight">
-              TRV_Aetos
+              Motif
             </span>
             <span className="block text-[10px] text-muted-foreground leading-snug mt-0.5">
-              Component library. Design+Motion Token Themes.
+              Runtime design & motion token system
             </span>
           </div>
         )}
