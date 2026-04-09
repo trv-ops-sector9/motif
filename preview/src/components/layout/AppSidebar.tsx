@@ -7,7 +7,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Layers,
-  ChevronsUpDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -156,7 +155,6 @@ export function AppSidebar({ activeView, onViewChange }: AppSidebarProps) {
                   traver@example.com
                 </span>
               </div>
-              <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             </>
           )}
         </button>

@@ -207,8 +207,7 @@ function DialogDemo() {
             type="button"
             onClick={handleSave}
             disabled={saving || saved}
-            className=""
-          >
+                     >
             {saving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -567,28 +566,40 @@ export function ComponentGallery() {
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="mt-4">
-            <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-              Overview — project summary, recent activity, and quick stats live here.
+            <div className="rounded-lg border bg-muted/40 p-6">
+              <p className="text-sm font-medium mb-2">3 projects active</p>
+              <p className="text-xs text-muted-foreground">Last deployment 2 hours ago. All health checks passing.</p>
             </div>
           </TabsContent>
           <TabsContent value="analytics" className="mt-4">
-            <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-              Analytics — charts, metrics, and usage trends would appear in this panel.
+            <div className="rounded-lg border bg-muted/40 p-6">
+              <div className="flex gap-8 text-center">
+                <div><p className="text-lg font-semibold tabular-nums">1,247</p><p className="text-xs text-muted-foreground">Requests / min</p></div>
+                <div><p className="text-lg font-semibold tabular-nums">42ms</p><p className="text-xs text-muted-foreground">Avg latency</p></div>
+                <div><p className="text-lg font-semibold tabular-nums">99.97%</p><p className="text-xs text-muted-foreground">Uptime</p></div>
+              </div>
             </div>
           </TabsContent>
           <TabsContent value="members" className="mt-4">
-            <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-              Members — team roster, roles, and permission management live here.
+            <div className="rounded-lg border bg-muted/40 p-6">
+              <div className="space-y-2">
+                {["Alex Kim — Owner", "Sam Rivera — Editor", "Jordan Lee — Viewer"].map((m) => (
+                  <p key={m} className="text-sm">{m}</p>
+                ))}
+              </div>
             </div>
           </TabsContent>
           <TabsContent value="activity" className="mt-4">
-            <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-              Activity — audit log, recent changes, and timeline of events belong here.
+            <div className="rounded-lg border bg-muted/40 p-6 space-y-2">
+              {["Config updated by Alex — 2h ago", "Deploy triggered by Sam — 5h ago", "Branch merged by Jordan — 1d ago"].map((a) => (
+                <p key={a} className="text-xs text-muted-foreground">{a}</p>
+              ))}
             </div>
           </TabsContent>
           <TabsContent value="settings" className="mt-4">
-            <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-              Settings — configuration options and preferences belong here.
+            <div className="rounded-lg border bg-muted/40 p-6">
+              <p className="text-sm font-medium mb-1">Environment</p>
+              <p className="text-xs text-muted-foreground">Production — us-east-1 · Node 20 · 2 vCPU</p>
             </div>
           </TabsContent>
         </Tabs>

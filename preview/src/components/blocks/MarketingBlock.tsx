@@ -34,13 +34,13 @@ const TESTIMONIALS = [
   {
     quote: "The theme system is exactly what I needed. Switching from Fluent to a dark minimal aesthetic took less than 30 seconds.",
     author: "Alex Kim",
-    role: "Senior Frontend Engineer, Vercel",
+    role: "Senior Frontend Engineer",
     initials: "AK",
   },
   {
     quote: "Finally a component library that doesn't fight you when you want to change the radius or tweak the color palette.",
     author: "Sam Rivera",
-    role: "Design Systems Lead, Linear",
+    role: "Design Systems Lead",
     initials: "SR",
   },
 ];
@@ -129,10 +129,10 @@ const DEADLINE_COLOR: Record<DeadlineStatus, string> = {
 };
 
 const DEADLINES: { name: string; date: string; daysLeft: number; status: DeadlineStatus }[] = [
-  { name: "Beta launch",    date: "Apr 10", daysLeft: 4,  status: "at-risk"  },
-  { name: "Docs freeze",    date: "Apr 12", daysLeft: 6,  status: "on-track" },
-  { name: "v1.0 RC",        date: "Apr 20", daysLeft: 14, status: "on-track" },
-  { name: "Public release", date: "May 1",  daysLeft: 25, status: "on-track" },
+  { name: "Beta launch",    date: "Q2 W1",  daysLeft: 4,  status: "at-risk"  },
+  { name: "Docs freeze",    date: "Q2 W2",  daysLeft: 8,  status: "on-track" },
+  { name: "v1.0 RC",        date: "Q2 W4",  daysLeft: 18, status: "on-track" },
+  { name: "Public release", date: "Q2 W6",  daysLeft: 32, status: "on-track" },
 ];
 
 const CATEGORY_BREAKDOWN = [
