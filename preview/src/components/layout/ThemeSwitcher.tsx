@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, RotateCcw, CircleOff, Palette } from "lucide-react";
+import { ChevronDown, ChevronRight, RotateCcw, CircleOff, Palette, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -10,24 +10,44 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const THEMES = [
-  { value: "default", label: "Default" },
-  { value: "dark-minimal", label: "Dark Minimal" },
-  { value: "fluent-light", label: "Fluent 2 Light" },
-  { value: "fluent-dark", label: "Fluent 2 Dark" },
-  { value: "bebop-light", label: "Bebop Light" },
-  { value: "bebop-dark", label: "Bebop Dark" },
-  { value: "nova-dark", label: "Nova Dark" },
+  { value: "default", label: "Default", light: "default", dark: "dark-minimal" },
+  { value: "fluent", label: "Fluent 2", light: "fluent-light", dark: "fluent-dark" },
+  { value: "bebop", label: "Bebop", light: "bebop-light", dark: "bebop-dark" },
+  // { value: "nova", label: "Nova", light: "nova-light", dark: "nova-dark" },
 ] as const;
 
 type ThemeValue = (typeof THEMES)[number]["value"];
+type ColorMode = "light" | "dark";
+
+/** Shared state so the theme picker and mode toggle stay in sync */
+let currentThemeValue: ThemeValue = "default";
+let currentMode: ColorMode = "light";
+let listeners: (() => void)[] = [];
+
+function applyTheme(theme: ThemeValue, mode: ColorMode) {
+  currentThemeValue = theme;
+  currentMode = mode;
+  const entry = THEMES.find((t) => t.value === theme) ?? THEMES[0];
+  const cssValue = mode === "dark" ? entry.dark : entry.light;
+  document.documentElement.setAttribute("data-theme", cssValue);
+  listeners.forEach((fn) => fn());
+}
+
+function useThemeSync() {
+  const [, setTick] = useState(0);
+  useState(() => {
+    const fn = () => setTick((t) => t + 1);
+    listeners.push(fn);
+    return () => { listeners = listeners.filter((l) => l !== fn); };
+  });
+  return { theme: currentThemeValue, mode: currentMode };
+}
 
 export function SidebarThemePicker() {
-  const [theme, setTheme] = useState<ThemeValue>("default");
+  const { theme } = useThemeSync();
 
   const handleChange = (value: string) => {
-    const t = value as ThemeValue;
-    setTheme(t);
-    document.documentElement.setAttribute("data-theme", t);
+    applyTheme(value as ThemeValue, currentMode);
   };
 
   const currentLabel = THEMES.find((t) => t.value === theme)?.label ?? "Default";
@@ -67,6 +87,50 @@ export function SidebarThemePicker() {
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+    </div>
+  );
+}
+
+/* ─── Light / Dark mode toggle ──────────────────────────────────────────── */
+
+export function SidebarModePicker() {
+  const { mode } = useThemeSync();
+
+  return (
+    <div className="px-2">
+      <p className="pt-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+        Mode
+      </p>
+      <div className="flex gap-1">
+        <button
+          onClick={() => applyTheme(currentThemeValue, "light")}
+          aria-label="Light mode"
+          className={cn(
+            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            mode === "light"
+              ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
+              : "border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+          )}
+        >
+          <Sun className="h-3 w-3" />
+          Light
+        </button>
+        <button
+          onClick={() => applyTheme(currentThemeValue, "dark")}
+          aria-label="Dark mode"
+          className={cn(
+            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            mode === "dark"
+              ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
+              : "border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+          )}
+        >
+          <Moon className="h-3 w-3" />
+          Dark
+        </button>
+      </div>
     </div>
   );
 }
@@ -324,6 +388,7 @@ export function SidebarThemeControls({ collapsed }: { collapsed: boolean }) {
         <div className="mt-1 flex flex-col">
           <SidebarMotionPicker />
           <SidebarThemePicker />
+          <SidebarModePicker />
           <SidebarAccentPicker />
           <SidebarSpacingSlider />
         </div>
