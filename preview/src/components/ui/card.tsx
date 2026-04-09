@@ -10,26 +10,41 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, interactive, ...props }, ref) => (
-    <div
-      ref={ref}
-      tabIndex={interactive ? 0 : undefined}
-      className={cn(
-        "rounded-xl border bg-card text-card-foreground shadow-[var(--shadow-sm)]",
-        interactive && [
-          "cursor-pointer select-none will-change-transform",
-          "[transition-property:translate,scale,box-shadow]",
-          "[transition-duration:var(--motion-duration-fast)]",
-          "[transition-timing-function:var(--motion-curve-navigation)]",
-          "hover:-translate-y-[2px] hover:shadow-[var(--shadow-lg)]",
-          "active:[translate:0_1px] active:scale-[0.98] active:shadow-[var(--shadow-sm)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        ],
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, interactive, onClick, onKeyDown, ...props }, ref) => {
+    const handleKeyDown = interactive && onClick
+      ? (e: React.KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick(e as unknown as React.MouseEvent<HTMLDivElement>);
+          }
+          onKeyDown?.(e);
+        }
+      : onKeyDown;
+
+    return (
+      <div
+        ref={ref}
+        role={interactive && onClick ? "button" : undefined}
+        tabIndex={interactive ? 0 : undefined}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "rounded-xl border bg-card text-card-foreground shadow-[var(--shadow-sm)]",
+          interactive && [
+            "cursor-pointer select-none will-change-transform",
+            "[transition-property:translate,scale,box-shadow]",
+            "[transition-duration:var(--motion-duration-fast)]",
+            "[transition-timing-function:var(--motion-curve-navigation)]",
+            "hover:-translate-y-[2px] hover:shadow-[var(--shadow-lg)]",
+            "active:[translate:0_1px] active:scale-[0.98] active:shadow-[var(--shadow-sm)]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          ],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
 );
 Card.displayName = "Card";
 
