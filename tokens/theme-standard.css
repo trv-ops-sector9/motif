@@ -105,6 +105,16 @@
   to   { opacity: 0; transform: translateY(100%); }
 }
 
+/* Overlay — backdrop blur + dim for focus control */
+@keyframes standard-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes standard-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
 @keyframes standard-reduced-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -131,6 +141,10 @@
   --motion-curve-ease-out:    cubic-bezier(0.0, 0, 0.2, 1);      /* enters — clean decelerate  */
   --motion-curve-ease-in:     cubic-bezier(0.4, 0, 1, 1);         /* exits — clean accelerate   */
   --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);           /* uniform motion             */
+
+  /* Focus control — blur + overlay depth */
+  --motion-blur-radius:       2px;
+  --motion-overlay-opacity:   0.5;
 }
 
 
@@ -173,6 +187,10 @@
   --animate-standard-slide-top-out:    standard-slide-top-out    var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
   --animate-standard-slide-bottom-in:  standard-slide-bottom-in  var(--motion-duration-slow)    var(--motion-curve-ease-out)    both;
   --animate-standard-slide-bottom-out: standard-slide-bottom-out var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
+
+  /* Overlay — backdrop blur + dim */
+  --animate-standard-overlay-in:       standard-overlay-in       var(--motion-duration-normal)  var(--motion-curve-ease-out)    both;
+  --animate-standard-overlay-out:      standard-overlay-out      var(--motion-duration-fast)    var(--motion-curve-ease-in)     both;
 }
 
 
@@ -191,6 +209,7 @@
     --motion-duration-slow:       1ms;
     --motion-duration-slower:     1ms;
     --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
 
     --animate-standard-fade-in:        standard-reduced-fade 1ms linear both;
     --animate-standard-fade-out:       standard-reduced-fade 1ms linear both;
@@ -212,6 +231,8 @@
     --animate-standard-slide-top-out:    standard-reduced-fade 1ms linear both;
     --animate-standard-slide-bottom-in:  standard-reduced-fade 1ms linear both;
     --animate-standard-slide-bottom-out: standard-reduced-fade 1ms linear both;
+    --animate-standard-overlay-in:       standard-reduced-fade 1ms linear both;
+    --animate-standard-overlay-out:      standard-reduced-fade 1ms linear both;
   }
 }
 
@@ -223,6 +244,7 @@
   --motion-duration-slow:       1ms;
   --motion-duration-slower:     1ms;
   --motion-duration-ultra-slow: 1ms;
+  --motion-blur-radius:         0;
 
   --animate-standard-fade-in:        standard-reduced-fade 1ms linear both;
   --animate-standard-fade-out:       standard-reduced-fade 1ms linear both;
@@ -244,4 +266,6 @@
   --animate-standard-slide-top-out:    standard-reduced-fade 1ms linear both;
   --animate-standard-slide-bottom-in:  standard-reduced-fade 1ms linear both;
   --animate-standard-slide-bottom-out: standard-reduced-fade 1ms linear both;
+  --animate-standard-overlay-in:       standard-reduced-fade 1ms linear both;
+  --animate-standard-overlay-out:      standard-reduced-fade 1ms linear both;
 }

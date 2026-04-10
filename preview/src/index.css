@@ -4,7 +4,6 @@
 @import "../../tokens/theme-dense.css";
 @import "../../tokens/theme-expressive.css";
 @import "../../tokens/theme-precision.css";
-@import "../../tokens/theme-fluent2.css";
 
 /* ── Motion bridge ──────────────────────────────────────────────────────── */
 /* Maps --anim-* to the active theme so components stay theme-agnostic.     */
@@ -38,6 +37,8 @@
   --anim-collapse-out:      var(--animate-standard-collapse-out);
   --anim-page-enter:        var(--animate-standard-page-enter);
   --anim-page-exit:         var(--animate-standard-page-exit);
+  --anim-overlay-in:        var(--animate-standard-overlay-in);
+  --anim-overlay-out:       var(--animate-standard-overlay-out);
 }
 
 [data-motion-theme="dense"] {
@@ -66,6 +67,8 @@
   --anim-collapse-out:      var(--animate-dense-collapse-out);
   --anim-page-enter:        var(--animate-dense-page-enter);
   --anim-page-exit:         var(--animate-dense-page-exit);
+  --anim-overlay-in:        var(--animate-dense-overlay-in);
+  --anim-overlay-out:       var(--animate-dense-overlay-out);
 }
 
 [data-motion-theme="expressive"] {
@@ -94,6 +97,8 @@
   --anim-collapse-out:      var(--animate-expressive-collapse-out);
   --anim-page-enter:        var(--animate-expressive-page-enter);
   --anim-page-exit:         var(--animate-expressive-page-exit);
+  --anim-overlay-in:        var(--animate-expressive-overlay-in);
+  --anim-overlay-out:       var(--animate-expressive-overlay-out);
 }
 
 [data-motion-theme="precision"] {
@@ -122,34 +127,8 @@
   --anim-collapse-out:      var(--animate-precision-collapse-out);
   --anim-page-enter:        var(--animate-precision-page-enter);
   --anim-page-exit:         var(--animate-precision-page-exit);
-}
-
-[data-motion-theme="fluent2"] {
-  --motion-curve-press-release:  var(--motion-curve-easy-ease);
-  --motion-curve-navigation:     var(--motion-curve-decelerate-max);
-  --motion-curve-expand-in:      var(--motion-curve-decelerate-mid);
-  --motion-curve-expand-out:     var(--motion-curve-accelerate-mid);
-  --motion-curve-accordion:      var(--motion-curve-easy-ease);
-  --anim-fade-in:           var(--animate-fluent2-fade-in);
-  --anim-fade-out:          var(--animate-fluent2-fade-out);
-  --anim-slide-up-in:       var(--animate-fluent2-slide-up-in);
-  --anim-slide-up-out:      var(--animate-fluent2-slide-up-out);
-  --anim-slide-down-in:     var(--animate-fluent2-slide-down-in);
-  --anim-slide-down-out:    var(--animate-fluent2-slide-down-out);
-  --anim-slide-left-in:     var(--animate-fluent2-slide-left-in);
-  --anim-slide-left-out:    var(--animate-fluent2-slide-left-out);
-  --anim-slide-right-in:    var(--animate-fluent2-slide-right-in);
-  --anim-slide-right-out:   var(--animate-fluent2-slide-right-out);
-  --anim-slide-top-in:      var(--animate-fluent2-slide-top-in);
-  --anim-slide-top-out:     var(--animate-fluent2-slide-top-out);
-  --anim-slide-bottom-in:   var(--animate-fluent2-slide-bottom-in);
-  --anim-slide-bottom-out:  var(--animate-fluent2-slide-bottom-out);
-  --anim-expand-in:         var(--animate-fluent2-expand-in);
-  --anim-expand-out:        var(--animate-fluent2-expand-out);
-  --anim-collapse-in:       var(--animate-fluent2-collapse-in);
-  --anim-collapse-out:      var(--animate-fluent2-collapse-out);
-  --anim-page-enter:        var(--animate-fluent2-page-enter);
-  --anim-page-exit:         var(--animate-fluent2-page-exit);
+  --anim-overlay-in:        var(--animate-precision-overlay-in);
+  --anim-overlay-out:       var(--animate-precision-overlay-out);
 }
 
 [data-motion-theme="reduced"] {
@@ -178,6 +157,8 @@
   --anim-collapse-out:      var(--animate-standard-collapse-out);
   --anim-page-enter:        var(--animate-standard-page-enter);
   --anim-page-exit:         var(--animate-standard-page-exit);
+  --anim-overlay-in:        var(--animate-standard-overlay-in);
+  --anim-overlay-out:       var(--animate-standard-overlay-out);
 }
 
 /* ── Sonner toast — motion token overrides ───────────────────────────────── */
@@ -200,10 +181,6 @@
 
 @import "./themes/default.css";
 @import "./themes/dark-minimal.css";
-@import "./themes/fluent-light.css";
-@import "./themes/fluent-dark.css";
-@import "./themes/bebop-light.css";
-@import "./themes/bebop-dark.css";
 
 @theme inline {
   --color-background: var(--background);

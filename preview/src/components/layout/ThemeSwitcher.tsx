@@ -11,8 +11,6 @@ import {
 
 const THEMES = [
   { value: "default", label: "Default", light: "default", dark: "dark-minimal" },
-  { value: "fluent", label: "Fluent 2", light: "fluent-light", dark: "fluent-dark" },
-  { value: "bebop", label: "Bebop", light: "bebop-light", dark: "bebop-dark" },
 ] as const;
 
 type ThemeValue = (typeof THEMES)[number]["value"];
@@ -141,7 +139,6 @@ const MOTION_THEMES = [
   { value: "dense", label: "Dense" },
   { value: "expressive", label: "Expressive" },
   { value: "precision", label: "Precision" },
-  { value: "fluent2", label: "Fluent 2" },
   { value: "reduced", label: "Reduced" },
 ] as const;
 

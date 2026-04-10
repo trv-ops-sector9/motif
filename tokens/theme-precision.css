@@ -22,6 +22,16 @@
   to   { opacity: 0; }
 }
 
+/* Overlay — backdrop blur + dim for focus control */
+@keyframes precision-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes precision-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
 @keyframes precision-reduced-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -46,6 +56,10 @@
   /* Easing curves — 2 curves, nothing more */
   --motion-curve-ease-out:    cubic-bezier(0.0, 0, 0.2, 1);    /* the only curve needed */
   --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);        /* uniform motion        */
+
+  /* Focus control — heaviest blur, maximum focus isolation */
+  --motion-blur-radius:       8px;
+  --motion-overlay-opacity:   0.6;
 }
 
 
@@ -88,6 +102,10 @@
   --animate-precision-slide-top-out:    precision-fade-out  var(--motion-duration-normal)   var(--motion-curve-ease-out) both;
   --animate-precision-slide-bottom-in:  precision-fade-in   var(--motion-duration-moderate) var(--motion-curve-ease-out) both;
   --animate-precision-slide-bottom-out: precision-fade-out  var(--motion-duration-normal)   var(--motion-curve-ease-out) both;
+
+  /* Overlay — heavy blur for maximum focus isolation */
+  --animate-precision-overlay-in:       precision-overlay-in  var(--motion-duration-normal)   var(--motion-curve-ease-out) both;
+  --animate-precision-overlay-out:      precision-overlay-out var(--motion-duration-fast)     var(--motion-curve-ease-out) both;
 }
 
 
@@ -105,6 +123,7 @@
     --motion-duration-slow:       1ms;
     --motion-duration-slower:     1ms;
     --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
 
     --animate-precision-fade-in:        precision-reduced-fade 1ms linear both;
     --animate-precision-fade-out:       precision-reduced-fade 1ms linear both;
@@ -126,6 +145,8 @@
     --animate-precision-slide-top-out:    precision-reduced-fade 1ms linear both;
     --animate-precision-slide-bottom-in:  precision-reduced-fade 1ms linear both;
     --animate-precision-slide-bottom-out: precision-reduced-fade 1ms linear both;
+    --animate-precision-overlay-in:       precision-reduced-fade 1ms linear both;
+    --animate-precision-overlay-out:      precision-reduced-fade 1ms linear both;
   }
 }
 
@@ -137,6 +158,7 @@
   --motion-duration-slow:       1ms;
   --motion-duration-slower:     1ms;
   --motion-duration-ultra-slow: 1ms;
+  --motion-blur-radius:         0;
 
   --animate-precision-fade-in:        precision-reduced-fade 1ms linear both;
   --animate-precision-fade-out:       precision-reduced-fade 1ms linear both;
@@ -158,4 +180,6 @@
   --animate-precision-slide-top-out:    precision-reduced-fade 1ms linear both;
   --animate-precision-slide-bottom-in:  precision-reduced-fade 1ms linear both;
   --animate-precision-slide-bottom-out: precision-reduced-fade 1ms linear both;
+  --animate-precision-overlay-in:       precision-reduced-fade 1ms linear both;
+  --animate-precision-overlay-out:      precision-reduced-fade 1ms linear both;
 }

@@ -2,9 +2,9 @@
 
 ## What this project is
 
-Motif is a **motion token system for Tailwind CSS v4**. It provides five named motion themes (Standard, Dense, Expressive, Precision, Fluent 2) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
+Motif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Standard, Dense, Expressive, Precision) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
 
-The core deliverable is the `tokens/` directory — five CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
+The core deliverable is the `tokens/` directory — four CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
 
 ---
 
@@ -15,8 +15,7 @@ tokens/
 ├── theme-standard.css     # Default. Neutral ease-out, no personality. Sets :root defaults.
 ├── theme-dense.css        # Compressed durations, minimal transforms
 ├── theme-expressive.css   # Spring overshoot on enter, bounce on press, fast exits
-├── theme-precision.css    # Fade only, no transforms, sub-100ms
-└── theme-fluent2.css      # Canonical Fluent 2 spec
+└── theme-precision.css    # Fade + blur focus control, no transforms, sub-100ms
 
 preview/
 ├── src/
@@ -27,7 +26,7 @@ preview/
 │   │   ├── gallery/                    # ComponentGallery — interactive token demo
 │   │   ├── blocks/                     # Dashboard, Settings, Auth, Marketing pages
 │   │   └── ui/                         # shadcn/ui components with motion wiring
-│   └── themes/                         # 7 color theme CSS files (OkLCh)
+│   └── themes/                         # 2 color theme CSS files (OkLCh) — default + dark-minimal
 ```
 
 ---
@@ -36,16 +35,17 @@ preview/
 
 **Layer 1 — Primitive tokens** (`:root` and `[data-motion-theme="..."]`)
 - 7 duration stops: `--motion-duration-ultra-fast` through `--motion-duration-ultra-slow`
-- Easing curves per theme: Standard (3), Dense (3), Expressive (5), Precision (2), Fluent 2 (9)
+- Easing curves per theme: Standard (3), Dense (3), Expressive (5), Precision (2)
+- Focus control tokens: `--motion-blur-radius` (4–16px per theme), `--motion-overlay-opacity` (0.4–0.6)
 
 **Layer 2 — Alias tokens** (`@theme {}` blocks → `animate-*` Tailwind utilities)
-- 12 animation archetypes × 5 themes = 60 aliases
+- 13 animation archetypes × 4 themes = 52 aliases (12 spatial + overlay-in/out)
 - Each alias: `<keyframe-name> <duration-var> <curve-var> both`
 - `var()` references resolve at runtime — enables theme switching without recompiling
 
-**12 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`
+**13 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`, `overlay-in`, `overlay-out`
 
-**Theme switching:** `theme-standard.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms`.
+**Theme switching:** `theme-standard.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms` and blur to `0`.
 
 ---
 
@@ -53,7 +53,7 @@ preview/
 
 Components use semantic intent variables, never theme-specific ones. The bridge maps:
 - `--motion-curve-press-release`, `--motion-curve-navigation`, `--motion-curve-expand-in/out`, `--motion-curve-accordion`
-- `--anim-fade-in` through all 12 archetypes → active theme's alias
+- `--anim-fade-in` through all 13 archetypes (including `--anim-overlay-in/out`) → active theme's alias
 
 ---
 

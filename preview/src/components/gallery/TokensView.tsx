@@ -119,17 +119,6 @@ const THEME_CURVES: Record<string, { name: string; label: string; category: stri
     { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Core"    },
     { name: "--motion-curve-linear",      label: "linear",      category: "Utility" },
   ],
-  fluent2: [
-    { name: "--motion-curve-accelerate-max", label: "accelerate-max", category: "Accelerate" },
-    { name: "--motion-curve-accelerate-mid", label: "accelerate-mid", category: "Accelerate" },
-    { name: "--motion-curve-accelerate-min", label: "accelerate-min", category: "Accelerate" },
-    { name: "--motion-curve-decelerate-max", label: "decelerate-max", category: "Decelerate" },
-    { name: "--motion-curve-decelerate-mid", label: "decelerate-mid", category: "Decelerate" },
-    { name: "--motion-curve-decelerate-min", label: "decelerate-min", category: "Decelerate" },
-    { name: "--motion-curve-easy-ease-max",  label: "easy-ease-max",  category: "Ease"       },
-    { name: "--motion-curve-easy-ease",      label: "easy-ease",      category: "Ease"       },
-    { name: "--motion-curve-linear",         label: "linear",         category: "Ease"       },
-  ],
 };
 
 /** Mini SVG bezier curve visualization — 48x48 */
@@ -213,7 +202,6 @@ function CurvesSection() {
     dense:      "3 curves — snap-first, minimal ceremony",
     expressive: "5 curves — spring + bounce overshoot",
     precision:  "2 curves — fade only, sub-100ms",
-    fluent2:    "9 cubic-bezier curves — Fluent 2 spec",
   };
 
   return (
