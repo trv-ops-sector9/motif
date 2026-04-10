@@ -15,16 +15,14 @@ Motif is being prepared as a portfolio piece for a hiring manager at an autonomo
 - [x] Update README — accurate curve counts, mention export/accent/spacing features
 - [x] Simplify color themes — 3 themes with light/dark mode toggle, Nova commented out
 - [x] Component gallery overhaul — 18 components with variant controls, trimmed to 1 demo each
+- [x] Refine components — motion tokens in switch/toggle/checkbox, Vaul→Radix drawer with CSS keyframes, gallery polish, dropdown simplification
 
-## Up next — Refining components
-- [ ] Review and polish each component demo for visual quality
-- [ ] Ensure all animated components visibly respond to motion theme switching
-- [ ] Consistent spacing and layout across all 18 sections
+## Up next — Revise motion themes
+- [ ] TBD
 
 ## Later
 - [ ] Blocks polish — make blocks look less templated/shadcn, more like real apps
 - [ ] Add new color themes — replace Nova, all themes need light + dark
-- [ ] Add more motion themes — shows architecture scales (Cinematic? Micro? TBD)
 - [ ] Deploy to public URL (Vercel/Netlify)
 - [ ] Design pass — overall layout and spacing polish
 - [ ] Update CLAUDE.md

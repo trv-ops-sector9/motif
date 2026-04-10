@@ -11,9 +11,10 @@ import {
 
 const THEMES = [
   { value: "default", label: "Default", light: "default", dark: "dark-minimal" },
-  { value: "fluent", label: "Fluent 2", light: "fluent-light", dark: "fluent-dark" },
-  { value: "bebop", label: "Bebop", light: "bebop-light", dark: "bebop-dark" },
-  // { value: "nova", label: "Nova", light: "nova-light", dark: "nova-dark" },
+  { value: "drive", label: "Drive", light: "drive", dark: "drive-dark" },
+  { value: "brutalist", label: "Brutalist", light: "brutalist", dark: "brutalist-dark" },
+  { value: "lux", label: "Lux", light: "lux", dark: "lux-dark" },
+  { value: "vapor", label: "Vapor", light: "vapor", dark: "vapor-dark" },
 ] as const;
 
 type ThemeValue = (typeof THEMES)[number]["value"];
@@ -101,30 +102,31 @@ export function SidebarModePicker() {
       <p className="pt-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
         Mode
       </p>
-      <div className="flex gap-1">
+      <div className="inline-flex w-full rounded-md border border-sidebar-border">
         <button
           onClick={() => applyTheme(currentThemeValue, "light")}
           aria-label="Light mode"
           className={cn(
-            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-l-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "light"
-              ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
-              : "border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+              ? "bg-sidebar-primary text-sidebar-primary-foreground"
+              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
           <Sun className="h-3 w-3" />
           Light
         </button>
+        <span className="w-px bg-sidebar-border" />
         <button
           onClick={() => applyTheme(currentThemeValue, "dark")}
           aria-label="Dark mode"
           className={cn(
-            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-r-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "dark"
-              ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
-              : "border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+              ? "bg-sidebar-primary text-sidebar-primary-foreground"
+              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
           <Moon className="h-3 w-3" />
@@ -138,17 +140,17 @@ export function SidebarModePicker() {
 /* ─── Motion theme picker ────────────────────────────────────────────────── */
 
 const MOTION_THEMES = [
-  { value: "fluent2", label: "Fluent 2" },
-  { value: "balanced", label: "Balanced" },
+  { value: "standard", label: "Standard" },
   { value: "dense", label: "Dense" },
   { value: "expressive", label: "Expressive" },
+  { value: "precision", label: "Precision" },
   { value: "reduced", label: "Reduced" },
 ] as const;
 
 type MotionThemeValue = (typeof MOTION_THEMES)[number]["value"];
 
 export function SidebarMotionPicker() {
-  const [motionTheme, setMotionTheme] = useState<MotionThemeValue>("fluent2");
+  const [motionTheme, setMotionTheme] = useState<MotionThemeValue>("standard");
 
   const handleChange = (value: string) => {
     const t = value as MotionThemeValue;
@@ -156,7 +158,7 @@ export function SidebarMotionPicker() {
     document.documentElement.setAttribute("data-motion-theme", t);
   };
 
-  const currentLabel = MOTION_THEMES.find((t) => t.value === motionTheme)?.label ?? "Fluent 2";
+  const currentLabel = MOTION_THEMES.find((t) => t.value === motionTheme)?.label ?? "Standard";
 
   return (
     <div className="px-2">

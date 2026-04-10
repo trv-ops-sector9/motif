@@ -44,7 +44,7 @@
 }
 
 @keyframes expressive-expand-in {
-  from { opacity: 0; transform: scale(0.80); }
+  from { opacity: 0; transform: scale(0.90); }
   to   { opacity: 1; transform: scale(1); }
 }
 
@@ -54,7 +54,7 @@
 }
 
 @keyframes expressive-collapse-in {
-  from { opacity: 0; transform: scale(1.16); }
+  from { opacity: 0; transform: scale(1.10); }
   to   { opacity: 1; transform: scale(1); }
 }
 
@@ -107,6 +107,16 @@
   to   { opacity: 0; transform: translateY(100%); }
 }
 
+/* Overlay — backdrop blur + dim for focus control */
+@keyframes expressive-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes expressive-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
 @keyframes expressive-reduced-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -130,13 +140,18 @@
   --motion-duration-ultra-slow: 600ms;
 
   /* Signature curves — overshoot */
-  --motion-curve-spring:      cubic-bezier(0.175, 0.885, 0.32, 1.28);  /* enters — overshoots ~10%, settles cleanly */
+  --motion-curve-spring:      cubic-bezier(0.175, 0.885, 0.32, 1.28);  /* enters — overshoots ~9%, settles cleanly  */
+  --motion-curve-spring-tight: cubic-bezier(0.22, 0.9, 0.36, 1.14);   /* overlay enters — ~5% overshoot, tighter   */
   --motion-curve-bounce:      cubic-bezier(0.34, 1.72, 0.64, 1);       /* press/release — snappy overshoot          */
 
   /* Supporting curves */
   --motion-curve-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);           /* non-spring decelerate                     */
   --motion-curve-ease-in:     cubic-bezier(0.55, 0.055, 0.675, 0.19);  /* exits — fast out of the way               */
   --motion-curve-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);          /* state transitions — punchy                */
+
+  /* Focus control — blur + overlay depth */
+  --motion-blur-radius:       4px;
+  --motion-overlay-opacity:   0.4;
 }
 
 
@@ -159,13 +174,13 @@
   --animate-expressive-slide-down-in:   expressive-slide-down-in   var(--motion-duration-moderate)  var(--motion-curve-spring)   both;
   --animate-expressive-slide-down-out:  expressive-slide-down-out  var(--motion-duration-fast)      var(--motion-curve-ease-in)  both;
 
-  /* Expand — spring enter for maximum personality */
-  --animate-expressive-expand-in:       expressive-expand-in       var(--motion-duration-slow)      var(--motion-curve-spring)   both;
-  --animate-expressive-expand-out:      expressive-expand-out      var(--motion-duration-fast)      var(--motion-curve-ease-in)  both;
+  /* Expand — overlay-tuned spring, reduced scale range */
+  --animate-expressive-expand-in:       expressive-expand-in       var(--motion-duration-slow)      var(--motion-curve-spring-tight) both;
+  --animate-expressive-expand-out:      expressive-expand-out      var(--motion-duration-fast)      var(--motion-curve-ease-in)      both;
 
-  /* Collapse — spring enter for maximum personality */
-  --animate-expressive-collapse-in:     expressive-collapse-in     var(--motion-duration-slow)      var(--motion-curve-spring)   both;
-  --animate-expressive-collapse-out:    expressive-collapse-out    var(--motion-duration-fast)      var(--motion-curve-ease-in)  both;
+  /* Collapse — overlay-tuned spring, reduced scale range */
+  --animate-expressive-collapse-in:     expressive-collapse-in     var(--motion-duration-slow)      var(--motion-curve-spring-tight) both;
+  --animate-expressive-collapse-out:    expressive-collapse-out    var(--motion-duration-fast)      var(--motion-curve-ease-in)      both;
 
   /* Page */
   --animate-expressive-page-enter:      expressive-page-enter      var(--motion-duration-slower)    var(--motion-curve-spring)   both;
@@ -180,6 +195,10 @@
   --animate-expressive-slide-top-out:    expressive-slide-top-out    var(--motion-duration-fast)     var(--motion-curve-ease-in)  both;
   --animate-expressive-slide-bottom-in:  expressive-slide-bottom-in  var(--motion-duration-slow)     var(--motion-curve-spring)   both;
   --animate-expressive-slide-bottom-out: expressive-slide-bottom-out var(--motion-duration-fast)     var(--motion-curve-ease-in)  both;
+
+  /* Overlay — backdrop blur + dim */
+  --animate-expressive-overlay-in:       expressive-overlay-in       var(--motion-duration-moderate) var(--motion-curve-ease-out) both;
+  --animate-expressive-overlay-out:      expressive-overlay-out      var(--motion-duration-fast)     var(--motion-curve-ease-in)  both;
 }
 
 
@@ -197,6 +216,7 @@
     --motion-duration-slow:       1ms;
     --motion-duration-slower:     1ms;
     --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
 
     --animate-expressive-fade-in:        expressive-reduced-fade 1ms linear both;
     --animate-expressive-fade-out:       expressive-reduced-fade 1ms linear both;
@@ -218,6 +238,8 @@
     --animate-expressive-slide-top-out:    expressive-reduced-fade 1ms linear both;
     --animate-expressive-slide-bottom-in:  expressive-reduced-fade 1ms linear both;
     --animate-expressive-slide-bottom-out: expressive-reduced-fade 1ms linear both;
+    --animate-expressive-overlay-in:       expressive-reduced-fade 1ms linear both;
+    --animate-expressive-overlay-out:      expressive-reduced-fade 1ms linear both;
   }
 }
 
@@ -229,6 +251,7 @@
   --motion-duration-slow:       1ms;
   --motion-duration-slower:     1ms;
   --motion-duration-ultra-slow: 1ms;
+  --motion-blur-radius:         0;
 
   --animate-expressive-fade-in:        expressive-reduced-fade 1ms linear both;
   --animate-expressive-fade-out:       expressive-reduced-fade 1ms linear both;
@@ -250,4 +273,6 @@
   --animate-expressive-slide-top-out:    expressive-reduced-fade 1ms linear both;
   --animate-expressive-slide-bottom-in:  expressive-reduced-fade 1ms linear both;
   --animate-expressive-slide-bottom-out: expressive-reduced-fade 1ms linear both;
+  --animate-expressive-overlay-in:       expressive-reduced-fade 1ms linear both;
+  --animate-expressive-overlay-out:      expressive-reduced-fade 1ms linear both;
 }

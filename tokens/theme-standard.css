@@ -1,0 +1,271 @@
+/* ============================================================
+   theme-standard.css
+   Neutral default — clean ease-out, no personality, predictable
+   Layer 1: Primitive tokens — raw values
+   Layer 2: Alias tokens — Tailwind v4 animate-* utilities
+   ============================================================ */
+
+
+/* ----------------------------------------------------------
+   @keyframes — standard prefix (safe for multi-theme coexistence)
+   Transform distances: 6px slides, scale 0.96 — subtle, clean
+   ---------------------------------------------------------- */
+
+@keyframes standard-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes standard-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes standard-slide-up-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes standard-slide-up-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes standard-slide-down-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes standard-slide-down-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(6px); }
+}
+
+@keyframes standard-expand-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes standard-expand-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.04); }
+}
+
+@keyframes standard-collapse-in {
+  from { opacity: 0; transform: scale(1.04); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes standard-collapse-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes standard-page-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes standard-page-exit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(6px); }
+}
+
+/* Drawer slides — full-panel translate for overlay surfaces */
+@keyframes standard-slide-left-in {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes standard-slide-left-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-100%); }
+}
+@keyframes standard-slide-right-in {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes standard-slide-right-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(100%); }
+}
+@keyframes standard-slide-top-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes standard-slide-top-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes standard-slide-bottom-in {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes standard-slide-bottom-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+
+/* Overlay — backdrop blur + dim for focus control */
+@keyframes standard-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes standard-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
+@keyframes standard-reduced-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ----------------------------------------------------------
+   Layer 1 — Primitive tokens
+   Moderate pace. 3 curves — ease-out, ease-in, linear.
+   ---------------------------------------------------------- */
+
+:root,
+[data-motion-theme="standard"] {
+  /* Duration scale — moderate */
+  --motion-duration-ultra-fast: 50ms;
+  --motion-duration-fast:       100ms;
+  --motion-duration-normal:     180ms;
+  --motion-duration-moderate:   220ms;
+  --motion-duration-slow:       280ms;
+  --motion-duration-slower:     360ms;
+  --motion-duration-ultra-slow: 480ms;
+
+  /* Easing curves — 3 clean curves, no personality */
+  --motion-curve-ease-out:    cubic-bezier(0.0, 0, 0.2, 1);      /* enters — clean decelerate  */
+  --motion-curve-ease-in:     cubic-bezier(0.4, 0, 1, 1);         /* exits — clean accelerate   */
+  --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);           /* uniform motion             */
+
+  /* Focus control — blur + overlay depth */
+  --motion-blur-radius:       2px;
+  --motion-overlay-opacity:   0.5;
+}
+
+
+/* ----------------------------------------------------------
+   Layer 2 — Alias tokens → Tailwind v4 animate-* utilities
+   Enter: ease-out  |  Exit: ease-in
+   ---------------------------------------------------------- */
+
+@theme {
+  /* Fade */
+  --animate-standard-fade-in:         standard-fade-in         var(--motion-duration-fast)     var(--motion-curve-ease-out)    both;
+  --animate-standard-fade-out:        standard-fade-out        var(--motion-duration-fast)     var(--motion-curve-ease-in)     both;
+
+  /* Slide up */
+  --animate-standard-slide-up-in:     standard-slide-up-in     var(--motion-duration-normal)   var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-up-out:    standard-slide-up-out    var(--motion-duration-fast)     var(--motion-curve-ease-in)     both;
+
+  /* Slide down */
+  --animate-standard-slide-down-in:   standard-slide-down-in   var(--motion-duration-normal)   var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-down-out:  standard-slide-down-out  var(--motion-duration-fast)     var(--motion-curve-ease-in)     both;
+
+  /* Expand */
+  --animate-standard-expand-in:       standard-expand-in       var(--motion-duration-normal)   var(--motion-curve-ease-out)    both;
+  --animate-standard-expand-out:      standard-expand-out      var(--motion-duration-fast)     var(--motion-curve-ease-in)     both;
+
+  /* Collapse */
+  --animate-standard-collapse-in:     standard-collapse-in     var(--motion-duration-normal)   var(--motion-curve-ease-out)    both;
+  --animate-standard-collapse-out:    standard-collapse-out    var(--motion-duration-fast)     var(--motion-curve-ease-in)     both;
+
+  /* Page */
+  --animate-standard-page-enter:      standard-page-enter      var(--motion-duration-slow)     var(--motion-curve-ease-out)    both;
+  --animate-standard-page-exit:       standard-page-exit       var(--motion-duration-normal)   var(--motion-curve-ease-in)     both;
+
+  /* Drawer slides */
+  --animate-standard-slide-left-in:    standard-slide-left-in    var(--motion-duration-slow)    var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-left-out:   standard-slide-left-out   var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
+  --animate-standard-slide-right-in:   standard-slide-right-in   var(--motion-duration-slow)    var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-right-out:  standard-slide-right-out  var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
+  --animate-standard-slide-top-in:     standard-slide-top-in     var(--motion-duration-slow)    var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-top-out:    standard-slide-top-out    var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
+  --animate-standard-slide-bottom-in:  standard-slide-bottom-in  var(--motion-duration-slow)    var(--motion-curve-ease-out)    both;
+  --animate-standard-slide-bottom-out: standard-slide-bottom-out var(--motion-duration-normal)  var(--motion-curve-ease-in)     both;
+
+  /* Overlay — backdrop blur + dim */
+  --animate-standard-overlay-in:       standard-overlay-in       var(--motion-duration-normal)  var(--motion-curve-ease-out)    both;
+  --animate-standard-overlay-out:      standard-overlay-out      var(--motion-duration-fast)    var(--motion-curve-ease-in)     both;
+}
+
+
+/* ----------------------------------------------------------
+   Reduced motion
+   All durations → 1ms, all transforms removed, fade only
+   ---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-motion-theme="standard"] {
+    --motion-duration-ultra-fast: 1ms;
+    --motion-duration-fast:       1ms;
+    --motion-duration-normal:     1ms;
+    --motion-duration-moderate:   1ms;
+    --motion-duration-slow:       1ms;
+    --motion-duration-slower:     1ms;
+    --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
+
+    --animate-standard-fade-in:        standard-reduced-fade 1ms linear both;
+    --animate-standard-fade-out:       standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-up-in:    standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-up-out:   standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-down-in:  standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-down-out: standard-reduced-fade 1ms linear both;
+    --animate-standard-expand-in:      standard-reduced-fade 1ms linear both;
+    --animate-standard-expand-out:     standard-reduced-fade 1ms linear both;
+    --animate-standard-collapse-in:    standard-reduced-fade 1ms linear both;
+    --animate-standard-collapse-out:   standard-reduced-fade 1ms linear both;
+    --animate-standard-page-enter:       standard-reduced-fade 1ms linear both;
+    --animate-standard-page-exit:        standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-left-in:    standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-left-out:   standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-right-in:   standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-right-out:  standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-top-in:     standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-top-out:    standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-bottom-in:  standard-reduced-fade 1ms linear both;
+    --animate-standard-slide-bottom-out: standard-reduced-fade 1ms linear both;
+    --animate-standard-overlay-in:       standard-reduced-fade 1ms linear both;
+    --animate-standard-overlay-out:      standard-reduced-fade 1ms linear both;
+  }
+}
+
+[data-motion-theme="reduced"] {
+  --motion-duration-ultra-fast: 1ms;
+  --motion-duration-fast:       1ms;
+  --motion-duration-normal:     1ms;
+  --motion-duration-moderate:   1ms;
+  --motion-duration-slow:       1ms;
+  --motion-duration-slower:     1ms;
+  --motion-duration-ultra-slow: 1ms;
+  --motion-blur-radius:         0;
+
+  --animate-standard-fade-in:        standard-reduced-fade 1ms linear both;
+  --animate-standard-fade-out:       standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-up-in:    standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-up-out:   standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-down-in:  standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-down-out: standard-reduced-fade 1ms linear both;
+  --animate-standard-expand-in:      standard-reduced-fade 1ms linear both;
+  --animate-standard-expand-out:     standard-reduced-fade 1ms linear both;
+  --animate-standard-collapse-in:    standard-reduced-fade 1ms linear both;
+  --animate-standard-collapse-out:   standard-reduced-fade 1ms linear both;
+  --animate-standard-page-enter:       standard-reduced-fade 1ms linear both;
+  --animate-standard-page-exit:        standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-left-in:    standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-left-out:   standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-right-in:   standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-right-out:  standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-top-in:     standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-top-out:    standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-bottom-in:  standard-reduced-fade 1ms linear both;
+  --animate-standard-slide-bottom-out: standard-reduced-fade 1ms linear both;
+  --animate-standard-overlay-in:       standard-reduced-fade 1ms linear both;
+  --animate-standard-overlay-out:      standard-reduced-fade 1ms linear both;
+}

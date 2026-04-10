@@ -106,6 +106,16 @@
   to   { transform: translateY(100%); }
 }
 
+/* Overlay — backdrop blur + dim for focus control */
+@keyframes dense-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes dense-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
 @keyframes dense-reduced-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -131,6 +141,10 @@
   --motion-curve-snap:        cubic-bezier(0, 0, 0.2, 1);    /* sharp settle — the workhorse   */
   --motion-curve-ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);  /* rare state transitions         */
   --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);      /* progress bars, uniform motion  */
+
+  /* Focus control — blur + overlay depth */
+  --motion-blur-radius:       0;
+  --motion-overlay-opacity:   0.5;
 }
 
 
@@ -173,6 +187,10 @@
   --animate-dense-slide-top-out:    dense-slide-top-out     var(--motion-duration-fast)        var(--motion-curve-snap) both;
   --animate-dense-slide-bottom-in:  dense-slide-bottom-in   var(--motion-duration-normal)      var(--motion-curve-snap) both;
   --animate-dense-slide-bottom-out: dense-slide-bottom-out  var(--motion-duration-fast)        var(--motion-curve-snap) both;
+
+  /* Overlay — backdrop blur + dim */
+  --animate-dense-overlay-in:       dense-overlay-in        var(--motion-duration-fast)        var(--motion-curve-snap) both;
+  --animate-dense-overlay-out:      dense-overlay-out       var(--motion-duration-ultra-fast)  var(--motion-curve-snap) both;
 }
 
 
@@ -190,6 +208,7 @@
     --motion-duration-slow:       1ms;
     --motion-duration-slower:     1ms;
     --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
 
     --animate-dense-fade-in:        dense-reduced-fade 1ms linear both;
     --animate-dense-fade-out:       dense-reduced-fade 1ms linear both;
@@ -211,6 +230,8 @@
     --animate-dense-slide-top-out:    dense-reduced-fade 1ms linear both;
     --animate-dense-slide-bottom-in:  dense-reduced-fade 1ms linear both;
     --animate-dense-slide-bottom-out: dense-reduced-fade 1ms linear both;
+    --animate-dense-overlay-in:       dense-reduced-fade 1ms linear both;
+    --animate-dense-overlay-out:      dense-reduced-fade 1ms linear both;
   }
 }
 
@@ -222,6 +243,7 @@
   --motion-duration-slow:       1ms;
   --motion-duration-slower:     1ms;
   --motion-duration-ultra-slow: 1ms;
+  --motion-blur-radius:         0;
 
   --animate-dense-fade-in:        dense-reduced-fade 1ms linear both;
   --animate-dense-fade-out:       dense-reduced-fade 1ms linear both;
@@ -243,4 +265,6 @@
   --animate-dense-slide-top-out:    dense-reduced-fade 1ms linear both;
   --animate-dense-slide-bottom-in:  dense-reduced-fade 1ms linear both;
   --animate-dense-slide-bottom-out: dense-reduced-fade 1ms linear both;
+  --animate-dense-overlay-in:       dense-reduced-fade 1ms linear both;
+  --animate-dense-overlay-out:      dense-reduced-fade 1ms linear both;
 }

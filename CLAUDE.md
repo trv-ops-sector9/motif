@@ -2,7 +2,7 @@
 
 ## What this project is
 
-Motif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Fluent 2, Balanced, Dense, Expressive) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
+Motif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Standard, Dense, Expressive, Precision) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
 
 The core deliverable is the `tokens/` directory — four CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
 
@@ -12,10 +12,10 @@ The core deliverable is the `tokens/` directory — four CSS files that can be d
 
 ```
 tokens/
-├── theme-fluent2.css      # Canonical Fluent 2 spec. Sets :root defaults.
-├── theme-balanced.css     # Relaxed pacing, softer curves
+├── theme-standard.css     # Default. Neutral ease-out, no personality. Sets :root defaults.
 ├── theme-dense.css        # Compressed durations, minimal transforms
-└── theme-expressive.css   # Spring overshoot on enter, bounce on press, fast exits
+├── theme-expressive.css   # Spring overshoot on enter, bounce on press, fast exits
+└── theme-precision.css    # Fade + blur focus control, no transforms, sub-100ms
 
 preview/
 ├── src/
@@ -26,7 +26,7 @@ preview/
 │   │   ├── gallery/                    # ComponentGallery — interactive token demo
 │   │   ├── blocks/                     # Dashboard, Settings, Auth, Marketing pages
 │   │   └── ui/                         # shadcn/ui components with motion wiring
-│   └── themes/                         # 7 color theme CSS files (OkLCh)
+│   └── themes/                         # 12 color theme CSS files (OkLCh) — 6 pairs (light + dark)
 ```
 
 ---
@@ -35,16 +35,42 @@ preview/
 
 **Layer 1 — Primitive tokens** (`:root` and `[data-motion-theme="..."]`)
 - 7 duration stops: `--motion-duration-ultra-fast` through `--motion-duration-ultra-slow`
-- 9 easing curves: Fluent 2 cubic-beziers + expressive spring/bounce (with overshoot)
+- Easing curves per theme: Standard (3), Dense (3), Expressive (6), Precision (2)
+- Focus control tokens: `--motion-blur-radius` (0–8px per theme), `--motion-overlay-opacity` (0.4–0.6)
 
 **Layer 2 — Alias tokens** (`@theme {}` blocks → `animate-*` Tailwind utilities)
-- 12 animation archetypes × 4 themes = 48 aliases
+- 22 animation archetypes × 4 themes = 88 aliases (20 spatial + overlay-in/out)
 - Each alias: `<keyframe-name> <duration-var> <curve-var> both`
 - `var()` references resolve at runtime — enables theme switching without recompiling
 
-**12 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`
+**22 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`, `slide-left-in`, `slide-left-out`, `slide-right-in`, `slide-right-out`, `slide-top-in`, `slide-top-out`, `slide-bottom-in`, `slide-bottom-out`, `overlay-in`, `overlay-out`
 
-**Theme switching:** `theme-fluent2.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms`.
+**Theme switching:** `theme-standard.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms` and blur to `0`.
+
+---
+
+## Color theme architecture
+
+**6 theme pairs** (light + dark each) in `preview/src/themes/`. All colors in OkLCh. Activated via `data-theme` attribute.
+
+| Theme | Mood | Radius | Shadows | Font | Border | Tracking |
+|-------|------|--------|---------|------|--------|----------|
+| **Default** | Neutral baseline | `0.625rem` | Standard | System sans | `1px` | `0em` |
+| **Dark Minimal** | Vercel/Linear dev-tool calm | `0.375rem` | Dark sharp | Inter | `1px` | `-0.011em` |
+| **Drive** | Premium automotive | `0.5rem` | Sharp, precise | Outfit | `1px` | `-0.01em` |
+| **Brutalist** | Editorial print, anti-design | `0rem` | None | Space Mono | `2px` | `-0.01em` |
+| **Lux** | Luxury fashion house | `1.25rem` | Warm diffused | DM Sans | `0.5px` | `0.02em` |
+| **Vapor** | Neon cyberpunk / dev tool | `0.25rem` | Colored glow | JetBrains Mono | `1px` | `-0.005em` |
+
+**Design tokens per theme** (beyond color):
+- `--radius` — border-radius scale anchor
+- `--border-width` — base border width (overrides Tailwind `border` utility)
+- `--letter-spacing` — applied on `body`
+- `--font-weight-heading` / `--font-weight-body` — applied on `h1-h6` and `body`
+- `--shadow-sm/md/lg/xl` — elevation scale, varies from none (Brutalist) to warm-tinted (Lux) to colored glow (Vapor)
+- `--font-sans` / `--font-mono` — font stack per theme
+
+**Border-width override:** `.border`, `.border-t/b/l/r` rules live outside `@layer` in `index.css` to beat Tailwind's hardcoded `1px` utilities. Explicit width classes (`border-2`, `border-0`) are unaffected.
 
 ---
 
@@ -52,7 +78,7 @@ preview/
 
 Components use semantic intent variables, never theme-specific ones. The bridge maps:
 - `--motion-curve-press-release`, `--motion-curve-navigation`, `--motion-curve-expand-in/out`, `--motion-curve-accordion`
-- `--anim-fade-in` through all 12 archetypes → active theme's alias
+- `--anim-fade-in` through all 13 archetypes (including `--anim-overlay-in/out`) → active theme's alias
 
 ---
 
@@ -83,6 +109,7 @@ Components use semantic intent variables, never theme-specific ones. The bridge 
 | Tables | TanStack Table |
 | Drag & Drop | dnd-kit |
 | Icons | Lucide React + Tabler Icons |
+| Fonts | Google Fonts: Outfit, Space Mono, DM Sans, JetBrains Mono, Plus Jakarta Sans |
 | Build | Vite |
 | Framework | React 19 |
 | Lint | ESLint (flat config) + TypeScript strict |

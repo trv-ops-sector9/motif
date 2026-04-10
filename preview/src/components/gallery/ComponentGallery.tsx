@@ -187,9 +187,9 @@ function CardDemo() {
                 4.9
               </span>
             </div>
-            <CardTitle className="mt-2">Fluent 2 Tokens</CardTitle>
+            <CardTitle className="mt-2">Motion Tokens</CardTitle>
             <CardDescription>
-              Motion primitives and alias tokens for consistent animation across surfaces.
+              Duration, easing, and blur primitives for consistent animation across surfaces.
             </CardDescription>
           </CardHeader>
         </Card>
