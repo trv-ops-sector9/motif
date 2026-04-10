@@ -138,17 +138,18 @@ export function SidebarModePicker() {
 /* ─── Motion theme picker ────────────────────────────────────────────────── */
 
 const MOTION_THEMES = [
-  { value: "fluent2", label: "Fluent 2" },
-  { value: "balanced", label: "Balanced" },
+  { value: "standard", label: "Standard" },
   { value: "dense", label: "Dense" },
   { value: "expressive", label: "Expressive" },
+  { value: "precision", label: "Precision" },
+  { value: "fluent2", label: "Fluent 2" },
   { value: "reduced", label: "Reduced" },
 ] as const;
 
 type MotionThemeValue = (typeof MOTION_THEMES)[number]["value"];
 
 export function SidebarMotionPicker() {
-  const [motionTheme, setMotionTheme] = useState<MotionThemeValue>("fluent2");
+  const [motionTheme, setMotionTheme] = useState<MotionThemeValue>("standard");
 
   const handleChange = (value: string) => {
     const t = value as MotionThemeValue;
@@ -156,7 +157,7 @@ export function SidebarMotionPicker() {
     document.documentElement.setAttribute("data-motion-theme", t);
   };
 
-  const currentLabel = MOTION_THEMES.find((t) => t.value === motionTheme)?.label ?? "Fluent 2";
+  const currentLabel = MOTION_THEMES.find((t) => t.value === motionTheme)?.label ?? "Standard";
 
   return (
     <div className="px-2">

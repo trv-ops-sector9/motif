@@ -98,22 +98,10 @@ function DurationSection() {
 
 /** Each theme defines its own curve vocabulary — not all themes need 9 curves. */
 const THEME_CURVES: Record<string, { name: string; label: string; category: string }[]> = {
-  fluent2: [
-    { name: "--motion-curve-accelerate-max", label: "accelerate-max", category: "Accelerate" },
-    { name: "--motion-curve-accelerate-mid", label: "accelerate-mid", category: "Accelerate" },
-    { name: "--motion-curve-accelerate-min", label: "accelerate-min", category: "Accelerate" },
-    { name: "--motion-curve-decelerate-max", label: "decelerate-max", category: "Decelerate" },
-    { name: "--motion-curve-decelerate-mid", label: "decelerate-mid", category: "Decelerate" },
-    { name: "--motion-curve-decelerate-min", label: "decelerate-min", category: "Decelerate" },
-    { name: "--motion-curve-easy-ease-max",  label: "easy-ease-max",  category: "Ease"       },
-    { name: "--motion-curve-easy-ease",      label: "easy-ease",      category: "Ease"       },
-    { name: "--motion-curve-linear",         label: "linear",         category: "Ease"       },
-  ],
-  balanced: [
-    { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Enter"      },
-    { name: "--motion-curve-ease-in",     label: "ease-in",     category: "Exit"       },
-    { name: "--motion-curve-ease-in-out", label: "ease-in-out", category: "Transition" },
-    { name: "--motion-curve-linear",      label: "linear",      category: "Utility"    },
+  standard: [
+    { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Enter"   },
+    { name: "--motion-curve-ease-in",     label: "ease-in",     category: "Exit"    },
+    { name: "--motion-curve-linear",      label: "linear",      category: "Utility" },
   ],
   dense: [
     { name: "--motion-curve-snap",        label: "snap",        category: "Core"    },
@@ -126,6 +114,21 @@ const THEME_CURVES: Record<string, { name: string; label: string; category: stri
     { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Supporting" },
     { name: "--motion-curve-ease-in",     label: "ease-in",     category: "Supporting" },
     { name: "--motion-curve-ease-in-out", label: "ease-in-out", category: "Supporting" },
+  ],
+  precision: [
+    { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Core"    },
+    { name: "--motion-curve-linear",      label: "linear",      category: "Utility" },
+  ],
+  fluent2: [
+    { name: "--motion-curve-accelerate-max", label: "accelerate-max", category: "Accelerate" },
+    { name: "--motion-curve-accelerate-mid", label: "accelerate-mid", category: "Accelerate" },
+    { name: "--motion-curve-accelerate-min", label: "accelerate-min", category: "Accelerate" },
+    { name: "--motion-curve-decelerate-max", label: "decelerate-max", category: "Decelerate" },
+    { name: "--motion-curve-decelerate-mid", label: "decelerate-mid", category: "Decelerate" },
+    { name: "--motion-curve-decelerate-min", label: "decelerate-min", category: "Decelerate" },
+    { name: "--motion-curve-easy-ease-max",  label: "easy-ease-max",  category: "Ease"       },
+    { name: "--motion-curve-easy-ease",      label: "easy-ease",      category: "Ease"       },
+    { name: "--motion-curve-linear",         label: "linear",         category: "Ease"       },
   ],
 };
 
@@ -194,8 +197,8 @@ function CurveRow({ name, label, raw }: { name: string; label: string; raw: stri
 
 function CurvesSection() {
   const { getCSSVar } = useTokenValues();
-  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "fluent2";
-  const curves = THEME_CURVES[motionTheme] ?? THEME_CURVES.fluent2;
+  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "standard";
+  const curves = THEME_CURVES[motionTheme] ?? THEME_CURVES.standard;
 
   // Group curves by category
   const categories = new Map<string, typeof curves>();
@@ -206,10 +209,11 @@ function CurvesSection() {
   }
 
   const THEME_LABELS: Record<string, string> = {
-    fluent2:    "9 cubic-bezier curves — Fluent 2 spec",
-    balanced:   "4 curves — organic, CSS-standard naming",
+    standard:   "3 curves — clean ease-out, no personality",
     dense:      "3 curves — snap-first, minimal ceremony",
     expressive: "5 curves — spring + bounce overshoot",
+    precision:  "2 curves — fade only, sub-100ms",
+    fluent2:    "9 cubic-bezier curves — Fluent 2 spec",
   };
 
   return (
@@ -543,7 +547,7 @@ function SpacingSection() {
 // ── Export tokens ────────────────────────────────────────────────────────────
 
 function collectTokens() {
-  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "fluent2";
+  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "standard";
   const colorTheme = document.documentElement.getAttribute("data-theme") || "default";
 
   const durations: Record<string, string> = {};
@@ -552,7 +556,7 @@ function collectTokens() {
   }
 
   const curves: Record<string, string> = {};
-  const themeCurves = THEME_CURVES[motionTheme] ?? THEME_CURVES.fluent2;
+  const themeCurves = THEME_CURVES[motionTheme] ?? THEME_CURVES.standard;
   for (const c of themeCurves) {
     curves[c.name] = getCSSVar(c.name);
   }
@@ -620,7 +624,7 @@ function ExportButton() {
 // ── Main layout ──────────────────────────────────────────────────────────────
 
 export function TokensView() {
-  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "fluent2";
+  const motionTheme = document.documentElement.getAttribute("data-motion-theme") || "standard";
   const colorTheme = document.documentElement.getAttribute("data-theme") || "default";
 
   // Re-render on theme change

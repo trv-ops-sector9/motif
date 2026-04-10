@@ -114,7 +114,6 @@
    Layer 1 — Primitive tokens
    ---------------------------------------------------------- */
 
-:root,
 [data-motion-theme="fluent2"] {
   /* Duration scale */
   --motion-duration-ultra-fast: 50ms;
@@ -186,7 +185,7 @@
    ---------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  :root {
+  [data-motion-theme="fluent2"] {
     --motion-duration-ultra-fast: 1ms;
     --motion-duration-fast:       1ms;
     --motion-duration-normal:     1ms;

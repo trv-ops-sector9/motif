@@ -2,9 +2,9 @@
 
 ## What this project is
 
-Motif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Fluent 2, Balanced, Dense, Expressive) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
+Motif is a **motion token system for Tailwind CSS v4**. It provides five named motion themes (Standard, Dense, Expressive, Precision, Fluent 2) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
 
-The core deliverable is the `tokens/` directory — four CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
+The core deliverable is the `tokens/` directory — five CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
 
 ---
 
@@ -12,10 +12,11 @@ The core deliverable is the `tokens/` directory — four CSS files that can be d
 
 ```
 tokens/
-├── theme-fluent2.css      # Canonical Fluent 2 spec. Sets :root defaults.
-├── theme-balanced.css     # Relaxed pacing, softer curves
+├── theme-standard.css     # Default. Neutral ease-out, no personality. Sets :root defaults.
 ├── theme-dense.css        # Compressed durations, minimal transforms
-└── theme-expressive.css   # Spring overshoot on enter, bounce on press, fast exits
+├── theme-expressive.css   # Spring overshoot on enter, bounce on press, fast exits
+├── theme-precision.css    # Fade only, no transforms, sub-100ms
+└── theme-fluent2.css      # Canonical Fluent 2 spec
 
 preview/
 ├── src/
@@ -35,16 +36,16 @@ preview/
 
 **Layer 1 — Primitive tokens** (`:root` and `[data-motion-theme="..."]`)
 - 7 duration stops: `--motion-duration-ultra-fast` through `--motion-duration-ultra-slow`
-- 9 easing curves: Fluent 2 cubic-beziers + expressive spring/bounce (with overshoot)
+- Easing curves per theme: Standard (3), Dense (3), Expressive (5), Precision (2), Fluent 2 (9)
 
 **Layer 2 — Alias tokens** (`@theme {}` blocks → `animate-*` Tailwind utilities)
-- 12 animation archetypes × 4 themes = 48 aliases
+- 12 animation archetypes × 5 themes = 60 aliases
 - Each alias: `<keyframe-name> <duration-var> <curve-var> both`
 - `var()` references resolve at runtime — enables theme switching without recompiling
 
 **12 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`
 
-**Theme switching:** `theme-fluent2.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms`.
+**Theme switching:** `theme-standard.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms`.
 
 ---
 
