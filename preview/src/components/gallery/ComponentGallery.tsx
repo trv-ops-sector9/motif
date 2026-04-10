@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 /* ── Shared layout helpers ── */
@@ -1203,6 +1204,15 @@ export function ComponentGallery() {
     <div>
       <GalleryHeader />
       <div className="p-6 space-y-6 max-w-5xl">
+        {/* Page header */}
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Component Gallery</h1>
+          <p className="text-sm text-muted-foreground">
+            Interactive demos — every component wired to the active motion and color tokens.
+          </p>
+        </div>
+
+        <Separator />
 
         {/* Row 1: Accordion (full width — wide content) */}
         <div className="grid sm:grid-cols-2 gap-4">
