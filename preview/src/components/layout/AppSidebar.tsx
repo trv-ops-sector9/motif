@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  LayoutDashboard,
+  BarChart2,
   Settings,
   LogIn,
   Megaphone,
@@ -41,7 +41,7 @@ const GALLERY_ITEMS: NavItem[] = [
 const BLOCK_ITEMS: NavItem[] = [
   { id: "fleet-ops", label: "Fleet Ops", icon: Navigation     },
   { id: "marketing", label: "Marketing", icon: Megaphone       },
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "dashboard", label: "Analytics", icon: BarChart2 },
   { id: "settings",  label: "Settings",  icon: Settings        },
   { id: "auth",      label: "Auth",      icon: LogIn           },
 ];

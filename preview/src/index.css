@@ -179,6 +179,16 @@
     height     var(--motion-duration-fast) var(--motion-curve-expand-out) !important;
 }
 
+/* ── Stagger utility ──────────────────────────────────────────────────── */
+/* Children set --stagger-index (0, 1, 2…) and the delay scales linearly. */
+/* Uses --motion-duration-ultra-fast as the base interval (~50-100ms).     */
+
+.stagger-children > * {
+  animation: var(--anim-slide-up-in);
+  animation-delay: calc(var(--stagger-index, 0) * var(--motion-duration-ultra-fast));
+  animation-fill-mode: both;
+}
+
 /* ── Fleet map pulse — uses motion duration token ──────────────────────── */
 
 @keyframes fleet-pulse {

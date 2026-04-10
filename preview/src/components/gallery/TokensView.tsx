@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Download, Check } from "lucide-react";
+import { Download, Check, RotateCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -62,30 +62,107 @@ const DURATION_TOKENS = [
 
 function DurationSection() {
   const { getCSSVar } = useTokenValues();
-  const maxMs = 600; // for bar width scaling
+  const [overrides, setOverrides] = useState<Record<string, number>>({});
+
+  // Detect motion theme changes and clear all overrides
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      for (const token of DURATION_TOKENS) {
+        document.documentElement.style.removeProperty(token.name);
+      }
+      setOverrides({});
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const handleChange = (tokenName: string, ms: number) => {
+    document.documentElement.style.setProperty(tokenName, `${ms}ms`);
+    setOverrides((prev) => ({ ...prev, [tokenName]: ms }));
+  };
+
+  const resetOne = (tokenName: string) => {
+    document.documentElement.style.removeProperty(tokenName);
+    setOverrides((prev) => {
+      const next = { ...prev };
+      delete next[tokenName];
+      return next;
+    });
+  };
+
+  const resetAll = () => {
+    for (const token of DURATION_TOKENS) {
+      document.documentElement.style.removeProperty(token.name);
+    }
+    setOverrides({});
+  };
+
+  const hasOverrides = Object.keys(overrides).length > 0;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Duration scale</CardTitle>
-        <CardDescription className="text-xs">7 stops from ultra-fast to ultra-slow</CardDescription>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="text-sm font-semibold">Duration scale</CardTitle>
+            <CardDescription className="text-xs">
+              Drag to override — changes propagate live across the entire app
+            </CardDescription>
+          </div>
+          {hasOverrides && (
+            <button
+              onClick={resetAll}
+              className={cn(
+                "flex items-center gap-1 shrink-0 rounded px-2 py-1 text-[11px] font-medium transition-colors cursor-pointer",
+                "text-muted-foreground hover:text-foreground hover:bg-muted",
+                "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+              )}
+              title="Reset all durations to theme defaults"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset all
+            </button>
+          )}
+        </div>
       </CardHeader>
-      <CardContent className="space-y-2.5">
+      <CardContent className="space-y-3">
         {DURATION_TOKENS.map((token) => {
           const raw = getCSSVar(token.name);
           const ms = parseInt(raw) || 0;
+          const isOverridden = token.name in overrides;
+
           return (
             <div key={token.name} className="flex items-center gap-3">
               <span className="w-20 shrink-0 text-xs text-muted-foreground">{token.label}</span>
-              <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-300"
-                  style={{ width: `${Math.min(100, (ms / maxMs) * 100)}%` }}
-                />
+              <input
+                type="range"
+                min={10}
+                max={1000}
+                step={10}
+                value={ms}
+                onChange={(e) => handleChange(token.name, Number(e.target.value))}
+                className="flex-1 cursor-pointer accent-primary h-2"
+              />
+              <div className="flex items-center gap-1.5 w-16 shrink-0 justify-end">
+                <code className={cn(
+                  "text-xs font-mono tabular-nums",
+                  isOverridden ? "text-primary font-semibold" : "text-muted-foreground",
+                )}>
+                  {ms}ms
+                </code>
+                {isOverridden && (
+                  <button
+                    onClick={() => resetOne(token.name)}
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none"
+                    title="Reset to theme default"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                  </button>
+                )}
               </div>
-              <code className="w-14 shrink-0 text-right text-xs font-mono tabular-nums text-muted-foreground">
-                {raw || "—"}
-              </code>
             </div>
           );
         })}
