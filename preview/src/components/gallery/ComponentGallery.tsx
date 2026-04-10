@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -126,10 +126,12 @@ function ButtonDemo() {
 }
 
 /* ── Card ── */
+type CardLayout = "media" | "stat" | "profile";
 type CardElevation = "sm" | "md" | "lg";
 type CardInteraction = "static" | "hover-lift" | "pressable";
 
 function CardDemo() {
+  const [layout, setLayout] = useState<CardLayout>("media");
   const [elevation, setElevation] = useState<CardElevation>("sm");
   const [interaction, setInteraction] = useState<CardInteraction>("pressable");
   const [hovered, setHovered] = useState(false);
@@ -147,42 +149,110 @@ function CardDemo() {
     box-shadow var(--motion-duration-fast) var(--motion-curve-press-release)
   `;
 
+  const cardProps = {
+    className: cn("select-none overflow-hidden", layout === "stat" ? "w-56" : "w-72"),
+    style: {
+      cursor: isHoverable ? "pointer" as const : "default" as const,
+      translate: isPressable && pressed ? "0 1px" : isHoverable && hovered ? "0 -2px" : "0 0",
+      scale: isPressable && pressed ? "0.98" : "1",
+      boxShadow: isHoverable && hovered && !pressed ? hoverShadow : shadowVar,
+      transition: pressed ? "none" : releaseTransition,
+    },
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => { setHovered(false); setPressed(false); },
+    onMouseDown: () => isPressable && setPressed(true),
+    onMouseUp: () => setPressed(false),
+  };
+
   return (
     <div className="flex flex-col flex-1 gap-8">
       <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
-        <Card
-          className="w-72 overflow-hidden select-none"
-          style={{
-            cursor: isHoverable ? "pointer" : "default",
-            translate: isPressable && pressed ? "0 1px" : isHoverable && hovered ? "0 -2px" : "0 0",
-            scale: isPressable && pressed ? "0.98" : "1",
-            boxShadow: isHoverable && hovered && !pressed ? hoverShadow : shadowVar,
-            transition: pressed ? "none" : releaseTransition,
-          }}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => { setHovered(false); setPressed(false); }}
-          onMouseDown={() => isPressable && setPressed(true)}
-          onMouseUp={() => setPressed(false)}
-        >
-          <div className="h-36 bg-muted flex items-center justify-center">
-            <Layers className="h-8 w-8 text-muted-foreground/40" />
-          </div>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <Badge variant="secondary">Design System</Badge>
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Star className="h-3 w-3 fill-current text-amber-500" />
-                4.9
-              </span>
+        {layout === "media" && (
+          <Card {...cardProps}>
+            <div className="h-32 bg-muted flex items-center justify-center">
+              <Layers className="h-8 w-8 text-muted-foreground/30" />
             </div>
-            <CardTitle className="mt-2">Motion Tokens</CardTitle>
-            <CardDescription>
-              Duration, easing, and blur primitives for consistent animation across surfaces.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <Badge variant="secondary" className="text-[10px]">Design System</Badge>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Star className="h-3 w-3 fill-current text-amber-500" /> 4.9
+                </span>
+              </div>
+              <CardTitle className="text-base mt-1.5">Motion Tokens</CardTitle>
+              <CardDescription className="text-xs">
+                Duration, easing, and blur primitives for animation.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter className="pt-0 pb-4 px-6">
+              <Button size="sm" className="w-full text-xs">View details</Button>
+            </CardFooter>
+          </Card>
+        )}
+
+        {layout === "stat" && (
+          <Card {...cardProps}>
+            <CardHeader className="pb-2">
+              <CardDescription className="text-xs font-medium uppercase tracking-wider">Total Revenue</CardDescription>
+              <div className="flex items-baseline gap-2 mt-1">
+                <CardTitle className="text-2xl tabular-nums">$45,231</CardTitle>
+                <span className="text-xs font-medium text-emerald-500">+20.1%</span>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0 pb-4">
+              <div className="flex gap-1 items-end h-10">
+                {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-sm bg-primary/20" style={{ height: `${h}%` }}>
+                    <div className="w-full rounded-sm bg-primary mt-auto" style={{ height: `${Math.min(h + 10, 100)}%` }} />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {layout === "profile" && (
+          <Card {...cardProps}>
+            <CardHeader className="pb-3 items-center text-center">
+              <Avatar className="h-14 w-14 mb-2">
+                <AvatarFallback className="text-lg font-semibold">TP</AvatarFallback>
+              </Avatar>
+              <CardTitle className="text-base">Traver Phillips</CardTitle>
+              <CardDescription className="text-xs">Design Engineer</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0 pb-2">
+              <div className="grid grid-cols-3 text-center divide-x">
+                <div className="px-2">
+                  <p className="text-sm font-semibold tabular-nums">128</p>
+                  <p className="text-[10px] text-muted-foreground">Projects</p>
+                </div>
+                <div className="px-2">
+                  <p className="text-sm font-semibold tabular-nums">4.9k</p>
+                  <p className="text-[10px] text-muted-foreground">Followers</p>
+                </div>
+                <div className="px-2">
+                  <p className="text-sm font-semibold tabular-nums">312</p>
+                  <p className="text-[10px] text-muted-foreground">Following</p>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="pt-2 pb-4 px-6 gap-2">
+              <Button size="sm" className="flex-1 text-xs">Follow</Button>
+              <Button size="sm" variant="outline" className="flex-1 text-xs">Message</Button>
+            </CardFooter>
+          </Card>
+        )}
       </div>
       <div className="mt-auto space-y-4">
+        <ControlGroup
+          label="Layout" name="card-layout" value={layout}
+          onChange={v => setLayout(v as CardLayout)}
+          options={[
+            { value: "media",   label: "Media"   },
+            { value: "stat",    label: "Stat"     },
+            { value: "profile", label: "Profile"  },
+          ]}
+        />
         <ControlGroup
           label="Shadow" name="card-elevation" value={elevation}
           onChange={v => setElevation(v as CardElevation)}
@@ -757,20 +827,19 @@ function CheckboxDemo() {
 
 /* ── Badge ── */
 type BadgeVariant = "default" | "secondary" | "outline" | "destructive";
+type BadgeIcon = "none" | "icon";
 
 function BadgeDemo() {
   const [variant, setVariant] = useState<BadgeVariant>("default");
+  const [icon, setIcon] = useState<BadgeIcon>("none");
 
   return (
     <div className="flex flex-col flex-1 gap-8">
       <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
-        <div className="flex items-center gap-3">
-          <Badge variant={variant}>Badge</Badge>
-          <Badge variant={variant}>
-            <CheckCircle className="h-3 w-3" />
-            With icon
-          </Badge>
-        </div>
+        <Badge variant={variant}>
+          {icon === "icon" && <CheckCircle className="h-3 w-3" />}
+          Badge
+        </Badge>
       </div>
       <div className="mt-auto space-y-4">
         <ControlGroup
@@ -781,6 +850,14 @@ function BadgeDemo() {
             { value: "secondary",   label: "Secondary"   },
             { value: "outline",     label: "Outline"     },
             { value: "destructive", label: "Destructive" },
+          ]}
+        />
+        <ControlGroup
+          label="Icon" name="badge-icon" value={icon}
+          onChange={v => setIcon(v as BadgeIcon)}
+          options={[
+            { value: "none", label: "None" },
+            { value: "icon", label: "With icon" },
           ]}
         />
       </div>
