@@ -1,17 +1,17 @@
 /* Drive Dark — Deep slate automotive. Sharp precise shadows,
    performance red accent on dark engineering canvas. */
 [data-theme="drive-dark"] {
-  --background: oklch(0.10 0.02 250);
+  --background: oklch(0.14 0.02 250);
   --foreground: oklch(0.93 0.005 250);
-  --card: oklch(0.13 0.02 250);
+  --card: oklch(0.17 0.02 250);
   --card-foreground: oklch(0.93 0.005 250);
-  --popover: oklch(0.13 0.02 250);
+  --popover: oklch(0.17 0.02 250);
   --popover-foreground: oklch(0.93 0.005 250);
   --primary: oklch(0.62 0.20 25);
   --primary-foreground: oklch(0.98 0.005 25);
-  --secondary: oklch(0.16 0.02 250);
+  --secondary: oklch(0.20 0.02 250);
   --secondary-foreground: oklch(0.75 0.008 250);
-  --muted: oklch(0.14 0.02 250);
+  --muted: oklch(0.18 0.02 250);
   --muted-foreground: oklch(0.60 0.01 250);
   --accent: oklch(0.62 0.22 25);
   --accent-foreground: oklch(0.99 0 0);
@@ -20,11 +20,11 @@
   --border: oklch(0.25 0.02 250);
   --input: oklch(0.25 0.02 250);
   --ring: oklch(0.62 0.22 25);
-  --sidebar: oklch(0.08 0.02 250);
+  --sidebar: oklch(0.11 0.02 250);
   --sidebar-foreground: oklch(0.75 0.008 250);
   --sidebar-primary: oklch(0.62 0.20 25);
   --sidebar-primary-foreground: oklch(0.98 0.005 25);
-  --sidebar-accent: oklch(0.14 0.02 250);
+  --sidebar-accent: oklch(0.18 0.02 250);
   --sidebar-accent-foreground: oklch(0.93 0.005 250);
   --sidebar-border: oklch(0.25 0.02 250);
   --sidebar-ring: oklch(0.62 0.22 25);
