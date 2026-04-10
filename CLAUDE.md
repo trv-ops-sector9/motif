@@ -35,15 +35,15 @@ preview/
 
 **Layer 1 — Primitive tokens** (`:root` and `[data-motion-theme="..."]`)
 - 7 duration stops: `--motion-duration-ultra-fast` through `--motion-duration-ultra-slow`
-- Easing curves per theme: Standard (3), Dense (3), Expressive (5), Precision (2)
-- Focus control tokens: `--motion-blur-radius` (4–16px per theme), `--motion-overlay-opacity` (0.4–0.6)
+- Easing curves per theme: Standard (3), Dense (3), Expressive (6), Precision (2)
+- Focus control tokens: `--motion-blur-radius` (0–8px per theme), `--motion-overlay-opacity` (0.4–0.6)
 
 **Layer 2 — Alias tokens** (`@theme {}` blocks → `animate-*` Tailwind utilities)
-- 13 animation archetypes × 4 themes = 52 aliases (12 spatial + overlay-in/out)
+- 22 animation archetypes × 4 themes = 88 aliases (20 spatial + overlay-in/out)
 - Each alias: `<keyframe-name> <duration-var> <curve-var> both`
 - `var()` references resolve at runtime — enables theme switching without recompiling
 
-**13 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`, `overlay-in`, `overlay-out`
+**22 archetypes:** `fade-in`, `fade-out`, `slide-up-in`, `slide-up-out`, `slide-down-in`, `slide-down-out`, `expand-in`, `expand-out`, `collapse-in`, `collapse-out`, `page-enter`, `page-exit`, `slide-left-in`, `slide-left-out`, `slide-right-in`, `slide-right-out`, `slide-top-in`, `slide-top-out`, `slide-bottom-in`, `slide-bottom-out`, `overlay-in`, `overlay-out`
 
 **Theme switching:** `theme-standard.css` sets `:root` baseline. Others activate via `data-motion-theme` attribute. All keyframes are prefixed per theme to avoid collision. `reduced` mode collapses durations to `1ms` and blur to `0`.
 
