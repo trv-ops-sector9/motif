@@ -262,6 +262,13 @@
   to   { height: 0; opacity: 0; }
 }
 
+/* ── View Transition (theme switch crossfade) ──────────────────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 150ms;
+  animation-timing-function: ease-out;
+}
+
 @layer base {
 :root {
   --background: oklch(1 0 0);
@@ -334,6 +341,37 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-heading);
 }
 } /* end @layer base */
+
+/* ── Scrollbars ───────────────────────────────────────────────────────── */
+/* Thin, theme-aware scrollbars. Firefox uses scrollbar-color/width.      */
+/* Webkit/Blink uses ::-webkit-scrollbar pseudo-elements.                 */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 /* ── Theme-driven border width ─────────────────────────────────────────── */
 /* Outside @layer so it overrides Tailwind's hardcoded 1px utilities.      */

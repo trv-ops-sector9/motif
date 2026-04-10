@@ -781,18 +781,22 @@ export function TokensView() {
   return (
     <div className="p-6 space-y-6 max-w-5xl">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight mb-1">Design tokens</h1>
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            Live reference — values update when you switch themes in the sidebar.
-            Currently:{" "}
-            <Badge variant="outline" className="text-[10px] mx-0.5">{motionTheme}</Badge>
-            {" "}motion /{" "}
-            <Badge variant="outline" className="text-[10px] mx-0.5">{colorTheme}</Badge>
-            {" "}color
-          </p>
-          <ExportButton />
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight">Design tokens</h1>
+        <p className="text-sm text-muted-foreground">
+          Live reference — values update when you switch themes in the sidebar.
+        </p>
+        <div className="flex items-center gap-2.5 pt-1">
+          <span className="text-sm text-muted-foreground">Currently:</span>
+          {[`${motionTheme} motion`, `${colorTheme} color`].map((label) => (
+            <span key={label} className="inline-flex items-center gap-1.5 rounded-full border bg-background px-2.5 py-0.5 text-[11px] font-medium text-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              {label}
+            </span>
+          ))}
+          <div className="ml-auto">
+            <ExportButton />
+          </div>
         </div>
       </div>
 
