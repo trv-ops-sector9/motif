@@ -2,7 +2,7 @@
 
 ## Context
 
-Motif is a motion token system for Tailwind v4, being prepared as a portfolio piece for a job application (AV startup). The codebase ships 4 motion themes and 6 color theme pairs. **Deadline: 2026-04-12 (2 days).** Branch: `feature/ui-polish` (PR #11 open).
+Motif is a motion token system for Tailwind v4, being prepared as a portfolio piece for a job application (AV startup). The codebase ships 4 motion themes and 6 color theme pairs. **Deadline: 2026-04-12.** Live: https://trv-ops-sector9.github.io/motif/
 
 ---
 
@@ -110,6 +110,12 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 - Borders: stronger contrast (lightness 0.88 → 0.84 light, 0.22 → 0.25 dark)
 - Shadows: crisper/tighter spread, higher opacity — less diffused cloud, more machined edge
 
+### ~~8d. Dark theme background variation~~ ✓
+- Drive dark: 0.10 → 0.14 (slate-blue tinted)
+- Lux dark: 0.10 → 0.15 (warm chocolate)
+- Vapor dark: 0.07 → 0.11 (purple-tinted, bumped chroma)
+- Brutalist + Dark Minimal: kept near-black (intentional identity)
+
 ---
 
 ## 9. README & Portfolio Presentation
@@ -123,12 +129,11 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 
 ---
 
-## 10. D1-D3 — Icons & Theme Personality
+## 10. D1/D3 — Icons & Card Alignment
 
-> De-stock the icon language, refine Drive theme, align component cards.
+> ~~D2 (Drive theme identity) completed in 8c.~~
 
 - [ ] D1: Icons — evaluate Tabler (already imported), Phosphor, or custom SVG per domain
-- [ ] D2: Drive theme — less round corners, bigger titles, tighter tracking
 - [ ] D3: Component card alignment
 - [ ] Commit & PR: `feature/icon-polish`
 
