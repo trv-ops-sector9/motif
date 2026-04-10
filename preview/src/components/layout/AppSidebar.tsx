@@ -1,18 +1,18 @@
 import { useState } from "react";
 import {
-  BarChart2,
-  Settings,
-  LogIn,
-  Megaphone,
-  Navigation,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Layers,
-  Paintbrush,
-  ChevronRight,
-  Copy,
-  Check,
-} from "lucide-react";
+  IconChartBar,
+  IconSettings,
+  IconLogin2,
+  IconSpeakerphone,
+  IconRoute,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
+  IconComponents,
+  IconColorSwatch,
+  IconChevronRight,
+  IconCopy,
+  IconCheck,
+} from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -34,16 +34,16 @@ interface NavItem {
 }
 
 const GALLERY_ITEMS: NavItem[] = [
-  { id: "components", label: "Components", icon: Layers },
-  { id: "tokens",     label: "Tokens",     icon: Paintbrush },
+  { id: "components", label: "Components", icon: IconComponents },
+  { id: "tokens",     label: "Tokens",     icon: IconColorSwatch },
 ];
 
 const BLOCK_ITEMS: NavItem[] = [
-  { id: "fleet-ops", label: "Fleet Ops", icon: Navigation     },
-  { id: "marketing", label: "Marketing", icon: Megaphone       },
-  { id: "dashboard", label: "Analytics", icon: BarChart2 },
-  { id: "settings",  label: "Settings",  icon: Settings        },
-  { id: "auth",      label: "Auth",      icon: LogIn           },
+  { id: "fleet-ops", label: "Fleet Ops", icon: IconRoute          },
+  { id: "marketing", label: "Marketing", icon: IconSpeakerphone   },
+  { id: "dashboard", label: "Analytics", icon: IconChartBar       },
+  { id: "settings",  label: "Settings",  icon: IconSettings       },
+  { id: "auth",      label: "Auth",      icon: IconLogin2         },
 ];
 
 interface AppSidebarProps {
@@ -93,9 +93,9 @@ export function AppSidebar({ activeView, onViewChange }: AppSidebarProps) {
           )}
         >
           {collapsed ? (
-            <PanelLeftOpen className="h-4 w-4" />
+            <IconLayoutSidebarLeftExpand className="h-4 w-4" />
           ) : (
-            <PanelLeftClose className="h-4 w-4" />
+            <IconLayoutSidebarLeftCollapse className="h-4 w-4" />
           )}
         </button>
       </div>
@@ -117,7 +117,7 @@ export function AppSidebar({ activeView, onViewChange }: AppSidebarProps) {
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Gallery
             </span>
-            <ChevronRight
+            <IconChevronRight
               className={cn(
                 "h-3 w-3 shrink-0 text-muted-foreground/60 transition-transform duration-150",
                 galleryOpen && "rotate-90"
@@ -148,7 +148,7 @@ export function AppSidebar({ activeView, onViewChange }: AppSidebarProps) {
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Blocks
             </span>
-            <ChevronRight
+            <IconChevronRight
               className={cn(
                 "h-3 w-3 shrink-0 text-muted-foreground/60 transition-transform duration-150",
                 blocksOpen && "rotate-90"
@@ -209,8 +209,8 @@ function FooterContact() {
           )}
         >
           {copied
-            ? <Check className="h-3 w-3 text-green-500" />
-            : <Copy className="h-3 w-3" />
+            ? <IconCheck className="h-3 w-3 text-green-500" />
+            : <IconCopy className="h-3 w-3" />
           }
         </button>
       </div>

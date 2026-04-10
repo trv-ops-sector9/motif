@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, RotateCcw, Palette, Sun, Moon } from "lucide-react";
+import { IconChevronDown, IconChevronRight, IconPalette, IconSun, IconMoon } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -69,7 +69,7 @@ export function SidebarThemePicker() {
             )}
           >
             <span className="flex-1 truncate text-left">{currentLabel}</span>
-            <ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+            <IconChevronDown className="h-3 w-3 shrink-0 opacity-50" />
           </button>
         </DropdownMenuTrigger>
 
@@ -114,7 +114,7 @@ export function SidebarModePicker() {
               : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
-          <Sun className="h-3 w-3" />
+          <IconSun className="h-3 w-3" />
           Light
         </button>
         <span className="w-px bg-sidebar-border" />
@@ -129,7 +129,7 @@ export function SidebarModePicker() {
               : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
-          <Moon className="h-3 w-3" />
+          <IconMoon className="h-3 w-3" />
           Dark
         </button>
       </div>
@@ -176,7 +176,7 @@ export function SidebarMotionPicker() {
             )}
           >
             <span className="flex-1 truncate text-left">{currentLabel}</span>
-            <ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+            <IconChevronDown className="h-3 w-3 shrink-0 opacity-50" />
           </button>
         </DropdownMenuTrigger>
 
@@ -199,93 +199,6 @@ export function SidebarMotionPicker() {
   );
 }
 
-/* ─── Spacing slider ─────────────────────────────────────────────────────── */
-
-const SPACING_DEFAULT = 0.25;
-const SPACING_MIN = 0.2;
-const SPACING_MAX = 0.35;
-const SPACING_STEP = 0.005;
-
-export function SidebarSpacingSlider() {
-  const [value, setValue] = useState(SPACING_DEFAULT);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = parseFloat(e.target.value);
-    setValue(v);
-    document.documentElement.style.setProperty("--spacing", `${v}rem`);
-  };
-
-  const handleReset = () => {
-    setValue(SPACING_DEFAULT);
-    document.documentElement.style.removeProperty("--spacing");
-  };
-
-  const isDefault = Math.abs(value - SPACING_DEFAULT) < 0.001;
-  const pct = ((value - SPACING_MIN) / (SPACING_MAX - SPACING_MIN)) * 100;
-
-  return (
-    <div className="px-2">
-      {/* Header row */}
-      <div className="flex items-center gap-2 pt-1.5 mb-0.5">
-        <span className="flex-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">Global Spacing</span>
-        {!isDefault && (
-          <button
-            onClick={handleReset}
-            aria-label="Reset spacing to default"
-            className={cn(
-              "flex h-4 w-4 cursor-pointer items-center justify-center rounded",
-              "text-muted-foreground hover:text-sidebar-foreground transition-colors",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sidebar-ring"
-            )}
-          >
-            <RotateCcw className="h-3 w-3" />
-          </button>
-        )}
-      </div>
-
-      {/* Range track */}
-      <input
-        type="range"
-        min={SPACING_MIN}
-        max={SPACING_MAX}
-        step={SPACING_STEP}
-        value={value}
-        onChange={handleChange}
-        aria-label={`Global spacing: ${value}rem`}
-        aria-valuemin={SPACING_MIN}
-        aria-valuemax={SPACING_MAX}
-        aria-valuenow={value}
-        className={cn(
-          "w-full cursor-pointer appearance-none rounded-full h-1.5",
-          /* webkit thumb */
-          "[&::-webkit-slider-thumb]:appearance-none",
-          "[&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3",
-          "[&::-webkit-slider-thumb]:rounded-full",
-          "[&::-webkit-slider-thumb]:bg-sidebar-primary",
-          "[&::-webkit-slider-thumb]:cursor-pointer",
-          "[&::-webkit-slider-thumb]:transition-transform",
-          "[&::-webkit-slider-thumb]:hover:scale-125",
-          /* firefox thumb */
-          "[&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:w-3",
-          "[&::-moz-range-thumb]:rounded-full",
-          "[&::-moz-range-thumb]:border-0",
-          "[&::-moz-range-thumb]:bg-sidebar-primary",
-          "[&::-moz-range-thumb]:cursor-pointer"
-        )}
-        style={{
-          background: `linear-gradient(to right, var(--sidebar-primary) ${pct}%, var(--sidebar-accent) ${pct}%)`,
-        }}
-      />
-
-      {/* Min / max labels */}
-      <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-muted-foreground/60">Compact</span>
-        <span className="text-[10px] text-muted-foreground/60">Spacious</span>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Collapsible theme controls wrapper ────────────────────────────────── */
 
 export function SidebarThemeControls({ collapsed }: { collapsed: boolean }) {
@@ -297,7 +210,7 @@ export function SidebarThemeControls({ collapsed }: { collapsed: boolean }) {
         title="Theme Controls"
         className="flex h-8 w-8 mx-auto items-center justify-center text-sidebar-foreground/40 select-none"
       >
-        <Palette className="h-4 w-4" />
+        <IconPalette className="h-4 w-4" />
       </div>
     );
   }
@@ -316,7 +229,7 @@ export function SidebarThemeControls({ collapsed }: { collapsed: boolean }) {
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Theme Controls
         </span>
-        <ChevronRight
+        <IconChevronRight
           className={cn(
             "h-3 w-3 shrink-0 text-muted-foreground/60 transition-transform duration-150",
             open && "rotate-90"
@@ -329,7 +242,6 @@ export function SidebarThemeControls({ collapsed }: { collapsed: boolean }) {
           <SidebarMotionPicker />
           <SidebarThemePicker />
           <SidebarModePicker />
-          <SidebarSpacingSlider />
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { IconCircleCheck, IconLoader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,7 @@ function SaveBar({
     <div className="flex items-center justify-end gap-3 pt-1">
       {saveState === "saved" && (
         <span className="flex items-center gap-1.5 text-sm text-primary">
-          <CheckCircle className="h-4 w-4" />
+          <IconCircleCheck className="h-4 w-4" />
           Saved!
         </span>
       )}
@@ -69,7 +69,7 @@ function SaveBar({
       >
         {saveState === "saving" ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <IconLoader2 className="h-4 w-4 animate-spin" />
             Saving…
           </>
         ) : saveState === "saved" ? (

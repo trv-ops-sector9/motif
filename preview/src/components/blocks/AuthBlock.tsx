@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { IconEye, IconEyeOff, IconLoader2, IconCircleCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -149,7 +149,7 @@ export function AuthBlock() {
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
                     </button>
                   </div>
                   {passwordError && (
@@ -177,7 +177,7 @@ export function AuthBlock() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <IconLoader2 className="h-4 w-4 animate-spin" />
                     Signing in…
                   </>
                 ) : (
@@ -202,7 +202,7 @@ function SuccessState({ onReset, email }: { onReset: () => void; email: string }
   return (
     <div className="flex flex-col items-center gap-5 px-6 py-10 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-        <CheckCircle className="h-7 w-7 text-primary" />
+        <IconCircleCheck className="h-7 w-7 text-primary" />
       </div>
       <div>
         <h2 className="text-lg font-semibold">Signed in successfully</h2>

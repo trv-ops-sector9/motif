@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Zap, Shield, Layers, Plus, CheckCheck, AlertTriangle, Activity, Users2, Flame, Clock, TrendingUp, GitMerge, MessageSquare } from "lucide-react";
+import { IconArrowLeft, IconArrowRight, IconBolt, IconShieldCheck, IconStack2, IconPlus, IconChecks, IconAlertTriangle, IconActivity, IconUsers, IconFlame, IconClock, IconTrendingUp, IconGitMerge, IconMessage } from "@tabler/icons-react";
 import { RadialBar, RadialBarChart } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,17 @@ type Phase = "idle" | "exiting" | "entering";
 // ── Marketing page data ───────────────────────────────────────────────────────
 const FEATURES = [
   {
-    icon: Zap,
+    icon: IconBolt,
     title: "Lightning fast",
     desc: "Built on Vite and optimized for production. Zero unnecessary re-renders and tree-shaking by default.",
   },
   {
-    icon: Shield,
+    icon: IconShieldCheck,
     title: "Accessible by default",
     desc: "Every component ships with ARIA attributes, keyboard navigation, and screen-reader support out of the box.",
   },
   {
-    icon: Layers,
+    icon: IconStack2,
     title: "Fully composable",
     desc: "Mix, match, and extend. Each primitive is headless at heart — bring your own styles or use ours.",
   },
@@ -47,10 +47,10 @@ const TESTIMONIALS = [
 
 // ── Workspace page data ───────────────────────────────────────────────────────
 const STATS = [
-  { label: "Total tasks",   value: "64", icon: CheckCheck,    delta: "+8 this week" },
-  { label: "Completed",     value: "41", icon: Activity,      delta: "+12 vs last"  },
-  { label: "Overdue",       value: "8",  icon: AlertTriangle, delta: "↓ 2 resolved" },
-  { label: "Contributors",  value: "5",  icon: Users2,        delta: "2 active now" },
+  { label: "Total tasks",   value: "64", icon: IconChecks,         delta: "+8 this week" },
+  { label: "Completed",     value: "41", icon: IconActivity,       delta: "+12 vs last"  },
+  { label: "Overdue",       value: "8",  icon: IconAlertTriangle,  delta: "↓ 2 resolved" },
+  { label: "Contributors",  value: "5",  icon: IconUsers,          delta: "2 active now" },
 ] as const;
 
 type ProjectStatus = "In progress" | "In review" | "Blocked" | "Shipped";
@@ -79,12 +79,12 @@ const TEAM = [
 ];
 
 const ACTIVITY = [
-  { icon: CheckCheck,    text: "Accessibility audit shipped to production",  user: "MC", time: "just now", accent: "text-green-500"       },
-  { icon: AlertTriangle, text: "API migration blocked on auth handshake",     user: "CN", time: "1h ago",   accent: "text-destructive"     },
-  { icon: GitMerge,      text: "PR #42 merged — component library v3 RC",    user: "SR", time: "2h ago",   accent: "text-primary"         },
-  { icon: Plus,          text: "New task: dark mode token audit",             user: "AK", time: "3h ago",   accent: "text-primary"         },
-  { icon: MessageSquare, text: "Comment thread on mobile onboarding flow",    user: "JL", time: "5h ago",   accent: "text-muted-foreground" },
-  { icon: Activity,      text: "Component library review session started",    user: "SR", time: "1d ago",   accent: "text-muted-foreground" },
+  { icon: IconChecks,         text: "Accessibility audit shipped to production",  user: "MC", time: "just now", accent: "text-green-500"       },
+  { icon: IconAlertTriangle, text: "API migration blocked on auth handshake",     user: "CN", time: "1h ago",   accent: "text-destructive"     },
+  { icon: IconGitMerge,      text: "PR #42 merged — component library v3 RC",    user: "SR", time: "2h ago",   accent: "text-primary"         },
+  { icon: IconPlus,          text: "New task: dark mode token audit",             user: "AK", time: "3h ago",   accent: "text-primary"         },
+  { icon: IconMessage,       text: "Comment thread on mobile onboarding flow",    user: "JL", time: "5h ago",   accent: "text-muted-foreground" },
+  { icon: IconActivity,      text: "Component library review session started",    user: "SR", time: "1d ago",   accent: "text-muted-foreground" },
 ];
 
 // Radial chart data — one bar per weekday
@@ -163,7 +163,7 @@ function MarketingPage({ onNavigate }: { onNavigate: () => void }) {
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <Button size="lg" onClick={onNavigate}>
             Get started free
-            <ArrowRight className="h-4 w-4" />
+            <IconArrowRight className="h-4 w-4" />
           </Button>
           <Button size="lg" variant="outline" onClick={onNavigate}>
             View on GitHub
@@ -250,7 +250,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
       <div className="flex items-center justify-between px-6 py-5 border-b">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onNavigate} aria-label="Back to landing page">
-            <ArrowLeft className="h-4 w-4" />
+            <IconArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-xl font-bold tracking-tight">Projects</h1>
@@ -258,7 +258,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           </div>
         </div>
         <Button>
-          <Plus className="h-4 w-4" />
+          <IconPlus className="h-4 w-4" />
           New project
         </Button>
       </div>
@@ -355,7 +355,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
 
             <div className="px-3 pt-3 mt-1 border-t">
               <Button variant="outline" size="sm" className="w-full text-xs">
-                <Plus className="h-3 w-3" />
+                <IconPlus className="h-3 w-3" />
                 Invite member
               </Button>
             </div>
@@ -387,7 +387,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           </CardContent>
           <CardFooter className="flex-col gap-1 pb-4 pt-2 text-xs">
             <div className="flex items-center gap-1.5 font-medium">
-              Trending up this week <TrendingUp className="h-3.5 w-3.5" />
+              Trending up this week <IconTrendingUp className="h-3.5 w-3.5" />
             </div>
             <div className="flex gap-3">
               {velocityChartData.map((d) => (
@@ -432,7 +432,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Priority queue</CardTitle>
-              <Flame className="h-3.5 w-3.5 text-orange-500" />
+              <IconFlame className="h-3.5 w-3.5 text-orange-500" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-2 pb-2">
@@ -461,7 +461,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Deadlines</CardTitle>
-              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconClock className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
@@ -492,7 +492,7 @@ function WorkspacePage({ onNavigate }: { onNavigate: () => void }) {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">By category</CardTitle>
-              <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconTrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">

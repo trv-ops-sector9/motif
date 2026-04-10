@@ -34,6 +34,7 @@
   --chart-4: oklch(0.60 0.12 240);
   --chart-5: oklch(0.72 0.15 310);
   --radius: 0.25rem;
+  --spacing: 0.22rem;
   --border-width: 1px;
   --letter-spacing: -0.005em;
   --font-weight-heading: 600;

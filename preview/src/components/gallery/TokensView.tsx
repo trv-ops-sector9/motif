@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Download, Check, RotateCcw } from "lucide-react";
+import { IconDownload, IconCheck, IconRotate } from "@tabler/icons-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -141,7 +141,7 @@ function DurationSection() {
             )}
             title="Reset all durations to theme defaults"
           >
-            <RotateCcw className="h-3 w-3" />
+            <IconRotate className="h-3 w-3" />
             Reset all
           </button>
         </div>
@@ -186,7 +186,7 @@ function DurationSection() {
                     className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none"
                     title="Reset to theme default"
                   >
-                    <RotateCcw className="h-3 w-3" />
+                    <IconRotate className="h-3 w-3" />
                   </button>
                 )}
               </div>
@@ -763,7 +763,7 @@ function ExportButton() {
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >
-      {done ? <Check className="h-3.5 w-3.5" /> : <Download className="h-3.5 w-3.5" />}
+      {done ? <IconCheck className="h-3.5 w-3.5" /> : <IconDownload className="h-3.5 w-3.5" />}
       {done ? "Downloaded" : "Download tokens"}
     </button>
   );
@@ -808,7 +808,7 @@ export function TokensView() {
         <div className="mt-4">
           <PrinciplesSection />
         </div>
-        <div className="grid sm:grid-cols-2 gap-4 items-start mt-4">
+        <div className="grid sm:grid-cols-2 gap-4 mt-4">
           <BridgeSection />
           <ArchetypesSection />
         </div>

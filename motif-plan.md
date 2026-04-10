@@ -118,54 +118,95 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 
 ---
 
-## 9. README & Portfolio Presentation
+## ~~9. Icons & Card Alignment~~ ✓
 
-> The README is the first thing a hiring manager sees on GitHub.
-
-- [ ] Add a hero screenshot or GIF showing theme switching in action
-- [ ] Add live demo link (https://trv-ops-sector9.github.io/motif/)
-- [ ] Tell the story: what Motif is, why it exists, what it demonstrates (motion tokens, design systems, Tailwind v4, theming architecture)
-- [ ] Commit & PR: `feature/readme-polish`
+> Branch: `feature/final-polish`. Consolidated icons to Tabler (sidebar, Fleet Ops, Marketing, Tokens, Settings, Auth, ThemeSwitcher). Kept Lucide in ComponentGallery demos and shadcn/ui primitives. Widened gallery to `max-w-5xl`, restructured to 2-column card grid.
 
 ---
 
-## 10. D1/D3 — Icons & Card Alignment
+## ~~10. Per-Theme Spacing~~ ✓
 
-> ~~D2 (Drive theme identity) completed in 8c.~~
-
-- [ ] D1: Icons — evaluate Tabler (already imported), Phosphor, or custom SVG per domain
-- [ ] D3: Component card alignment
-- [ ] Commit & PR: `feature/icon-polish`
+> Removed global spacing slider. Added `--spacing` per theme: Drive/Vapor `0.22rem`, Dark Minimal `0.23rem`, Brutalist `0.24rem`, Default `0.25rem`, Lux `0.3rem`. Fixed `:root` override bug in index.css.
 
 ---
 
-## 11. Fleet Ops Design Polish (BIG pass)
+## 11. P0 — First Impression
 
-> Make the flagship page look sick. This is the centerpiece for the AV startup application.
+> These make the app look broken or generic on first load. Do first.
 
-- [ ] Full design audit of FleetOpsBlock — layout density, card hierarchy, data presentation
-- [ ] Visual polish — shadows, spacing, typography, color usage across all themes
-- [ ] Map, charts, tables, stat cards — everything gets a quality pass
-- [ ] Commit & PR: `feature/fleet-polish`
-
----
-
-## 12. Mobile Spot-Check
-
-> They might open it on their phone. It shouldn't fall apart.
-
-- [ ] Test all views at mobile (375px) and tablet (768px) breakpoints
-- [ ] Fix any layout breaks or overflow issues — don't over-engineer, just don't be broken
-- [ ] Verify theme switcher and sidebar work on small screens
-- [ ] Commit & PR: `feature/responsive-fixes`
+- [ ] 11a: Default to Dark Minimal + Standard on first load (not stock shadcn Default)
+- [ ] 11b: Default dark theme contrast — borders and secondary bg barely visible
+- [ ] 11c: Default card shadows — too puffy/Fluent, tighten them
 
 ---
 
-## 13. Final Cleanup
+## 12. P1 — Component Gallery Polish
 
-- [ ] Update `CLAUDE.md` — reflect current state, any new conventions
+> The gallery was just restructured to card grid. These finish the job.
+
+- [ ] 12a: Variant controls sticky to card bottom — controls jump when changing options
+- [ ] 12b: Card component demo — needs better design, more variants
+- [ ] 12c: Badge with icon — remove inline icon, make it a variant toggle
+- [ ] 12d: Gallery header — add "Component Gallery" sub-header, match Tokens page style
+
+---
+
+## 13. P2 — Token Page
+
+- [ ] 13a: Evaluate card wrappers — do they add value or just visual noise? Consider stripping to flat sections with dividers.
+
+---
+
+## 14. P3 — Fleet Ops (flagship for AV startup)
+
+> Make the flagship page look sick. This is the centerpiece.
+
+- [ ] 14a: Combine stat cards + map into single dense row
+- [ ] 14b: Map SVG redesign — current design is weak
+- [ ] 14c: Clickable vehicle detail entry higher up (not buried in table)
+- [ ] 14d: Consider a third Fleet page (already have overview + vehicle detail — maybe fleet analytics or route planning)
+
+---
+
+## 15. P4 — Scope Decisions (need user call)
+
+- [ ] 15a: Cut or keep Dashboard/Auth/Settings blocks
+- [ ] 15b: Differentiate Marketing workspace from Fleet Ops
+- [ ] 15c: Avatar component — fix styling or remove
+
+---
+
+## 16. Component Design & Motion Audit
+
+> Added to plan — detailed audit of component design and motion token usage across all views.
+
+- [ ] 16a: Full component design audit
+- [ ] 16b: Motion token usage review
+
+---
+
+## 17. Mobile Spot-Check
+
+- [ ] Test all views at 375px and 768px breakpoints
+- [ ] Fix layout breaks — don't over-engineer, just don't be broken
+- [ ] Verify sidebar and theme switcher on small screens
+
+---
+
+## 18. Final Cleanup
+
+- [ ] Update `CLAUDE.md` — reflect current state
 - [ ] Final `npm run build` and `npm run lint` — zero warnings
-- [ ] Commit & PR: `feature/final-cleanup`
+
+---
+
+## 19. README & Portfolio Presentation
+
+> Skipped earlier — do last.
+
+- [ ] Hero screenshot or GIF showing theme switching
+- [ ] Live demo link
+- [ ] Tell the story: what Motif is, why it exists, what it demonstrates
 
 ---
 

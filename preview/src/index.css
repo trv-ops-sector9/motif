@@ -309,10 +309,6 @@
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.04);
   color-scheme: light;
-  /* Tailwind v4 spacing base — all spacing utilities use calc(var(--spacing) * N).
-     Changing this value at runtime scales every gap, padding, margin, and size
-     token proportionally across the entire UI. */
-  --spacing: 0.25rem;
 }
 
 * {

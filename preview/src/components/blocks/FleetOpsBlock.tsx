@@ -10,26 +10,26 @@ import {
 } from "@tanstack/react-table";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 import {
-  Car,
-  Battery,
-  MapPin,
-  Clock,
-  AlertTriangle,
-  Activity,
-  Navigation,
-  Gauge,
-  ArrowUpDown,
-  Search,
-  Shield,
-  Radio,
-  ArrowLeft,
-  Thermometer,
-  Cpu,
-  Eye,
-  Wifi,
-  Flame,
-  Map,
-} from "lucide-react";
+  IconCarSuv,
+  IconBatteryCharging,
+  IconMapPin,
+  IconClock,
+  IconAlertTriangle,
+  IconActivity,
+  IconNavigation,
+  IconGauge,
+  IconArrowsUpDown,
+  IconSearch,
+  IconShield,
+  IconRadar,
+  IconArrowLeft,
+  IconTemperature,
+  IconCpu,
+  IconEye,
+  IconWifi,
+  IconFlame,
+  IconMap,
+} from "@tabler/icons-react";
 
 import { cssMs, cssCurve } from "@/lib/motion";
 import { Badge } from "@/components/ui/badge";
@@ -154,7 +154,7 @@ const columns: ColumnDef<Vehicle>[] = [
     header: ({ column }) => (
       <Button variant="ghost" size="sm" className="-ml-3 h-8" onClick={() => column.toggleSorting()}>
         Vehicle
-        <ArrowUpDown className="ml-1 h-3 w-3" />
+        <IconArrowsUpDown className="ml-1 h-3 w-3" />
       </Button>
     ),
     cell: ({ row }) => <span className="font-mono text-xs font-semibold">{row.getValue("id")}</span>,
@@ -172,7 +172,7 @@ const columns: ColumnDef<Vehicle>[] = [
     header: "Location",
     cell: ({ row }) => (
       <div className="flex items-center gap-1.5">
-        <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
+        <IconMapPin className="h-3 w-3 text-muted-foreground shrink-0" />
         <span className="text-xs truncate max-w-[180px]">{row.getValue("location")}</span>
       </div>
     ),
@@ -182,14 +182,14 @@ const columns: ColumnDef<Vehicle>[] = [
     header: ({ column }) => (
       <Button variant="ghost" size="sm" className="-ml-3 h-8" onClick={() => column.toggleSorting()}>
         Battery
-        <ArrowUpDown className="ml-1 h-3 w-3" />
+        <IconArrowsUpDown className="ml-1 h-3 w-3" />
       </Button>
     ),
     cell: ({ row }) => {
       const pct = row.getValue("battery") as number;
       return (
         <div className="flex items-center gap-2">
-          <Battery className={`h-3.5 w-3.5 shrink-0 ${pct < 30 ? "text-destructive" : pct < 50 ? "text-orange-500" : "text-green-500"}`} />
+          <IconBatteryCharging className={`h-3.5 w-3.5 shrink-0 ${pct < 30 ? "text-destructive" : pct < 50 ? "text-orange-500" : "text-green-500"}`} />
           <div className="flex items-center gap-2 min-w-[4.5rem]">
             <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
               <div
@@ -216,7 +216,7 @@ const columns: ColumnDef<Vehicle>[] = [
     header: "Last Ping",
     cell: ({ row }) => (
       <div className="flex items-center gap-1.5">
-        <Radio className="h-3 w-3 text-muted-foreground shrink-0" />
+        <IconRadar className="h-3 w-3 text-muted-foreground shrink-0" />
         <span className="text-xs text-muted-foreground">{row.getValue("lastPing")}</span>
       </div>
     ),
@@ -441,16 +441,16 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
 // ─── Stat cards ──────────────────────────────────────────────────────────────
 
 const STATS = [
-  { label: "Active Vehicles",  value: "6",   icon: Car,        delta: "+2 vs yesterday" },
-  { label: "Trips Today",      value: "847", icon: Navigation, delta: "+12% vs avg"     },
-  { label: "Avg Wait Time",    value: "3.2m",icon: Clock,      delta: "-18s vs last wk" },
-  { label: "Fleet Utilization", value: "72%", icon: Gauge,      delta: "+4pp vs target"  },
+  { label: "Active Vehicles",  value: "6",   icon: IconCarSuv,      delta: "+2 vs yesterday" },
+  { label: "Trips Today",      value: "847", icon: IconNavigation,  delta: "+12% vs avg"     },
+  { label: "Avg Wait Time",    value: "3.2m",icon: IconClock,       delta: "-18s vs last wk" },
+  { label: "Fleet Utilization", value: "72%", icon: IconGauge,      delta: "+4pp vs target"  },
 ] as const;
 
 const FLEET_SUMMARY = [
-  { icon: Activity,      label: "active",             count: VEHICLES.filter((v) => v.status === "Active").length },
-  { icon: Battery,       label: "charging",           count: VEHICLES.filter((v) => v.status === "Charging").length },
-  { icon: AlertTriangle, label: "offline/maintenance", count: VEHICLES.filter((v) => v.status === "Maintenance" || v.status === "Offline").length },
+  { icon: IconActivity,       label: "active",             count: VEHICLES.filter((v) => v.status === "Active").length },
+  { icon: IconBatteryCharging, label: "charging",           count: VEHICLES.filter((v) => v.status === "Charging").length },
+  { icon: IconAlertTriangle,  label: "offline/maintenance", count: VEHICLES.filter((v) => v.status === "Maintenance" || v.status === "Offline").length },
 ];
 
 // Status breakdown for fleet health card
@@ -510,12 +510,12 @@ const vehicleTripConfig = {
 } satisfies ChartConfig;
 
 const SENSOR_DATA = [
-  { label: "Lidar",       icon: Eye,          value: "Nominal", status: "ok" },
-  { label: "Camera Array", icon: Eye,          value: "6/6 online", status: "ok" },
-  { label: "CPU Temp",     icon: Thermometer,  value: "62°C", status: "ok" },
-  { label: "GPU Load",     icon: Cpu,          value: "41%", status: "ok" },
-  { label: "Connectivity", icon: Wifi,         value: "5G — 42ms", status: "ok" },
-  { label: "IMU",          icon: Activity,     value: "Calibrated", status: "ok" },
+  { label: "Lidar",       icon: IconEye,         value: "Nominal", status: "ok" },
+  { label: "Camera Array", icon: IconEye,         value: "6/6 online", status: "ok" },
+  { label: "CPU Temp",     icon: IconTemperature, value: "62°C", status: "ok" },
+  { label: "GPU Load",     icon: IconCpu,         value: "41%", status: "ok" },
+  { label: "Connectivity", icon: IconWifi,        value: "5G — 42ms", status: "ok" },
+  { label: "IMU",          icon: IconActivity,    value: "Calibrated", status: "ok" },
 ] as const;
 
 const VEHICLE_EVENTS = [
@@ -642,7 +642,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Recent Alerts</CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
+              <IconShield className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="flex-1 pt-0">
@@ -666,7 +666,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
                         animationFillMode: "both",
                       }}
                     >
-                      <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
+                      <IconAlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs leading-snug">{alert.message}</p>
                         <div className="flex items-center gap-2 mt-1">
@@ -694,7 +694,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Fleet Health</CardTitle>
-              <Activity className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconActivity className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
@@ -717,7 +717,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Response Queue</CardTitle>
-              <Flame className="h-3.5 w-3.5 text-orange-500" />
+              <IconFlame className="h-3.5 w-3.5 text-orange-500" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-2 pb-2">
@@ -741,7 +741,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Zone Activity</CardTitle>
-              <Map className="h-3.5 w-3.5 text-muted-foreground" />
+              <IconMap className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
@@ -773,7 +773,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
               <CardDescription className="text-xs">{VEHICLES.length} vehicles in fleet</CardDescription>
             </div>
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search vehicles..."
                 value={globalFilter}
@@ -853,7 +853,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
       {/* Header */}
       <div className="flex items-center gap-3" style={{ animation: "var(--anim-fade-in)" }}>
         <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back to fleet overview">
-          <ArrowLeft className="h-4 w-4" />
+          <IconArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <div className="flex items-center gap-2">
@@ -861,7 +861,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
             <Badge variant={STATUS_VARIANT[vehicle.status]}>{vehicle.status}</Badge>
           </div>
           <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1.5">
-            <MapPin className="h-3 w-3" />
+            <IconMapPin className="h-3 w-3" />
             {vehicle.location}
           </p>
         </div>
@@ -870,10 +870,10 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
       {/* Vital stats row */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {([
-          { label: "Battery", value: `${vehicle.battery}%`, icon: Battery, sub: vehicle.battery < 30 ? "Low — charge soon" : "Healthy" },
-          { label: "Current Trip", value: vehicle.currentTrip, icon: Navigation, sub: vehicle.currentTrip === "—" ? "No active trip" : "In progress" },
-          { label: "Last Ping", value: vehicle.lastPing, icon: Radio, sub: "Telemetry active" },
-          { label: "Today's Distance", value: "47.3 mi", icon: Gauge, sub: "12 trips completed" },
+          { label: "Battery", value: `${vehicle.battery}%`, icon: IconBatteryCharging, sub: vehicle.battery < 30 ? "Low — charge soon" : "Healthy" },
+          { label: "Current Trip", value: vehicle.currentTrip, icon: IconNavigation, sub: vehicle.currentTrip === "—" ? "No active trip" : "In progress" },
+          { label: "Last Ping", value: vehicle.lastPing, icon: IconRadar, sub: "Telemetry active" },
+          { label: "Today's Distance", value: "47.3 mi", icon: IconGauge, sub: "12 trips completed" },
         ] as const).map((s, i) => {
           const Icon = s.icon;
           return (
@@ -1012,7 +1012,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                   animationFillMode: "both",
                 }}
               >
-                <Activity className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${evt.type === "warning" ? "text-orange-500" : "text-muted-foreground"}`} />
+                <IconActivity className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${evt.type === "warning" ? "text-orange-500" : "text-muted-foreground"}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs leading-snug">{evt.event}</p>
                   <span className="text-[10px] text-muted-foreground">{evt.time}</span>
@@ -1027,7 +1027,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">Alerts for {vehicle.id}</CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
+              <IconShield className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0 space-y-1">
@@ -1043,7 +1043,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                     animationFillMode: "both",
                   }}
                 >
-                  <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
+                  <IconAlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs leading-snug">{alert.message}</p>
                     <span className="text-[10px] text-muted-foreground">{alert.time}</span>

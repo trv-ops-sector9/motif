@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -22,22 +22,9 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 /* ── Shared layout helpers ── */
 
-function SectionHeading({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="mb-6">
-      <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-      <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
-    </div>
-  );
-}
-
-function Section({ children }: { children: React.ReactNode }) {
-  return (
-    <section className="border-b pb-10 mb-10 last:border-0 last:mb-0 last:pb-0">
-      {children}
-    </section>
-  );
-}
+// Consistent tighter padding for component cards (matches TokensView)
+const hdrCn = "px-4 pt-4 pb-3";
+const bodyCn = "px-4 pb-4 pt-1";
 
 function ControlGroup({ label, name, value, options, onChange }: {
   label: string;
@@ -81,7 +68,7 @@ function ButtonDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Button variant={variant} size={size} disabled={isDisabled}>
           {isLoading
             ? <><Loader2 className="h-4 w-4 animate-spin" />{!isIconOnly && "Loading…"}</>
@@ -161,7 +148,7 @@ function CardDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Card
           className="w-72 overflow-hidden select-none"
           style={{
@@ -244,7 +231,7 @@ function DialogDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Dialog open={open} onOpenChange={handleOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">Open dialog</Button>
@@ -308,7 +295,7 @@ function DialogDemo() {
 function DropdownMenuDemo() {
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2">
@@ -360,7 +347,7 @@ function TabsDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Tabs defaultValue="overview" className="w-full max-w-lg">
           <TabsList>
             {tabs.map(t => (
@@ -410,7 +397,7 @@ const FAQ_ITEMS = [
   {
     value: "spacing",
     question: "What controls the global spacing?",
-    answer: "Tailwind v4 generates all spacing utilities as calc(var(--spacing) * N). The sidebar slider sets --spacing on :root at runtime, scaling every gap and padding simultaneously.",
+    answer: "Tailwind v4 generates all spacing utilities as calc(var(--spacing) * N). Each visual theme sets its own --spacing value — from tight (Drive) to generous (Lux) — so density adapts automatically when you switch themes.",
   },
   {
     value: "accessibility",
@@ -424,7 +411,7 @@ function AccordionDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         {mode === "single" ? (
           <Accordion type="single" collapsible defaultValue="what-is-it" className="w-full max-w-lg">
             {FAQ_ITEMS.map((item) => (
@@ -480,7 +467,7 @@ function ToastDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Button variant="outline" onClick={fireToast}>Fire toast</Button>
       </div>
       <div className="space-y-4">
@@ -508,7 +495,7 @@ function TooltipDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -546,7 +533,7 @@ function SwitchDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         {layout === "inline" ? (
           <div className="flex items-center gap-3">
             <Switch
@@ -613,7 +600,7 @@ function InputDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <div className="w-full max-w-xs space-y-1.5">
           <Label htmlFor="input-demo" className={isError ? "text-destructive" : ""}>
             Email address
@@ -675,7 +662,7 @@ function SelectDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <div className="w-full max-w-xs space-y-1.5">
           <Label>Assign to</Label>
           <Select value={value} onValueChange={setValue} disabled={disabled === "disabled"}>
@@ -720,7 +707,7 @@ function CheckboxDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         {layout === "single" ? (
           <div className="flex items-center gap-2.5">
             <Checkbox id="checkbox-single" disabled={disabled === "disabled"} />
@@ -775,7 +762,7 @@ function BadgeDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <div className="flex items-center gap-3">
           <Badge variant={variant}>Badge</Badge>
           <Badge variant={variant}>
@@ -812,7 +799,7 @@ function AvatarDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <div className="flex items-center gap-4">
           <Avatar className={sizeClass}>
             {content === "image" ? (
@@ -865,7 +852,7 @@ function AlertDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Alert variant={type === "destructive" ? "destructive" : "default"} className="max-w-md">
           {type === "destructive" ? <AlertCircle className="h-4 w-4" /> : <Info className="h-4 w-4" />}
           <AlertTitle>{type === "destructive" ? "Error" : "Heads up"}</AlertTitle>
@@ -899,7 +886,7 @@ function DrawerDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <Drawer>
           <DrawerTrigger asChild>
             <Button variant="outline">Open drawer</Button>
@@ -958,7 +945,7 @@ function ToggleGroupDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         {type === "multiple" ? (
           <ToggleGroup type="multiple" variant={variant} size={size}>
             <ToggleGroupItem value="bold" aria-label="Toggle bold">
@@ -1024,7 +1011,7 @@ function ProgressDemo() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-xl border bg-muted/30 py-12 px-6">
+      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
         <div className="w-full max-w-xs space-y-2">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Progress</span>
@@ -1114,156 +1101,146 @@ function GalleryHeader() {
   );
 }
 
+function DemoCard({ title, description, children, className }: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Card className={className}>
+      <CardHeader className={hdrCn}>
+        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+        <CardDescription className="text-xs">{description}</CardDescription>
+      </CardHeader>
+      <CardContent className={bodyCn}>
+        {children}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function ComponentGallery() {
   return (
     <div>
       <GalleryHeader />
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="p-6 space-y-6 max-w-5xl">
 
-      <Section>
-        <SectionHeading
-          title="Accordion"
-          description="Collapsible content sections with height animation — no spring curves here, only smooth easing."
-        />
-        <AccordionDemo />
-      </Section>
+        {/* Row 1: Accordion (full width — wide content) */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard
+            title="Accordion"
+            description="Height animation — no spring curves, only smooth easing."
+            className="sm:col-span-2"
+          >
+            <AccordionDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Alert"
-          description="Inline alert banners — info and destructive variants."
-        />
-        <AlertDemo />
-      </Section>
+        {/* Row 2: Alert + Avatar */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Alert" description="Inline banners — info and destructive variants.">
+            <AlertDemo />
+          </DemoCard>
+          <DemoCard title="Avatar" description="Image or fallback initials at different sizes.">
+            <AvatarDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Avatar"
-          description="User avatar with image or fallback initials at different sizes."
-        />
-        <AvatarDemo />
-      </Section>
+        {/* Row 3: Badge + Checkbox */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Badge" description="Inline status labels — all semantic color variants.">
+            <BadgeDemo />
+          </DemoCard>
+          <DemoCard title="Checkbox" description="Background and check transition via motion tokens.">
+            <CheckboxDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Badge"
-          description="Inline status labels — all semantic color variants."
-        />
-        <BadgeDemo />
-      </Section>
+        {/* Row 4: Button (full width — 4 control groups) */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard
+            title="Button"
+            description="All variants, sizes, and states — color transitions use motion token timing."
+            className="sm:col-span-2"
+          >
+            <ButtonDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Button"
-          description="All variants, sizes, and states — color transitions use motion token timing."
-        />
-        <ButtonDemo />
-      </Section>
+        {/* Row 5: Card (full width — interactive demo) */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard
+            title="Card"
+            description="Shadow elevation — hover lift and press use motion token curves."
+            className="sm:col-span-2"
+          >
+            <CardDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Card"
-          description="Interactive card with shadow elevation — hover lift and press use motion token curves."
-        />
-        <CardDemo />
-      </Section>
+        {/* Row 6: Dialog + Drawer */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Dialog" description="Modal overlay with fade-in and expand animation.">
+            <DialogDemo />
+          </DemoCard>
+          <DemoCard title="Drawer" description="Slides from any edge with motion tokens.">
+            <DrawerDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Checkbox"
-          description="Checkbox with label — background and check transition via motion tokens."
-        />
-        <CheckboxDemo />
-      </Section>
+        {/* Row 7: Dropdown Menu + Input */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Dropdown Menu" description="Slide animation responds to motion theme.">
+            <DropdownMenuDemo />
+          </DemoCard>
+          <DemoCard title="Input" description="Text input with label, error state, and adornments.">
+            <InputDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Dialog"
-          description="Modal overlay with fade-in and expand animation — form, loading, and success states."
-        />
-        <DialogDemo />
-      </Section>
+        {/* Row 8: Progress + Select */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Progress" description="Fill animates with motion token duration and easing.">
+            <ProgressDemo />
+          </DemoCard>
+          <DemoCard title="Select" description="Grouped options — uses slide animation tokens.">
+            <SelectDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Drawer"
-          description="Overlay panel — slides from any edge with motion tokens, swipe to dismiss."
-        />
-        <DrawerDemo />
-      </Section>
+        {/* Row 9: Switch + Toast */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Switch" description="Thumb slides with motion token timing.">
+            <SwitchDemo />
+          </DemoCard>
+          <DemoCard title="Toast" description="Sonner notifications — animate in and out.">
+            <ToastDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Dropdown Menu"
-          description="Contextual menu — slide animation on open and close responds to motion theme."
-        />
-        <DropdownMenuDemo />
-      </Section>
+        {/* Row 10: Tabs (full width — wide content) */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard
+            title="Tabs"
+            description="Sliding pill indicator — more tabs means more travel for the animation."
+            className="sm:col-span-2"
+          >
+            <TabsDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Input"
-          description="Text input with label, error state, and adornment options."
-        />
-        <InputDemo />
-      </Section>
+        {/* Row 11: Toggle Group + Tooltip */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <DemoCard title="Toggle Group" description="Segmented toggles — color transitions use motion tokens.">
+            <ToggleGroupDemo />
+          </DemoCard>
+          <DemoCard title="Tooltip" description="Hover tooltip with configurable placement.">
+            <TooltipDemo />
+          </DemoCard>
+        </div>
 
-      <Section>
-        <SectionHeading
-          title="Progress"
-          description="Determinate progress bar — fill animates with motion token duration and easing."
-        />
-        <ProgressDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Select"
-          description="Dropdown select with grouped options — uses slide animation tokens."
-        />
-        <SelectDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Switch"
-          description="Toggle switch — thumb slides with motion token timing."
-        />
-        <SwitchDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Tabs"
-          description="Tab switcher with sliding pill indicator — more tabs means more travel for the animation."
-        />
-        <TabsDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Toast"
-          description="Sonner notifications — fire different types to see them animate in and out."
-        />
-        <ToastDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Toggle Group"
-          description="Segmented toggle buttons — color transitions use motion token timing."
-        />
-        <ToggleGroupDemo />
-      </Section>
-
-      <Section>
-        <SectionHeading
-          title="Tooltip"
-          description="Hover tooltip with configurable placement — uses slide animation tokens."
-        />
-        <TooltipDemo />
-      </Section>
-    </div>
+      </div>
     </div>
   );
 }
