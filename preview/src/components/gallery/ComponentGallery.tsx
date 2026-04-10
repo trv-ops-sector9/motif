@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 
 /* ── Shared layout helpers ── */
 
@@ -67,8 +68,8 @@ function ButtonDemo() {
   const isIconOnly = iconMode === "only" || size === "icon";
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Button variant={variant} size={size} disabled={isDisabled}>
           {isLoading
             ? <><Loader2 className="h-4 w-4 animate-spin" />{!isIconOnly && "Loading…"}</>
@@ -78,7 +79,7 @@ function ButtonDemo() {
           }
         </Button>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Variant" name="variant" value={variant}
           onChange={v => setVariant(v as BtnVariant)}
@@ -147,8 +148,8 @@ function CardDemo() {
   `;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Card
           className="w-72 overflow-hidden select-none"
           style={{
@@ -181,7 +182,7 @@ function CardDemo() {
           </CardHeader>
         </Card>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Shadow" name="card-elevation" value={elevation}
           onChange={v => setElevation(v as CardElevation)}
@@ -230,8 +231,8 @@ function DialogDemo() {
   const sizeClass = size === "sm" ? "sm:max-w-sm" : size === "lg" ? "sm:max-w-xl" : "sm:max-w-md";
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Dialog open={open} onOpenChange={handleOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">Open dialog</Button>
@@ -275,7 +276,7 @@ function DialogDemo() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Size" name="dialog-size" value={size}
           onChange={v => setSize(v as DialogSize)}
@@ -294,8 +295,8 @@ function DialogDemo() {
 
 function DropdownMenuDemo() {
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2">
@@ -346,8 +347,8 @@ function TabsDemo() {
   const tabs = allTabs.slice(0, n);
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Tabs defaultValue="overview" className="w-full max-w-lg">
           <TabsList>
             {tabs.map(t => (
@@ -363,7 +364,7 @@ function TabsDemo() {
           ))}
         </Tabs>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Tabs" name="tab-count" value={count}
           onChange={v => setCount(v as TabCount)}
@@ -410,8 +411,8 @@ function AccordionDemo() {
   const [mode, setMode] = useState<AccordionMode>("single");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         {mode === "single" ? (
           <Accordion type="single" collapsible defaultValue="what-is-it" className="w-full max-w-lg">
             {FAQ_ITEMS.map((item) => (
@@ -432,7 +433,7 @@ function AccordionDemo() {
           </Accordion>
         )}
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Mode" name="accordion-mode" value={mode}
           onChange={v => setMode(v as AccordionMode)}
@@ -466,11 +467,11 @@ function ToastDemo() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Button variant="outline" onClick={fireToast}>Fire toast</Button>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Type" name="toast-type" value={type}
           onChange={v => setType(v as ToastType)}
@@ -494,8 +495,8 @@ function TooltipDemo() {
   const [side, setSide] = useState<TooltipSide>("top");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -507,7 +508,7 @@ function TooltipDemo() {
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Side" name="tooltip-side" value={side}
           onChange={v => setSide(v as TooltipSide)}
@@ -532,8 +533,8 @@ function SwitchDemo() {
   const [layout, setLayout] = useState<SwitchLayout>("inline");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         {layout === "inline" ? (
           <div className="flex items-center gap-3">
             <Switch
@@ -564,7 +565,7 @@ function SwitchDemo() {
           </div>
         )}
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Layout" name="switch-layout" value={layout}
           onChange={v => setLayout(v as SwitchLayout)}
@@ -599,8 +600,8 @@ function InputDemo() {
   const isDisabled = state === "disabled";
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <div className="w-full max-w-xs space-y-1.5">
           <Label htmlFor="input-demo" className={isError ? "text-destructive" : ""}>
             Email address
@@ -630,7 +631,7 @@ function InputDemo() {
           )}
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="State" name="input-state" value={state}
           onChange={v => setState(v as InputState)}
@@ -661,8 +662,8 @@ function SelectDemo() {
   const [disabled, setDisabled] = useState<"enabled" | "disabled">("enabled");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <div className="w-full max-w-xs space-y-1.5">
           <Label>Assign to</Label>
           <Select value={value} onValueChange={setValue} disabled={disabled === "disabled"}>
@@ -684,7 +685,7 @@ function SelectDemo() {
           </Select>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="State" name="select-state" value={disabled}
           onChange={v => setDisabled(v as "enabled" | "disabled")}
@@ -706,8 +707,8 @@ function CheckboxDemo() {
   const [layout, setLayout] = useState<CheckboxLayout>("single");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         {layout === "single" ? (
           <div className="flex items-center gap-2.5">
             <Checkbox id="checkbox-single" disabled={disabled === "disabled"} />
@@ -732,7 +733,7 @@ function CheckboxDemo() {
           </div>
         )}
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Layout" name="checkbox-layout" value={layout}
           onChange={v => setLayout(v as CheckboxLayout)}
@@ -761,8 +762,8 @@ function BadgeDemo() {
   const [variant, setVariant] = useState<BadgeVariant>("default");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <div className="flex items-center gap-3">
           <Badge variant={variant}>Badge</Badge>
           <Badge variant={variant}>
@@ -771,7 +772,7 @@ function BadgeDemo() {
           </Badge>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Variant" name="badge-variant" value={variant}
           onChange={v => setVariant(v as BadgeVariant)}
@@ -798,8 +799,8 @@ function AvatarDemo() {
   const sizeClass = size === "sm" ? "h-6 w-6 text-[10px]" : size === "lg" ? "h-12 w-12 text-base" : "h-8 w-8 text-sm";
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <div className="flex items-center gap-4">
           <Avatar className={sizeClass}>
             {content === "image" ? (
@@ -821,7 +822,7 @@ function AvatarDemo() {
           </Avatar>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Size" name="avatar-size" value={size}
           onChange={v => setSize(v as AvatarSize)}
@@ -851,8 +852,8 @@ function AlertDemo() {
   const [type, setType] = useState<AlertType>("info");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Alert variant={type === "destructive" ? "destructive" : "default"} className="max-w-md">
           {type === "destructive" ? <AlertCircle className="h-4 w-4" /> : <Info className="h-4 w-4" />}
           <AlertTitle>{type === "destructive" ? "Error" : "Heads up"}</AlertTitle>
@@ -864,7 +865,7 @@ function AlertDemo() {
           </AlertDescription>
         </Alert>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Variant" name="alert-variant" value={type}
           onChange={v => setType(v as AlertType)}
@@ -885,8 +886,8 @@ function DrawerDemo() {
   const [side, setSide] = useState<DrawerSide>("right");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Drawer>
           <DrawerTrigger asChild>
             <Button variant="outline">Open drawer</Button>
@@ -917,7 +918,7 @@ function DrawerDemo() {
           </DrawerContent>
         </Drawer>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Side" name="drawer-side" value={side}
           onChange={v => setSide(v as DrawerSide)}
@@ -944,8 +945,8 @@ function ToggleGroupDemo() {
   const [type, setType] = useState<ToggleType>("multiple");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         {type === "multiple" ? (
           <ToggleGroup type="multiple" variant={variant} size={size}>
             <ToggleGroupItem value="bold" aria-label="Toggle bold">
@@ -972,7 +973,7 @@ function ToggleGroupDemo() {
           </ToggleGroup>
         )}
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Variant" name="toggle-variant" value={variant}
           onChange={v => setVariant(v as ToggleVariant)}
@@ -1010,8 +1011,8 @@ function ProgressDemo() {
   const [animated, setAnimated] = useState<"static" | "animated">("animated");
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-center rounded-lg bg-muted/30 py-6 px-4">
+    <div className="flex flex-col flex-1 gap-8">
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <div className="w-full max-w-xs space-y-2">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Progress</span>
@@ -1030,7 +1031,7 @@ function ProgressDemo() {
           </div>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="mt-auto space-y-4">
         <ControlGroup
           label="Value" name="progress-value" value={String(value)}
           onChange={v => setValue(parseInt(v))}
@@ -1108,12 +1109,12 @@ function DemoCard({ title, description, children, className }: {
   className?: string;
 }) {
   return (
-    <Card className={className}>
+    <Card className={cn("h-full", className)}>
       <CardHeader className={hdrCn}>
         <CardTitle className="text-sm font-semibold">{title}</CardTitle>
         <CardDescription className="text-xs">{description}</CardDescription>
       </CardHeader>
-      <CardContent className={bodyCn}>
+      <CardContent className={cn(bodyCn, "flex-1 flex flex-col")}>
         {children}
       </CardContent>
     </Card>
