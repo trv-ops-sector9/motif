@@ -38,8 +38,7 @@ function useTokenValues() {
         if (
           m.type === "attributes" &&
           (m.attributeName === "data-motion-theme" ||
-            m.attributeName === "data-theme" ||
-            m.attributeName === "style")
+            m.attributeName === "data-theme")
         ) {
           refresh();
         }
@@ -63,6 +62,27 @@ const DURATION_TOKENS = [
   { name: "--motion-duration-slower",     label: "Slower"     },
   { name: "--motion-duration-ultra-slow", label: "Ultra Slow" },
 ];
+
+/** Shared range input styles — custom track + thumb for theme consistency */
+const rangeTrackCn = cn(
+  "flex-1 cursor-pointer appearance-none rounded-full h-1.5",
+  "bg-muted",
+  /* webkit thumb */
+  "[&::-webkit-slider-thumb]:appearance-none",
+  "[&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5",
+  "[&::-webkit-slider-thumb]:rounded-full",
+  "[&::-webkit-slider-thumb]:bg-primary",
+  "[&::-webkit-slider-thumb]:cursor-pointer",
+  "[&::-webkit-slider-thumb]:transition-transform",
+  "[&::-webkit-slider-thumb]:hover:scale-125",
+  "[&::-webkit-slider-thumb]:shadow-sm",
+  /* firefox thumb */
+  "[&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5",
+  "[&::-moz-range-thumb]:rounded-full",
+  "[&::-moz-range-thumb]:border-0",
+  "[&::-moz-range-thumb]:bg-primary",
+  "[&::-moz-range-thumb]:cursor-pointer",
+);
 
 function DurationSection() {
   const { getCSSVar } = useTokenValues();
@@ -131,9 +151,12 @@ function DurationSection() {
       </CardHeader>
       <CardContent className={cn(bodyCn, "pb-6 space-y-2.5")}>
         {DURATION_TOKENS.map((token) => {
-          const raw = getCSSVar(token.name);
-          const ms = parseInt(raw) || 0;
           const isOverridden = token.name in overrides;
+          // Use React state for overridden values (instant), CSS query for defaults
+          const ms = isOverridden
+            ? overrides[token.name]
+            : parseInt(getCSSVar(token.name)) || 0;
+          const pct = Math.round(((ms - 10) / (1000 - 10)) * 100);
 
           return (
             <div key={token.name} className="flex items-center gap-3">
@@ -145,7 +168,10 @@ function DurationSection() {
                 step={10}
                 value={ms}
                 onChange={(e) => handleChange(token.name, Number(e.target.value))}
-                className="flex-1 cursor-pointer accent-primary h-2"
+                className={rangeTrackCn}
+                style={{
+                  background: `linear-gradient(to right, var(--primary) ${pct}%, var(--muted) ${pct}%)`,
+                }}
               />
               <div className="flex items-center gap-1.5 w-16 shrink-0 justify-end">
                 <code className={cn(

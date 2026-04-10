@@ -77,26 +77,75 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 ~~6. C3 — Archetypes section visual demos~~ skipped (user declined)
 ~~7. B1 — Fleet map redesign (topographic, route lines, heading indicators)~~ ✓
 
-**Branch: `feature/final-polish`** (in progress)
-~~8. Token card spacing overhaul — tighter padding, consistent slider layout, simplified archetypes table, export button repositioned~~ ✓
-9. E3 — Accent picker: improve or remove
-10. E1 + E2 — Sidebar polish (spacing, tooltip area)
-11. D1-D3 — Icons/theme personality (if time)
+**Branch: `feature/final-polish`** ✓ merged as PR #13 + #14
+~~8. Token card spacing overhaul~~ ✓
+~~9. E3 — Accent picker: removed (partial override broke consistency)~~ ✓
+~~10. E1 + E2 — Sidebar polish (divider, tooltip area, spacing, header alignment)~~ ✓
 
 ---
 
-## 7. README & Portfolio Presentation
+## ~~7. Deploy (GitHub Pages)~~ ✓
+
+> Merged as PR #13 + #14. GH Actions workflow, Vite `base: "/motif/"`, `.npmrc` for peer deps.
+> **Live at:** https://trv-ops-sector9.github.io/motif/
+
+---
+
+## ~~8. Bug Fixes & Theme Refinements~~ ✓
+
+### ~~8a. Duration sliders~~ ✓
+- Fixed: custom track+thumb styling (range inputs were invisible on dark themes), use React state for override values instead of CSS queries, removed unnecessary `style` MutationObserver
+
+### ~~8b. Accent colors~~ ✓
+- Root cause: `--primary` (the most visible color — buttons, active states) was achromatic for Drive/Lux. The `--accent` CSS var was themed but only used for subtle hover backgrounds.
+- Fix: gave Drive and Lux themed `--primary` + `--sidebar-primary` colors matching their personality hues:
+  - Drive: performance red (oklch hue 25)
+  - Lux: warm gold (oklch hue 75)
+  - Brutalist: stays monochrome (intentional identity)
+  - Vapor: already had colored primary
+
+### ~~8c. Drive theme — automotive identity~~ ✓
+- Radius: `0.5rem` → `0.25rem` (sharper, instrument-panel precision)
+- Letter-spacing: `-0.01em` → `-0.015em` (tighter tracking)
+- Borders: stronger contrast (lightness 0.88 → 0.84 light, 0.22 → 0.25 dark)
+- Shadows: crisper/tighter spread, higher opacity — less diffused cloud, more machined edge
+
+---
+
+## 9. README & Portfolio Presentation
 
 > The README is the first thing a hiring manager sees on GitHub.
 
 - [ ] Add a hero screenshot or GIF showing theme switching in action
-- [ ] Add live demo link (after deploy)
+- [ ] Add live demo link (https://trv-ops-sector9.github.io/motif/)
 - [ ] Tell the story: what Motif is, why it exists, what it demonstrates (motion tokens, design systems, Tailwind v4, theming architecture)
 - [ ] Commit & PR: `feature/readme-polish`
 
 ---
 
-## 8. Mobile Spot-Check
+## 10. D1-D3 — Icons & Theme Personality
+
+> De-stock the icon language, refine Drive theme, align component cards.
+
+- [ ] D1: Icons — evaluate Tabler (already imported), Phosphor, or custom SVG per domain
+- [ ] D2: Drive theme — less round corners, bigger titles, tighter tracking
+- [ ] D3: Component card alignment
+- [ ] Commit & PR: `feature/icon-polish`
+
+---
+
+## 11. Fleet Ops Design Polish (BIG pass)
+
+> Make the flagship page look sick. This is the centerpiece for the AV startup application.
+
+- [ ] Full design audit of FleetOpsBlock — layout density, card hierarchy, data presentation
+- [ ] Visual polish — shadows, spacing, typography, color usage across all themes
+- [ ] Map, charts, tables, stat cards — everything gets a quality pass
+- [ ] Commit & PR: `feature/fleet-polish`
+
+---
+
+## 12. Mobile Spot-Check
 
 > They might open it on their phone. It shouldn't fall apart.
 
@@ -107,21 +156,7 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 
 ---
 
-## 9. Deploy (GitHub Pages)
-
-> Last real step. Everything is polished, now make it live.
-
-- [ ] Configure GitHub Pages deployment from `preview/dist` via GitHub Actions
-  - Build: `cd preview && npm run build`
-  - Output: `preview/dist`
-  - Set `base` in `vite.config.ts` for the GitHub Pages subpath
-- [ ] Verify deployed URL loads and theme switching works
-- [ ] Add deploy URL to README
-- [ ] Commit & PR: `feature/deploy-setup`
-
----
-
-## 10. Final Cleanup
+## 13. Final Cleanup
 
 - [ ] Update `CLAUDE.md` — reflect current state, any new conventions
 - [ ] Final `npm run build` and `npm run lint` — zero warnings
