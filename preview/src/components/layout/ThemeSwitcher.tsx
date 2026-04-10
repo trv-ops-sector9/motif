@@ -21,8 +21,8 @@ type ThemeValue = (typeof THEMES)[number]["value"];
 type ColorMode = "light" | "dark";
 
 /** Shared state so the theme picker and mode toggle stay in sync */
-let currentThemeValue: ThemeValue = "default";
-let currentMode: ColorMode = "light";
+let currentThemeValue: ThemeValue = "drive";
+let currentMode: ColorMode = "dark";
 let listeners: (() => void)[] = [];
 
 function applyTheme(theme: ThemeValue, mode: ColorMode) {
@@ -30,8 +30,18 @@ function applyTheme(theme: ThemeValue, mode: ColorMode) {
   currentMode = mode;
   const entry = THEMES.find((t) => t.value === theme) ?? THEMES[0];
   const cssValue = mode === "dark" ? entry.dark : entry.light;
-  document.documentElement.setAttribute("data-theme", cssValue);
-  listeners.forEach((fn) => fn());
+
+  const apply = () => {
+    document.documentElement.setAttribute("data-theme", cssValue);
+    listeners.forEach((fn) => fn());
+  };
+
+  // View Transition API — smooth crossfade instead of staggered repaint
+  if ((document as any).startViewTransition) {
+    (document as any).startViewTransition(apply);
+  } else {
+    apply();
+  }
 }
 
 function useThemeSync() {
@@ -107,30 +117,28 @@ export function SidebarModePicker() {
           onClick={() => applyTheme(currentThemeValue, "light")}
           aria-label="Light mode"
           className={cn(
-            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-l-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "flex flex-1 cursor-pointer items-center justify-center rounded-l-md py-1.5 text-xs",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "light"
               ? "bg-sidebar-primary text-sidebar-primary-foreground"
-              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+              : "bg-sidebar text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
           )}
         >
-          <IconSun className="h-3 w-3" />
-          Light
+          <IconSun className="h-3.5 w-3.5" />
         </button>
         <span className="w-px bg-sidebar-border" />
         <button
           onClick={() => applyTheme(currentThemeValue, "dark")}
           aria-label="Dark mode"
           className={cn(
-            "flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-r-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+            "flex flex-1 cursor-pointer items-center justify-center rounded-r-md py-1.5 text-xs",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "dark"
               ? "bg-sidebar-primary text-sidebar-primary-foreground"
-              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
+              : "bg-sidebar text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
           )}
         >
-          <IconMoon className="h-3 w-3" />
-          Dark
+          <IconMoon className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>

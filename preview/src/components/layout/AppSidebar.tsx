@@ -232,11 +232,11 @@ function NavButton({ item, active, collapsed, onClick }: NavButtonProps) {
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
-        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-        active &&
-          "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
+        active
+          ? "bg-sidebar-primary text-sidebar-primary-foreground"
+          : "text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         collapsed && "justify-center px-0"
       )}
     >
