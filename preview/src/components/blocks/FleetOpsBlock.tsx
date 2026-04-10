@@ -233,7 +233,6 @@ const STATUS_COLOR: Record<VehicleStatus, string> = {
   Offline:     "var(--color-destructive, hsl(0 84% 60%))",
 };
 
-// Geofence zone polygons (stylized SF neighborhoods)
 function centroid(points: string): { cx: number; cy: number } {
   const pts = points.split(" ").map((p) => p.split(",").map(Number));
   return {
@@ -242,25 +241,39 @@ function centroid(points: string): { cx: number; cy: number } {
   };
 }
 
+// Zones — each gets a distinct chart color for topographic identity
 const ZONES = [
-  { id: "downtown",   points: "25,35 55,35 55,58 35,65 25,55",     label: "Downtown" },
-  { id: "soma",       points: "35,65 55,58 65,68 55,80 35,78",     label: "SoMa" },
-  { id: "missionbay", points: "55,58 75,50 85,65 75,78 65,68",     label: "Mission Bay" },
-  { id: "potrero",    points: "45,78 55,80 60,90 40,92",           label: "Potrero" },
-  { id: "depot",      points: "70,78 88,78 88,92 70,92",           label: "Depot Zone" },
+  { id: "downtown",   points: "25,35 55,35 55,58 35,65 25,55",  label: "Downtown",    fill: "var(--chart-1)", activity: 0.10 },
+  { id: "soma",       points: "35,65 55,58 65,68 55,80 35,78",  label: "SoMa",        fill: "var(--chart-2)", activity: 0.08 },
+  { id: "missionbay", points: "55,58 75,50 85,65 75,78 65,68",  label: "Mission Bay", fill: "var(--chart-3)", activity: 0.08 },
+  { id: "potrero",    points: "45,78 55,80 60,90 40,92",         label: "Potrero",     fill: "var(--chart-4)", activity: 0.06 },
+  { id: "depot",      points: "70,78 88,78 88,92 70,92",         label: "Depot Zone",  fill: "var(--chart-5)", activity: 0.06 },
 ].map((z) => ({ ...z, ...centroid(z.points) }));
 
-// Stylized road grid
-const ROADS = [
-  // Major horizontal routes
-  "M 15,40 L 90,40", "M 15,55 L 90,55", "M 15,70 L 90,70", "M 15,85 L 90,85",
-  // Major vertical routes
-  "M 30,25 L 30,95", "M 50,25 L 50,95", "M 70,25 L 70,95",
-  // Diagonal (Market St)
-  "M 18,32 L 72,62",
-  // Embarcadero curve
-  "M 75,30 Q 92,45 88,70",
+// Routes: primary (named, with arrows) + secondary grid
+const PRIMARY_ROUTES = [
+  { d: "M 18,32 L 72,62",          label: "Market St"    },
+  { d: "M 75,30 Q 92,45 88,70",    label: "Embarcadero"  },
+  { d: "M 15,55 L 90,55",          label: "Mission St"   },
 ];
+const SECONDARY_ROUTES = [
+  "M 30,25 L 30,92", "M 50,25 L 50,92", "M 70,25 L 70,78",
+  "M 15,40 L 90,40", "M 15,70 L 90,70", "M 15,85 L 90,85",
+];
+
+// Per-vehicle heading in degrees (0 = north, clockwise)
+const VEHICLE_HEADING: Record<string, number> = {
+  "AV-001": 45,   // NE along Market
+  "AV-002": 170,  // S through Mission Bay
+  "AV-003": 0,    // at depot, pointing N
+  "AV-004": 120,  // SE toward Embarcadero
+  "AV-005": 260,  // W, idling
+  "AV-006": 0,    // at depot
+  "AV-007": 200,  // SW toward Potrero
+  "AV-008": 0,    // offline
+  "AV-009": 80,   // E through Hayes Valley
+  "AV-010": 0,    // charging at depot
+};
 
 function FleetMap({ vehicles, selectedId, onSelect }: {
   vehicles: Vehicle[];
@@ -287,31 +300,62 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="relative w-full rounded-lg border bg-muted/30 overflow-hidden" style={{ aspectRatio: "2.4 / 1" }}>
-          <svg
-            viewBox="10 20 85 80"
-            className="w-full h-full"
-            preserveAspectRatio="xMidYMid meet"
-          >
-            {/* Geofence zones */}
+          <svg viewBox="10 20 85 80" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              {/* Arrowhead marker for primary routes */}
+              <marker id="route-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                <path d="M 0 0 L 5 2.5 L 0 5 z" fill="currentColor" opacity="0.35" />
+              </marker>
+            </defs>
+
+            {/* Topographic zone fills — outer ring (low opacity) */}
             {ZONES.map((zone) => (
               <polygon
-                key={zone.id}
+                key={`${zone.id}-outer`}
                 points={zone.points}
-                className="fill-primary/[0.04] stroke-primary/20"
-                strokeWidth="0.3"
-                strokeDasharray="2 1"
+                fill={zone.fill}
+                fillOpacity={zone.activity}
+                stroke={zone.fill}
+                strokeOpacity={0.25}
+                strokeWidth="0.4"
               />
             ))}
 
-            {/* Road grid */}
-            {ROADS.map((d, i) => (
+            {/* Topographic zone fills — inner highlight ring */}
+            {ZONES.map((zone) => {
+              // Shrink polygon slightly toward centroid for inner ring
+              const pts = zone.points.split(" ").map((p) => {
+                const [x, y] = p.split(",").map(Number);
+                return `${zone.cx + (x - zone.cx) * 0.55},${zone.cy + (y - zone.cy) * 0.55}`;
+              });
+              return (
+                <polygon
+                  key={`${zone.id}-inner`}
+                  points={pts.join(" ")}
+                  fill={zone.fill}
+                  fillOpacity={zone.activity * 0.8}
+                  stroke="none"
+                />
+              );
+            })}
+
+            {/* Secondary road grid */}
+            {SECONDARY_ROUTES.map((d, i) => (
+              <path key={i} d={d} stroke="currentColor" strokeOpacity={0.08} strokeWidth="0.35" fill="none" strokeLinecap="round" />
+            ))}
+
+            {/* Primary named routes with direction arrows */}
+            {PRIMARY_ROUTES.map((r) => (
               <path
-                key={i}
-                d={d}
-                className="stroke-muted-foreground/15"
-                strokeWidth="0.4"
+                key={r.label}
+                d={r.d}
+                stroke="currentColor"
+                strokeOpacity={0.22}
+                strokeWidth="0.7"
                 fill="none"
                 strokeLinecap="round"
+                markerMid="url(#route-arrow)"
+                markerEnd="url(#route-arrow)"
               />
             ))}
 
@@ -323,9 +367,12 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
                 y={zone.cy}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className="fill-muted-foreground/30 select-none pointer-events-none"
+                fill="currentColor"
+                fillOpacity={0.45}
                 fontSize="2.5"
-                fontWeight="600"
+                fontWeight="700"
+                className="select-none pointer-events-none uppercase tracking-wide"
+                style={{ letterSpacing: "0.05em" }}
               >
                 {zone.label}
               </text>
@@ -336,51 +383,48 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
               const color = STATUS_COLOR[v.status];
               const isActive = v.status === "Active";
               const isSelected = selectedId === v.id;
+              const heading = VEHICLE_HEADING[v.id] ?? 0;
+              const { x, y } = v.coords;
+              const s = 2.4;
+              // Triangle pointing north, rotated to heading
+              const tri = `${x},${y - s} ${x - s * 0.65},${y + s * 0.55} ${x + s * 0.65},${y + s * 0.55}`;
+
               return (
-                <g
-                  key={v.id}
-                  className="cursor-pointer"
-                  onClick={() => onSelect(isSelected ? null : v.id)}
-                >
+                <g key={v.id} className="cursor-pointer" onClick={() => onSelect(isSelected ? null : v.id)}>
+                  {/* Expanded transparent hit area */}
+                  <circle cx={x} cy={y} r={5} fill="transparent" />
+
                   {/* Pulse ring for active vehicles */}
                   {isActive && (
-                    <circle
-                      cx={v.coords.x}
-                      cy={v.coords.y}
-                      r="3"
-                      fill="none"
-                      stroke={color}
-                      strokeWidth="0.4"
-                      className="animate-fleet-pulse"
-                    />
+                    <circle cx={x} cy={y} r="3.5" fill="none" stroke={color} strokeWidth="0.4" className="animate-fleet-pulse" />
                   )}
+
                   {/* Selection ring */}
                   {isSelected && (
-                    <circle
-                      cx={v.coords.x}
-                      cy={v.coords.y}
-                      r="3.5"
-                      fill="none"
-                      className="stroke-foreground"
-                      strokeWidth="0.5"
+                    <circle cx={x} cy={y} r="4.2" fill="none" stroke="currentColor" strokeOpacity={0.8} strokeWidth="0.6" />
+                  )}
+
+                  {/* Heading triangle (active/idle/charging) or dim circle (offline/maintenance) */}
+                  {v.status === "Offline" || v.status === "Maintenance" ? (
+                    <circle cx={x} cy={y} r="1.8" fill={color} opacity={0.3} />
+                  ) : (
+                    <polygon
+                      points={tri}
+                      fill={color}
+                      transform={`rotate(${heading}, ${x}, ${y})`}
                     />
                   )}
-                  {/* Dot */}
-                  <circle
-                    cx={v.coords.x}
-                    cy={v.coords.y}
-                    r="1.8"
-                    fill={color}
-                    opacity={v.status === "Offline" ? 0.4 : 1}
-                  />
-                  {/* Label */}
+
+                  {/* ID label */}
                   <text
-                    x={v.coords.x}
-                    y={v.coords.y - 3.5}
+                    x={x}
+                    y={y - 5}
                     textAnchor="middle"
-                    className="fill-foreground select-none pointer-events-none"
+                    fill="currentColor"
+                    fillOpacity={0.75}
                     fontSize="2"
                     fontWeight="700"
+                    className="select-none pointer-events-none"
                   >
                     {v.id.replace("AV-0", "")}
                   </text>
@@ -517,15 +561,6 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
         </p>
       </div>
 
-      {/* Fleet map */}
-      <div style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 1)",
-        animationFillMode: "both",
-      }}>
-        <FleetMap vehicles={VEHICLES} selectedId={selectedVehicle} onSelect={setSelectedVehicle} />
-      </div>
-
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3 @3xl/main:grid-cols-4">
         {STATS.map((s, i) => {
@@ -533,7 +568,7 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
           return (
             <Card key={s.label} style={{
               animation: "var(--anim-slide-up-in)",
-              animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 2})`,
+              animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 1})`,
               animationFillMode: "both",
             }}>
               <CardHeader className="pb-4">
@@ -545,6 +580,15 @@ function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) 
             </Card>
           );
         })}
+      </div>
+
+      {/* Fleet map */}
+      <div style={{
+        animation: "var(--anim-slide-up-in)",
+        animationDelay: "calc(var(--motion-duration-ultra-fast) * 5)",
+        animationFillMode: "both",
+      }}>
+        <FleetMap vehicles={VEHICLES} selectedId={selectedVehicle} onSelect={setSelectedVehicle} />
       </div>
 
       {/* Chart + Alerts */}

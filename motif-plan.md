@@ -67,13 +67,18 @@ Motif is a motion token system for Tailwind v4, being prepared as a portfolio pi
 
 ### Suggested execution order (remaining)
 
-1. F1 — Decide on Dashboard (kill/demote/rebrand)
-2. B1 + B2 — Fleet map redesign + card patterns
-3. Tier 1 token editing (duration sliders)
-4. C1-C3 — Token page revision
-5. E3 — Accent picker decision
-6. E1 + E2 — Sidebar polish
-7. D1-D3 — Icons/theme personality (if time)
+~~1. F1 — Dashboard → Analytics rebrand~~ ✓
+~~2. B2+B3 — Fleet density pass~~ ✓
+~~3. Tier 1 token editing (duration sliders)~~ ✓
+
+**Branch: `feature/token-page-polish`**
+4. C1 — Token page card layout revision
+5. C2 — Ease curve clipping fix (viewBox for overshoot)
+6. C3 — Archetypes section visual demos
+7. B1 — Fleet map redesign (topographic, route lines, heading indicators)
+8. E3 — Accent picker: improve or remove
+9. E1 + E2 — Sidebar polish (spacing, tooltip area)
+10. D1-D3 — Icons/theme personality (if time)
 
 ---
 

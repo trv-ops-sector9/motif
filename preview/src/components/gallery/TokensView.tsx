@@ -202,8 +202,21 @@ const THEME_CURVES: Record<string, { name: string; label: string; category: stri
 function CurvePreview({ points }: { points: [number, number, number, number] }) {
   const [x1, y1, x2, y2] = points;
   const w = 48, h = 48, pad = 4;
-  const sx = (v: number) => pad + v * (w - pad * 2);
-  const sy = (v: number) => h - pad - v * (h - pad * 2);
+  const inner = h - pad * 2;
+
+  // Expand y range only when curve overshoots [0, 1] (e.g. spring, bounce)
+  const hasOvershoot = y1 > 1 || y2 > 1 || y1 < 0 || y2 < 0;
+  const margin = 0.1;
+  const yMin = hasOvershoot ? Math.min(0, y1, y2) - margin : 0;
+  const yMax = hasOvershoot ? Math.max(1, y1, y2) + margin : 1;
+  const yRange = yMax - yMin;
+
+  const sx = (v: number) => pad + v * inner;
+  const sy = (v: number) => h - pad - ((v - yMin) / yRange) * inner;
+
+  // Grid rect tracks the logical [0,1] output space
+  const gridBottom = sy(0);
+  const gridTop = sy(1);
 
   return (
     <svg
@@ -211,8 +224,8 @@ function CurvePreview({ points }: { points: [number, number, number, number] }) 
       className="h-12 w-12 shrink-0"
       fill="none"
     >
-      {/* Grid */}
-      <rect x={pad} y={pad} width={w - pad * 2} height={h - pad * 2} rx={2}
+      {/* Grid — [0,1] output space */}
+      <rect x={pad} y={gridTop} width={inner} height={gridBottom - gridTop} rx={2}
         className="stroke-border fill-none" strokeWidth={0.5} />
       {/* Curve */}
       <path
@@ -451,32 +464,31 @@ function PrinciplesSection() {
       <CardHeader>
         <CardTitle className="text-sm font-semibold">Motion principles</CardTitle>
         <CardDescription className="text-xs">
-          Four named personalities — each defines its own curve vocabulary, duration range, and transform philosophy
+          Four named personalities — curve vocabulary, duration range, transform style
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {MOTION_PRINCIPLES.map((p) => (
-          <div key={p.theme} className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">{p.theme}</span>
-              <Badge variant="outline" className="text-[9px] px-1.5 py-0">
-                {p.curves} {p.curves === 1 ? "curve" : "curves"}
-              </Badge>
-            </div>
-            <p className="text-xs text-muted-foreground">{p.personality}</p>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-1">
-              <div>
-                <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">Durations</span>
-                <code className="block text-[11px] font-mono">{p.durations}</code>
-              </div>
-              <div>
-                <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">Transforms</span>
-                <code className="block text-[11px] font-mono">{p.transforms}</code>
-              </div>
-            </div>
-            <p className="text-[11px] text-muted-foreground/80 mt-1 leading-relaxed">{p.philosophy}</p>
-          </div>
-        ))}
+      <CardContent>
+        <table className="w-full text-xs border-collapse">
+          <thead>
+            <tr className="border-b border-border">
+              {["Theme", "Durations", "Curves", "Transforms"].map((h) => (
+                <th key={h} className="pb-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 pr-4">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {MOTION_PRINCIPLES.map((p) => (
+              <tr key={p.theme} className="border-b border-border/50 last:border-0">
+                <td className="py-2 pr-4 font-semibold">{p.theme}</td>
+                <td className="py-2 pr-4 font-mono text-[11px] text-muted-foreground">{p.durations}</td>
+                <td className="py-2 pr-4 tabular-nums text-muted-foreground">{p.curves}</td>
+                <td className="py-2 font-mono text-[11px] text-muted-foreground">{p.transforms}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   );
@@ -766,10 +778,12 @@ export function TokensView() {
       {/* Motion tokens */}
       <section>
         <h2 className="text-lg font-semibold mb-4">Motion</h2>
-        <PrinciplesSection />
-        <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <DurationSection />
           <CurvesSection />
+        </div>
+        <div className="mt-4">
+          <PrinciplesSection />
         </div>
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
           <BridgeSection />
