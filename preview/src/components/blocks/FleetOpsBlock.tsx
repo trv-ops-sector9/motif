@@ -1,14 +1,8 @@
-import { useRef, useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-} from "@tanstack/react-table";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
+import { useEffect, useRef, useState } from "react";
+import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
+import { MapContainer, TileLayer, Circle, CircleMarker, Polyline, Polygon, Tooltip, useMap } from "react-leaflet";
+import type { LatLngTuple } from "leaflet";
+import "leaflet/dist/leaflet.css";
 import {
   IconCarSuv,
   IconBatteryCharging,
@@ -18,7 +12,6 @@ import {
   IconActivity,
   IconNavigation,
   IconGauge,
-  IconArrowsUpDown,
   IconSearch,
   IconShield,
   IconRadar,
@@ -27,8 +20,12 @@ import {
   IconCpu,
   IconEye,
   IconWifi,
-  IconFlame,
-  IconMap,
+  IconBolt,
+  IconRoute,
+  IconCircleCheck,
+  IconCircleX,
+  IconChartBar,
+  IconWifiOff,
 } from "@tabler/icons-react";
 
 import { cssMs, cssCurve } from "@/lib/motion";
@@ -48,19 +45,6 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -73,7 +57,7 @@ interface Vehicle {
   battery: number;
   currentTrip: string;
   lastPing: string;
-  coords: { x: number; y: number };
+  coords: LatLngTuple;
 }
 
 const STATUS_VARIANT: Record<VehicleStatus, "default" | "secondary" | "outline" | "destructive"> = {
@@ -85,40 +69,17 @@ const STATUS_VARIANT: Record<VehicleStatus, "default" | "secondary" | "outline" 
 };
 
 const VEHICLES: Vehicle[] = [
-  { id: "AV-001", status: "Active",      location: "Market St & 4th",     battery: 87, currentTrip: "TRP-4821", lastPing: "2s ago",  coords: { x: 38, y: 52 } },
-  { id: "AV-002", status: "Active",      location: "Mission Bay Loop",    battery: 64, currentTrip: "TRP-4819", lastPing: "5s ago",  coords: { x: 62, y: 72 } },
-  { id: "AV-003", status: "Charging",    location: "Depot A — Bay 3",    battery: 42, currentTrip: "—",        lastPing: "1m ago",  coords: { x: 78, y: 85 } },
-  { id: "AV-004", status: "Active",      location: "Embarcadero & King",  battery: 91, currentTrip: "TRP-4823", lastPing: "3s ago",  coords: { x: 72, y: 58 } },
-  { id: "AV-005", status: "Idle",        location: "Soma Standby Zone",   battery: 78, currentTrip: "—",        lastPing: "30s ago", coords: { x: 48, y: 62 } },
-  { id: "AV-006", status: "Maintenance", location: "Depot B — Bay 1",    battery: 55, currentTrip: "—",        lastPing: "12m ago", coords: { x: 22, y: 88 } },
-  { id: "AV-007", status: "Active",      location: "Potrero & 16th",     battery: 73, currentTrip: "TRP-4825", lastPing: "1s ago",  coords: { x: 55, y: 78 } },
-  { id: "AV-008", status: "Offline",     location: "Last: Depot A",       battery: 12, currentTrip: "—",        lastPing: "2h ago",  coords: { x: 80, y: 88 } },
-  { id: "AV-009", status: "Active",      location: "Hayes Valley",        battery: 82, currentTrip: "TRP-4827", lastPing: "4s ago",  coords: { x: 28, y: 42 } },
-  { id: "AV-010", status: "Charging",    location: "Depot A — Bay 7",    battery: 29, currentTrip: "—",        lastPing: "3m ago",  coords: { x: 82, y: 82 } },
+  { id: "AV-001", status: "Active",      location: "Market St & 4th",     battery: 87, currentTrip: "TRP-4821", lastPing: "2s ago",  coords: [37.7853, -122.4056] },
+  { id: "AV-002", status: "Active",      location: "Mission Bay Loop",    battery: 64, currentTrip: "TRP-4819", lastPing: "5s ago",  coords: [37.7699, -122.3933] },
+  { id: "AV-003", status: "Charging",    location: "Depot A — Bay 3",    battery: 42, currentTrip: "—",        lastPing: "1m ago",  coords: [37.7580, -122.3870] },
+  { id: "AV-004", status: "Active",      location: "Embarcadero & King",  battery: 91, currentTrip: "TRP-4823", lastPing: "3s ago",  coords: [37.7760, -122.3927] },
+  { id: "AV-005", status: "Idle",        location: "Soma Standby Zone",   battery: 78, currentTrip: "—",        lastPing: "30s ago", coords: [37.7785, -122.4020] },
+  { id: "AV-006", status: "Maintenance", location: "Depot B — Bay 1",    battery: 55, currentTrip: "—",        lastPing: "12m ago", coords: [37.7550, -122.4180] },
+  { id: "AV-007", status: "Active",      location: "Potrero & 16th",     battery: 73, currentTrip: "TRP-4825", lastPing: "1s ago",  coords: [37.7660, -122.4020] },
+  { id: "AV-008", status: "Offline",     location: "Last: Depot A",       battery: 12, currentTrip: "—",        lastPing: "2h ago",  coords: [37.7570, -122.3880] },
+  { id: "AV-009", status: "Active",      location: "Hayes Valley",        battery: 82, currentTrip: "TRP-4827", lastPing: "4s ago",  coords: [37.7760, -122.4240] },
+  { id: "AV-010", status: "Charging",    location: "Depot A — Bay 7",    battery: 29, currentTrip: "—",        lastPing: "3m ago",  coords: [37.7575, -122.3860] },
 ];
-
-const TRIP_DATA = [
-  { hour: "6 AM",  trips: 12 },
-  { hour: "7 AM",  trips: 28 },
-  { hour: "8 AM",  trips: 64 },
-  { hour: "9 AM",  trips: 78 },
-  { hour: "10 AM", trips: 52 },
-  { hour: "11 AM", trips: 41 },
-  { hour: "12 PM", trips: 58 },
-  { hour: "1 PM",  trips: 63 },
-  { hour: "2 PM",  trips: 49 },
-  { hour: "3 PM",  trips: 55 },
-  { hour: "4 PM",  trips: 72 },
-  { hour: "5 PM",  trips: 89 },
-  { hour: "6 PM",  trips: 94 },
-  { hour: "7 PM",  trips: 67 },
-  { hour: "8 PM",  trips: 38 },
-  { hour: "9 PM",  trips: 22 },
-];
-
-const tripChartConfig = {
-  trips: { label: "Trips", color: "var(--chart-1)" },
-} satisfies ChartConfig;
 
 type AlertSeverity = "critical" | "warning" | "info";
 
@@ -146,295 +107,320 @@ const ALERTS: Alert[] = [
   { severity: "info",     message: "Scheduled maintenance reminder",             vehicle: "AV-006", time: "4h ago"  },
 ];
 
-// ─── Table columns ───────────────────────────────────────────────────────────
-
-const columns: ColumnDef<Vehicle>[] = [
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <Button variant="ghost" size="sm" className="-ml-3 h-8" onClick={() => column.toggleSorting()}>
-        Vehicle
-        <IconArrowsUpDown className="ml-1 h-3 w-3" />
-      </Button>
-    ),
-    cell: ({ row }) => <span className="font-mono text-xs font-semibold">{row.getValue("id")}</span>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as VehicleStatus;
-      return <Badge variant={STATUS_VARIANT[status]} className="text-[10px]">{status}</Badge>;
-    },
-  },
-  {
-    accessorKey: "location",
-    header: "Location",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-1.5">
-        <IconMapPin className="h-3 w-3 text-muted-foreground shrink-0" />
-        <span className="text-xs truncate max-w-[180px]">{row.getValue("location")}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "battery",
-    header: ({ column }) => (
-      <Button variant="ghost" size="sm" className="-ml-3 h-8" onClick={() => column.toggleSorting()}>
-        Battery
-        <IconArrowsUpDown className="ml-1 h-3 w-3" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const pct = row.getValue("battery") as number;
-      return (
-        <div className="flex items-center gap-2">
-          <IconBatteryCharging className={`h-3.5 w-3.5 shrink-0 ${pct < 30 ? "text-destructive" : pct < 50 ? "text-orange-500" : "text-green-500"}`} />
-          <div className="flex items-center gap-2 min-w-[4.5rem]">
-            <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
-              <div
-                className={`h-full rounded-full ${pct < 30 ? "bg-destructive" : pct < 50 ? "bg-orange-500" : "bg-green-500"}`}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <span className="text-xs tabular-nums">{pct}%</span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "currentTrip",
-    header: "Trip",
-    cell: ({ row }) => {
-      const trip = row.getValue("currentTrip") as string;
-      return <span className={`text-xs font-mono ${trip === "—" ? "text-muted-foreground" : ""}`}>{trip}</span>;
-    },
-  },
-  {
-    accessorKey: "lastPing",
-    header: "Last Ping",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-1.5">
-        <IconRadar className="h-3 w-3 text-muted-foreground shrink-0" />
-        <span className="text-xs text-muted-foreground">{row.getValue("lastPing")}</span>
-      </div>
-    ),
-  },
-];
-
 // ─── Fleet map ──────────────────────────────────────────────────────────────
 
-const STATUS_COLOR: Record<VehicleStatus, string> = {
-  Active:      "var(--chart-1)",
-  Idle:        "var(--chart-3)",
-  Charging:    "var(--chart-4)",
-  Maintenance: "var(--chart-5)",
-  Offline:     "var(--color-destructive, hsl(0 84% 60%))",
+const STATUS_COLOR_HEX: Record<VehicleStatus, string> = {
+  Active:      "#22c55e",
+  Idle:        "#f59e0b",
+  Charging:    "#3b82f6",
+  Maintenance: "#a855f7",
+  Offline:     "#ef4444",
 };
 
-function centroid(points: string): { cx: number; cy: number } {
-  const pts = points.split(" ").map((p) => p.split(",").map(Number));
-  return {
-    cx: pts.reduce((s, p) => s + p[0], 0) / pts.length,
-    cy: pts.reduce((s, p) => s + p[1], 0) / pts.length,
-  };
+const MAP_CENTER: LatLngTuple = [37.758, -122.405];
+const MAP_ZOOM = 13;
+
+// Tile URLs — CartoDB Positron (light) and Dark Matter (dark)
+const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const TILE_ATTR  = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>';
+
+// Projected route waypoints for active vehicles — longer paths that extend off-map
+const ACTIVE_ROUTES: Record<string, LatLngTuple[]> = {
+  "AV-001": [[37.7853, -122.4056], [37.7880, -122.4000], [37.7920, -122.3940], [37.7950, -122.3880]],
+  "AV-002": [[37.7699, -122.3933], [37.7660, -122.3900], [37.7620, -122.3860], [37.7580, -122.3820]],
+  "AV-004": [[37.7760, -122.3927], [37.7730, -122.3870], [37.7700, -122.3810], [37.7680, -122.3760]],
+  "AV-007": [[37.7660, -122.4020], [37.7630, -122.4060], [37.7590, -122.4110], [37.7550, -122.4150]],
+  "AV-009": [[37.7760, -122.4240], [37.7790, -122.4170], [37.7820, -122.4100], [37.7850, -122.4040]],
+};
+
+// Geofence zones — operational boundaries
+const GEOFENCES: { center: LatLngTuple; radius: number; label: string; type: "depot" | "restricted" | "operational" }[] = [
+  { center: [37.7575, -122.3870], radius: 250,  label: "Depot A",          type: "depot" },
+  { center: [37.7550, -122.4180], radius: 200,  label: "Depot B",          type: "depot" },
+  { center: [37.7820, -122.3930], radius: 180,  label: "Ferry Zone",       type: "restricted" },
+  { center: [37.7940, -122.3940], radius: 300,  label: "Pier 39 Zone",     type: "restricted" },
+];
+
+// Operational coverage polygon — approximate SF service area boundary
+const COVERAGE_ZONE: LatLngTuple[] = [
+  [37.7950, -122.4300], [37.7950, -122.3800], [37.7850, -122.3750],
+  [37.7700, -122.3780], [37.7500, -122.3800], [37.7480, -122.4200],
+  [37.7550, -122.4350], [37.7700, -122.4350], [37.7850, -122.4320],
+];
+
+// Incident locations derived from INCIDENTS data
+const INCIDENT_COORDS: { id: string; coords: LatLngTuple; severity: AlertSeverity }[] = [
+  { id: "INC-0041", coords: [37.7830, -122.4140], severity: "critical" },
+  { id: "INC-0042", coords: [37.7580, -122.3870], severity: "critical" },
+  { id: "INC-0043", coords: [37.7840, -122.4120], severity: "warning" },
+  { id: "INC-0044", coords: [37.7805, -122.3910], severity: "warning" },
+  { id: "INC-0048", coords: [37.7610, -122.4050], severity: "critical" },
+];
+
+/** Syncs tile layer when theme changes (react-leaflet doesn't re-render TileLayer on url change) */
+function TileSync({ isDark }: { isDark: boolean }) {
+  const map = useMap();
+  const prev = useRef(isDark);
+  useEffect(() => {
+    if (prev.current !== isDark) {
+      prev.current = isDark;
+      map.eachLayer((l) => {
+        if ("_url" in l) map.removeLayer(l);
+      });
+      import("leaflet").then((L) => {
+        L.tileLayer(isDark ? TILE_DARK : TILE_LIGHT, { attribution: TILE_ATTR }).addTo(map);
+      });
+    }
+  }, [isDark, map]);
+  return null;
 }
 
-// Zones — each gets a distinct chart color for topographic identity
-const ZONES = [
-  { id: "downtown",   points: "25,35 55,35 55,58 35,65 25,55",  label: "Downtown",    fill: "var(--chart-1)", activity: 0.10 },
-  { id: "soma",       points: "35,65 55,58 65,68 55,80 35,78",  label: "SoMa",        fill: "var(--chart-2)", activity: 0.08 },
-  { id: "missionbay", points: "55,58 75,50 85,65 75,78 65,68",  label: "Mission Bay", fill: "var(--chart-3)", activity: 0.08 },
-  { id: "potrero",    points: "45,78 55,80 60,90 40,92",         label: "Potrero",     fill: "var(--chart-4)", activity: 0.06 },
-  { id: "depot",      points: "70,78 88,78 88,92 70,92",         label: "Depot Zone",  fill: "var(--chart-5)", activity: 0.06 },
-].map((z) => ({ ...z, ...centroid(z.points) }));
+// ── Count-up hook ────────────────────────────────────────────────────────────
 
-// Routes: primary (named, with arrows) + secondary grid
-const PRIMARY_ROUTES = [
-  { d: "M 18,32 L 72,62",          label: "Market St"    },
-  { d: "M 75,30 Q 92,45 88,70",    label: "Embarcadero"  },
-  { d: "M 15,55 L 90,55",          label: "Mission St"   },
-];
-const SECONDARY_ROUTES = [
-  "M 30,25 L 30,92", "M 50,25 L 50,92", "M 70,25 L 70,78",
-  "M 15,40 L 90,40", "M 15,70 L 90,70", "M 15,85 L 90,85",
-];
-
-// Per-vehicle heading in degrees (0 = north, clockwise)
-const VEHICLE_HEADING: Record<string, number> = {
-  "AV-001": 45,   // NE along Market
-  "AV-002": 170,  // S through Mission Bay
-  "AV-003": 0,    // at depot, pointing N
-  "AV-004": 120,  // SE toward Embarcadero
-  "AV-005": 260,  // W, idling
-  "AV-006": 0,    // at depot
-  "AV-007": 200,  // SW toward Potrero
-  "AV-008": 0,    // offline
-  "AV-009": 80,   // E through Hayes Valley
-  "AV-010": 0,    // charging at depot
-};
+function useCountUp(target: number, duration = 900): number {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let rafId: number;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setValue(target * ease);
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+      else setValue(target);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [target, duration]);
+  return value;
+}
 
 function FleetMap({ vehicles, selectedId, onSelect }: {
   vehicles: Vehicle[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute("data-theme") || "default"
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute("data-theme") || "default");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const dark = theme.includes("dark");
+
+  // Per-theme map tint — matches the background palette, not the accent/primary color.
+  const THEME_TINT: Record<string, [r: number, g: number, b: number]> = {
+    "default":       [100, 110, 130],
+    "dark-minimal":  [ 90,  95, 110],
+    "drive":         [ 80, 100, 180],
+    "drive-dark":    [ 60,  80, 160],
+    "brutalist":     [ 30,  30,  30],
+    "brutalist-dark":[  0,   0,   0],
+    "lux":           [160, 140,  90],
+    "lux-dark":      [ 90,  75,  50],
+    "vapor":         [110,  60, 190],
+    "vapor-dark":    [ 80,  40, 200],
+  };
+  const [tr, tg, tb] = THEME_TINT[theme] ?? [80, 90, 120];
+  const tintColor = `rgb(${tr} ${tg} ${tb} / ${dark ? 0.10 : 0.06})`;
+
+  const geofenceColor = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)";
+  const geofenceStroke = dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)";
+  const restrictedColor = "#ef4444";
+  const coverageStroke = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const coverageFill = dark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.01)";
+
+  // Dynamic values go on the div as CSS custom properties — static <style> reads them via var().
+  // This avoids React 19 style deduplication swallowing dynamic template-literal style tags.
+  const mapCssVars = {
+    "--fleet-map-bg":      dark ? "#0d0d0d"                                        : "#f2f2f2",
+    "--fleet-tile-filter": dark ? "grayscale(1) brightness(0.70) contrast(1.10)"  : "grayscale(1) brightness(0.97) contrast(1.15)",
+  } as React.CSSProperties;
+
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-sm font-semibold">Fleet Map</CardTitle>
-            <CardDescription className="text-xs">San Francisco coverage area</CardDescription>
-          </div>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-            {(["Active", "Idle", "Charging", "Offline"] as VehicleStatus[]).map((s) => (
-              <span key={s} className="flex items-center gap-1">
-                <span className="inline-block h-2 w-2 rounded-full" style={{ background: STATUS_COLOR[s] }} />
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="relative w-full rounded-lg border bg-muted/30 overflow-hidden" style={{ aspectRatio: "2.4 / 1" }}>
-          <svg viewBox="10 20 85 80" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              {/* Arrowhead marker for primary routes */}
-              <marker id="route-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
-                <path d="M 0 0 L 5 2.5 L 0 5 z" fill="currentColor" opacity="0.35" />
-              </marker>
-            </defs>
+    <div className="relative w-full h-full rounded-lg overflow-hidden border" style={mapCssVars}>
+      <style>{`
+        .fleet-map .leaflet-container { background: var(--fleet-map-bg) !important; }
+        .fleet-map .leaflet-tile-pane { filter: var(--fleet-tile-filter) !important; }
+        .fleet-map .leaflet-control-attribution { font-size: 7px !important; opacity: 0.3; background: transparent !important; }
+        .fleet-map .leaflet-control-attribution a { color: inherit !important; }
+        .fleet-marker-tooltip .leaflet-tooltip,
+        .fleet-map .leaflet-tooltip {
+          background: var(--color-card) !important;
+          border: 1px solid var(--color-border) !important;
+          color: var(--color-muted-foreground) !important;
+          font-size: 9px;
+          font-family: ui-monospace, monospace;
+          padding: 2px 5px;
+          border-radius: 3px;
+          box-shadow: var(--shadow-sm, 0 1px 4px rgba(0,0,0,0.08));
+          letter-spacing: 0.02em;
+        }
+        .fleet-marker-tooltip .leaflet-tooltip::before,
+        .fleet-map .leaflet-tooltip::before { display: none; }
+      `}</style>
 
-            {/* Topographic zone fills — outer ring (low opacity) */}
-            {ZONES.map((zone) => (
-              <polygon
-                key={`${zone.id}-outer`}
-                points={zone.points}
-                fill={zone.fill}
-                fillOpacity={zone.activity}
-                stroke={zone.fill}
-                strokeOpacity={0.25}
-                strokeWidth="0.4"
+      <div className="fleet-map w-full h-full">
+        <MapContainer
+          center={MAP_CENTER}
+          zoom={MAP_ZOOM}
+          zoomControl={false}
+          attributionControl={true}
+          scrollWheelZoom={false}
+          dragging={false}
+          doubleClickZoom={false}
+          touchZoom={false}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <TileLayer url={dark ? TILE_DARK : TILE_LIGHT} attribution={TILE_ATTR} />
+          <TileSync isDark={dark} />
+
+          {/* Operational coverage zone — subtle boundary */}
+          <Polygon
+            positions={COVERAGE_ZONE}
+            pathOptions={{
+              color: coverageStroke,
+              weight: 1,
+              fillColor: coverageFill,
+              fillOpacity: 1,
+              dashArray: "4 3",
+            }}
+          />
+
+          {/* Geofence zones */}
+          {GEOFENCES.map((gf) => (
+            <Circle
+              key={gf.label}
+              center={gf.center}
+              radius={gf.radius}
+              pathOptions={{
+                color: gf.type === "restricted" ? restrictedColor : geofenceStroke,
+                weight: 0.8,
+                fillColor: gf.type === "restricted" ? restrictedColor : geofenceColor,
+                fillOpacity: gf.type === "restricted" ? 0.06 : 0.15,
+                dashArray: gf.type === "restricted" ? "3 2" : undefined,
+              }}
+            >
+              <Tooltip direction="center" permanent className="fleet-marker-tooltip">
+                <span style={{ fontSize: "7px", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  {gf.label}
+                </span>
+              </Tooltip>
+            </Circle>
+          ))}
+
+          {/* Route projections — thin dashed lines for active vehicles */}
+          {Object.entries(ACTIVE_ROUTES).map(([id, path]) => {
+            const vehicle = vehicles.find((v) => v.id === id);
+            if (!vehicle) return null;
+            const isSelected = selectedId === id;
+            return (
+              <Polyline
+                key={id}
+                positions={path}
+                pathOptions={{
+                  color: STATUS_COLOR_HEX[vehicle.status],
+                  weight: isSelected ? 1.5 : 0.8,
+                  opacity: isSelected ? 0.6 : 0.25,
+                  dashArray: "5 3",
+                  lineCap: "round",
+                }}
               />
-            ))}
+            );
+          })}
 
-            {/* Topographic zone fills — inner highlight ring */}
-            {ZONES.map((zone) => {
-              // Shrink polygon slightly toward centroid for inner ring
-              const pts = zone.points.split(" ").map((p) => {
-                const [x, y] = p.split(",").map(Number);
-                return `${zone.cx + (x - zone.cx) * 0.55},${zone.cy + (y - zone.cy) * 0.55}`;
-              });
-              return (
-                <polygon
-                  key={`${zone.id}-inner`}
-                  points={pts.join(" ")}
-                  fill={zone.fill}
-                  fillOpacity={zone.activity * 0.8}
-                  stroke="none"
-                />
-              );
-            })}
+          {/* Incident markers — small pulsing dots at incident locations */}
+          {INCIDENT_COORDS.map((inc) => (
+            <CircleMarker
+              key={inc.id}
+              center={inc.coords}
+              radius={inc.severity === "critical" ? 6 : 4}
+              pathOptions={{
+                color: inc.severity === "critical" ? "#ef4444" : "#f59e0b",
+                weight: 0.5,
+                fillColor: inc.severity === "critical" ? "#ef4444" : "#f59e0b",
+                fillOpacity: 0.4,
+                opacity: 0.6,
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -4]} className="fleet-marker-tooltip">
+                <span style={{ fontSize: "8px" }}>{inc.id}</span>
+              </Tooltip>
+            </CircleMarker>
+          ))}
 
-            {/* Secondary road grid */}
-            {SECONDARY_ROUTES.map((d, i) => (
-              <path key={i} d={d} stroke="currentColor" strokeOpacity={0.08} strokeWidth="0.35" fill="none" strokeLinecap="round" />
-            ))}
+          {/* Vehicle markers — on top of everything */}
+          {vehicles.map((v) => {
+            const color = STATUS_COLOR_HEX[v.status];
+            const isSelected = selectedId === v.id;
+            const isOffline = v.status === "Offline" || v.status === "Maintenance";
 
-            {/* Primary named routes with direction arrows */}
-            {PRIMARY_ROUTES.map((r) => (
-              <path
-                key={r.label}
-                d={r.d}
-                stroke="currentColor"
-                strokeOpacity={0.22}
-                strokeWidth="0.7"
-                fill="none"
-                strokeLinecap="round"
-                markerMid="url(#route-arrow)"
-                markerEnd="url(#route-arrow)"
-              />
-            ))}
-
-            {/* Zone labels */}
-            {ZONES.map((zone) => (
-              <text
-                key={zone.id}
-                x={zone.cx}
-                y={zone.cy}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fill="currentColor"
-                fillOpacity={0.45}
-                fontSize="2.5"
-                fontWeight="700"
-                className="select-none pointer-events-none uppercase tracking-wide"
-                style={{ letterSpacing: "0.05em" }}
+            return (
+              <CircleMarker
+                key={v.id}
+                center={v.coords}
+                radius={isSelected ? 9 : isOffline ? 5 : 7}
+                pathOptions={{
+                  color: isSelected ? "white" : color,
+                  weight: isSelected ? 2 : 1,
+                  fillColor: color,
+                  fillOpacity: isOffline ? 0.25 : isSelected ? 1 : 0.85,
+                  opacity: isSelected ? 0.9 : 0.7,
+                }}
+                eventHandlers={{
+                  click: () => onSelect(isSelected ? null : v.id),
+                }}
               >
-                {zone.label}
-              </text>
-            ))}
-
-            {/* Vehicle markers */}
-            {vehicles.map((v) => {
-              const color = STATUS_COLOR[v.status];
-              const isActive = v.status === "Active";
-              const isSelected = selectedId === v.id;
-              const heading = VEHICLE_HEADING[v.id] ?? 0;
-              const { x, y } = v.coords;
-              const s = 2.4;
-              // Triangle pointing north, rotated to heading
-              const tri = `${x},${y - s} ${x - s * 0.65},${y + s * 0.55} ${x + s * 0.65},${y + s * 0.55}`;
-
-              return (
-                <g key={v.id} className="cursor-pointer" onClick={() => onSelect(isSelected ? null : v.id)}>
-                  {/* Expanded transparent hit area */}
-                  <circle cx={x} cy={y} r={5} fill="transparent" />
-
-                  {/* Pulse ring for active vehicles */}
-                  {isActive && (
-                    <circle cx={x} cy={y} r="3.5" fill="none" stroke={color} strokeWidth="0.4" className="animate-fleet-pulse" />
-                  )}
-
-                  {/* Selection ring */}
+                <Tooltip
+                  direction="top"
+                  offset={[0, -6]}
+                  className="fleet-marker-tooltip"
+                  permanent={isSelected}
+                >
+                  <span>{v.id}</span>
                   {isSelected && (
-                    <circle cx={x} cy={y} r="4.2" fill="none" stroke="currentColor" strokeOpacity={0.8} strokeWidth="0.6" />
+                    <span style={{ marginLeft: 4, opacity: 0.5 }}>{v.status}</span>
                   )}
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
+        </MapContainer>
+      </div>
 
-                  {/* Heading triangle (active/idle/charging) or dim circle (offline/maintenance) */}
-                  {v.status === "Offline" || v.status === "Maintenance" ? (
-                    <circle cx={x} cy={y} r="1.8" fill={color} opacity={0.3} />
-                  ) : (
-                    <polygon
-                      points={tri}
-                      fill={color}
-                      transform={`rotate(${heading}, ${x}, ${y})`}
-                    />
-                  )}
+      {/* Per-theme tint overlay — matches map tone to the background palette */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: tintColor, zIndex: 450 }}
+      />
 
-                  {/* ID label */}
-                  <text
-                    x={x}
-                    y={y - 5}
-                    textAnchor="middle"
-                    fill="currentColor"
-                    fillOpacity={0.75}
-                    fontSize="2"
-                    fontWeight="700"
-                    className="select-none pointer-events-none"
-                  >
-                    {v.id.replace("AV-0", "")}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Legend — bottom left overlay */}
+      <div className="absolute bottom-5 left-2 z-[1000] flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded px-2 py-1 border text-[8px]">
+        {(["Active", "Idle", "Charging", "Offline"] as VehicleStatus[]).map((s) => (
+          <span key={s} className="flex items-center gap-1 text-muted-foreground font-medium">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_COLOR_HEX[s] }} />
+            {s}
+          </span>
+        ))}
+        <span className="border-l pl-2 ml-0.5 flex items-center gap-1 text-muted-foreground font-medium">
+          <span className="h-1.5 w-1.5 rounded-full bg-destructive/60" />
+          Incident
+        </span>
+      </div>
+
+      {/* Coordinates + vehicle count watermark */}
+      <div className="absolute top-2 right-2 z-[1000] text-[7px] text-muted-foreground/40 font-mono tracking-wider">
+        37.77°N · 122.41°W · {vehicles.filter((v) => v.status === "Active").length} active
+      </div>
+    </div>
   );
 }
 
@@ -451,49 +437,6 @@ const FLEET_SUMMARY = [
   { icon: IconActivity,       label: "active",             count: VEHICLES.filter((v) => v.status === "Active").length },
   { icon: IconBatteryCharging, label: "charging",           count: VEHICLES.filter((v) => v.status === "Charging").length },
   { icon: IconAlertTriangle,  label: "offline/maintenance", count: VEHICLES.filter((v) => v.status === "Maintenance" || v.status === "Offline").length },
-];
-
-// Status breakdown for fleet health card
-const STATUS_BAR_CLASS: Record<VehicleStatus, string> = {
-  Active:      "bg-[var(--chart-1)]",
-  Idle:        "bg-[var(--chart-3)]",
-  Charging:    "bg-[var(--chart-4)]",
-  Maintenance: "bg-[var(--chart-5)]",
-  Offline:     "bg-destructive",
-};
-
-const STATUS_BREAKDOWN = (["Active", "Idle", "Charging", "Maintenance", "Offline"] as VehicleStatus[]).map(
-  (status) => ({
-    label: status,
-    count: VEHICLES.filter((v) => v.status === status).length,
-    pct: Math.round((VEHICLES.filter((v) => v.status === status).length / VEHICLES.length) * 100),
-    barClass: STATUS_BAR_CLASS[status],
-  })
-);
-
-type FleetPriority = "P0" | "P1" | "P2" | "P3";
-
-const FLEET_PRIORITY_COLOR: Record<FleetPriority, string> = {
-  P0: "bg-destructive text-destructive-foreground",
-  P1: "bg-orange-500 text-white",
-  P2: "bg-primary text-primary-foreground",
-  P3: "bg-muted text-muted-foreground",
-};
-
-const RESPONSE_QUEUE: { priority: FleetPriority; label: string; vehicle: string; due: string }[] = [
-  { priority: "P0", label: "Sensor array fault — lidar primary", vehicle: "AV-008", due: "Now"   },
-  { priority: "P1", label: "Battery critical threshold",          vehicle: "AV-010", due: "30m"   },
-  { priority: "P1", label: "Disengagement event logged",          vehicle: "AV-001", due: "1h"    },
-  { priority: "P2", label: "Scheduled bay maintenance",           vehicle: "AV-006", due: "Today" },
-  { priority: "P3", label: "Route deviation reported",            vehicle: "AV-002", due: "EOD"   },
-];
-
-const ZONE_ACTIVITY = [
-  { label: "Downtown",    trips: 34, pct: 72 },
-  { label: "SoMa",        trips: 28, pct: 59 },
-  { label: "Mission Bay", trips: 22, pct: 47 },
-  { label: "Potrero",     trips: 14, pct: 30 },
-  { label: "Depot Zone",  trips: 8,  pct: 17 },
 ];
 
 // ─── Vehicle detail data ────────────────────────────────────────────────────
@@ -528,316 +471,662 @@ const VEHICLE_EVENTS = [
   { time: "1h ago",  event: "Trip TRP-4819 completed — 4.2mi",        type: "info" as const },
 ];
 
-// ─── Sub-pages ──────────────────────────────────────────────────────────────
+// ─── Incident data ───────────────────────────────────────────────────────────
 
-function FleetOverviewPage({ onSelectVehicle }: { onSelectVehicle: (id: string) => void }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [alertTab, setAlertTab] = useState<"all" | AlertSeverity>("all");
-  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+type IncidentType = "disengagement" | "emergency_stop" | "sensor_fault" | "geofence" | "comm_loss";
 
-  const table = useReactTable({
-    data: VEHICLES,
-    columns,
-    state: { sorting, globalFilter },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+interface Incident {
+  id: string;
+  type: IncidentType;
+  severity: AlertSeverity;
+  vehicle: string;
+  location: string;
+  description: string;
+  time: string;
+  responseTimeSec: number;
+  resolved: boolean;
+}
 
-  const filteredAlerts = alertTab === "all"
-    ? ALERTS
-    : ALERTS.filter((a) => a.severity === alertTab);
+const INCIDENT_TYPE_META: Record<IncidentType, { label: string; icon: React.ElementType; color: string }> = {
+  disengagement:  { label: "Disengagement",  icon: IconRoute,             color: "text-orange-500"  },
+  emergency_stop: { label: "Emergency Stop", icon: IconBolt,              color: "text-destructive" },
+  sensor_fault:   { label: "Sensor Fault",   icon: IconEye,               color: "text-yellow-500"  },
+  geofence:       { label: "Geofence",       icon: IconShield,            color: "text-blue-400"    },
+  comm_loss:      { label: "Comm Loss",      icon: IconWifiOff,           color: "text-muted-foreground" },
+};
+
+const INCIDENTS: Incident[] = [
+  { id: "INC-0041", type: "emergency_stop",  severity: "critical", vehicle: "AV-007", location: "Market & Polk St",       description: "Pedestrian entered active ODD — full autonomy stop executed, remote ops notified", time: "3h ago",      responseTimeSec: 1.4, resolved: true  },
+  { id: "INC-0042", type: "sensor_fault",    severity: "critical", vehicle: "AV-008", location: "Depot A — Bay 3",        description: "Lidar primary array lost signal — fallback to camera-only, vehicle sidelined",  time: "14m ago",     responseTimeSec: 8.2, resolved: false },
+  { id: "INC-0043", type: "disengagement",   severity: "warning",  vehicle: "AV-001", location: "Market St & 8th",        description: "Construction zone cone displacement — operator assumed manual control",          time: "28m ago",     responseTimeSec: 3.1, resolved: true  },
+  { id: "INC-0044", type: "geofence",        severity: "warning",  vehicle: "AV-004", location: "Embarcadero Ferry Dock", description: "Approaching restricted ferry zone — route correction automatically applied",      time: "1h ago",      responseTimeSec: 2.0, resolved: true  },
+  { id: "INC-0045", type: "comm_loss",       severity: "warning",  vehicle: "AV-002", location: "SOMA Tunnel Approach",   description: "5G primary degraded below 10 Mbps — switched to V2X mesh backup",               time: "1h 14m ago",  responseTimeSec: 0.8, resolved: true  },
+  { id: "INC-0046", type: "sensor_fault",    severity: "warning",  vehicle: "AV-005", location: "Hayes Valley — Oak St",  description: "Camera 3 (left rear) lens obstruction detected — auto-clean sequence initiated",  time: "2h ago",      responseTimeSec: 4.4, resolved: true  },
+  { id: "INC-0047", type: "disengagement",   severity: "warning",  vehicle: "AV-009", location: "Van Ness & Fell St",     description: "Anomalous cyclist trajectory in adjacent lane — operator intervened, re-engaged",  time: "4h ago",      responseTimeSec: 2.8, resolved: true  },
+  { id: "INC-0048", type: "emergency_stop",  severity: "critical", vehicle: "AV-003", location: "Potrero & 20th St",      description: "Wrong-way vehicle detected on one-way — immediate full stop, hazard lights on",   time: "6h ago",      responseTimeSec: 1.1, resolved: true  },
+  { id: "INC-0049", type: "sensor_fault",    severity: "info",     vehicle: "AV-006", location: "Depot B — Bay 1",        description: "Radar calibration drift exceeds 0.3° threshold — recalibration queued",          time: "8h ago",      responseTimeSec: 0,   resolved: true  },
+  { id: "INC-0050", type: "geofence",        severity: "info",     vehicle: "AV-010", location: "Pier 39 Approach",       description: "Tourist density spike (>200 pedestrians/min) — adaptive speed reduction applied", time: "10h ago",     responseTimeSec: 0,   resolved: true  },
+];
+
+// Incident distribution across 6-hour windows (last 24h)
+const INCIDENT_TIMELINE = [
+  { window: "00–06", disengagement: 1, emergency_stop: 1, sensor_fault: 0, geofence: 0, comm_loss: 0 },
+  { window: "06–12", disengagement: 0, emergency_stop: 0, sensor_fault: 1, geofence: 1, comm_loss: 1 },
+  { window: "12–18", disengagement: 1, emergency_stop: 0, sensor_fault: 1, geofence: 1, comm_loss: 0 },
+  { window: "18–24", disengagement: 1, emergency_stop: 1, sensor_fault: 1, geofence: 0, comm_loss: 0 },
+];
+
+const incidentChartConfig = {
+  disengagement:  { label: "Disengagement",  color: "var(--chart-3)" },
+  emergency_stop: { label: "Emergency Stop", color: "var(--chart-1)" },
+  sensor_fault:   { label: "Sensor Fault",   color: "var(--chart-2)" },
+  geofence:       { label: "Geofence",       color: "var(--chart-4)" },
+  comm_loss:      { label: "Comm Loss",      color: "var(--chart-5)" },
+} satisfies ChartConfig;
+
+// ─── Stat tile with count-up ─────────────────────────────────────────────────
+
+function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }) {
+  const Icon = stat.icon;
+  const numMatch = stat.value.match(/^([\d.]+)(.*)$/);
+  const numericPart = numMatch ? parseFloat(numMatch[1]) : 0;
+  const suffix = numMatch ? numMatch[2] : "";
+  const counted = useCountUp(numericPart, 800 + delay * 120);
+  const display = numericPart % 1 !== 0
+    ? counted.toFixed(1) + suffix
+    : Math.round(counted) + suffix;
 
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-6">
-      {/* Header */}
-      <div style={{ animation: "var(--anim-fade-in)" }}>
-        <h1 className="text-2xl font-bold tracking-tight">Fleet Operations</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Real-time autonomous vehicle fleet monitoring
+    <div
+      className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
+      style={{
+        animation: "var(--anim-slide-up-in)",
+        animationDelay: `calc(var(--motion-duration-ultra-fast) * ${delay + 2})`,
+        animationFillMode: "both",
+      }}
+    >
+      <div className="flex items-center justify-between">
+        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="text-[10px] text-muted-foreground/60 truncate ml-1 text-right leading-tight">{stat.delta}</span>
+      </div>
+      <div>
+        <div className="text-2xl font-bold tabular-nums tracking-tight leading-none">{display}</div>
+        <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">{stat.label}</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Selected vehicle mini-panel ─────────────────────────────────────────────
+
+function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenDetail: () => void }) {
+  const batteryBg = vehicle.battery < 30 ? "bg-destructive" : vehicle.battery < 50 ? "bg-orange-500" : "bg-green-500";
+  const batteryText = vehicle.battery < 30 ? "text-destructive" : vehicle.battery < 50 ? "text-orange-500" : "text-green-500";
+
+  return (
+    <div
+      className="h-full rounded-lg border bg-muted/20 p-3 space-y-2 overflow-hidden"
+      style={{ animation: "var(--anim-expand-in)", animationFillMode: "both" }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-sm font-bold">{vehicle.id}</span>
+          <Badge variant={STATUS_VARIANT[vehicle.status]} className="text-[9px] h-4 px-1.5">{vehicle.status}</Badge>
+        </div>
+        <button
+          onClick={onOpenDetail}
+          className="text-[10px] text-primary hover:underline cursor-pointer shrink-0"
+        >
+          Details →
+        </button>
+      </div>
+      <p className="text-[11px] text-muted-foreground flex items-center gap-1 truncate">
+        <IconMapPin className="h-3 w-3 shrink-0" />
+        {vehicle.location}
+      </p>
+      <div>
+        <div className="flex justify-between mb-1">
+          <span className="text-[10px] text-muted-foreground">Battery</span>
+          <span className={`text-[10px] font-mono font-semibold ${batteryText}`}>{vehicle.battery}%</span>
+        </div>
+        <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+          <div className={`h-full rounded-full ${batteryBg}`} style={{ width: `${vehicle.battery}%` }} />
+        </div>
+      </div>
+      {vehicle.currentTrip !== "—" && (
+        <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+          <IconNavigation className="h-3 w-3 shrink-0" />
+          <span className="font-mono">{vehicle.currentTrip}</span>
+          <span className="text-muted-foreground/50">· {vehicle.lastPing}</span>
         </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Compact vehicle list ─────────────────────────────────────────────────────
+
+function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilter, setGlobalFilter }: {
+  vehicles: Vehicle[];
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
+  onOpenDetail: (id: string) => void;
+  globalFilter: string;
+  setGlobalFilter: (v: string) => void;
+}) {
+  const filtered = vehicles.filter((v) =>
+    globalFilter === "" ||
+    v.id.toLowerCase().includes(globalFilter.toLowerCase()) ||
+    v.location.toLowerCase().includes(globalFilter.toLowerCase())
+  );
+
+  return (
+    <div className="rounded-lg border overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted/20 shrink-0">
+        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Vehicles</h2>
+        <div className="relative">
+          <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+          <Input
+            placeholder="Search..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-6 h-6 text-xs w-32"
+          />
+        </div>
+      </div>
+      <div className="overflow-y-auto flex-1 divide-y">
+        {filtered.map((v, i) => {
+          const isSelected = selectedId === v.id;
+          const batteryBg = v.battery < 30 ? "bg-destructive" : v.battery < 50 ? "bg-orange-500" : "bg-green-500";
+          return (
+            <div
+              key={v.id}
+              className={`flex items-center gap-2.5 px-3 py-2 cursor-pointer transition-colors hover:bg-muted/40 ${isSelected ? "bg-muted/60" : ""}`}
+              onClick={() => onSelect(isSelected ? null : v.id)}
+              style={{
+                animation: "var(--anim-fade-in)",
+                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.4})`,
+                animationFillMode: "both",
+              }}
+            >
+              <span className="h-2 w-2 rounded-full shrink-0" style={{ background: STATUS_COLOR_HEX[v.status] }} />
+              <span className="font-mono text-xs font-bold w-12 shrink-0">{v.id}</span>
+              <span className="text-xs text-muted-foreground flex-1 truncate">{v.location}</span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-8 h-1 rounded-full bg-muted overflow-hidden">
+                  <div className={`h-full rounded-full ${batteryBg}`} style={{ width: `${v.battery}%` }} />
+                </div>
+                <span className="text-[10px] text-muted-foreground tabular-nums w-6 text-right">{v.battery}%</span>
+              </div>
+              {isSelected && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onOpenDetail(v.id); }}
+                  className="text-[10px] text-primary hover:underline shrink-0 cursor-pointer"
+                >
+                  →
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex items-center gap-4 px-3 py-2 border-t bg-muted/10 shrink-0">
+        {FLEET_SUMMARY.map(({ icon: Icon, label, count }) => (
+          <span key={label} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+            <Icon className="h-3 w-3" />{count} {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Alerts panel ─────────────────────────────────────────────────────────────
+
+function AlertsPanel({ alerts, filter, onFilterChange }: {
+  alerts: Alert[];
+  filter: "all" | AlertSeverity;
+  onFilterChange: (f: "all" | AlertSeverity) => void;
+}) {
+  const filtered = filter === "all" ? alerts : alerts.filter((a) => a.severity === filter);
+  const criticalCount = alerts.filter((a) => a.severity === "critical").length;
+
+  return (
+    <div className="rounded-lg border overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted/20 shrink-0">
+        <div className="flex items-center gap-2">
+          <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Alerts</h2>
+          {criticalCount > 0 && (
+            <span className="text-[9px] font-bold bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full">
+              {criticalCount} critical
+            </span>
+          )}
+        </div>
+        <IconShield className="h-3.5 w-3.5 text-muted-foreground" />
+      </div>
+      <div className="flex border-b shrink-0">
+        {(["all", "critical", "warning", "info"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => onFilterChange(tab)}
+            className={`flex-1 text-[10px] py-1.5 font-medium transition-colors capitalize cursor-pointer ${
+              filter === tab ? "text-foreground border-b border-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      <div className="overflow-y-auto flex-1 divide-y">
+        {filtered.map((alert, i) => {
+          const style = ALERT_STYLE[alert.severity];
+          return (
+            <div
+              key={i}
+              className="flex items-start gap-2.5 px-3 py-2.5 hover:bg-muted/40 transition-colors"
+              style={{
+                animation: "var(--anim-fade-in)",
+                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.4})`,
+                animationFillMode: "both",
+              }}
+            >
+              <IconAlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs leading-snug">{alert.message}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="font-mono text-[10px] text-muted-foreground">{alert.vehicle}</span>
+                  <span className="text-[10px] text-muted-foreground/50">{alert.time}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Incident Review page ────────────────────────────────────────────────────
+
+function IncidentReviewPage({ onBack }: { onBack: () => void }) {
+  const [typeFilter, setTypeFilter] = useState<"all" | IncidentType>("all");
+  const [unresolvedOnly, setUnresolvedOnly] = useState(false);
+
+  const filtered = INCIDENTS.filter(
+    (i) => (typeFilter === "all" || i.type === typeFilter) && (!unresolvedOnly || !i.resolved)
+  );
+
+  const criticalCount  = INCIDENTS.filter((i) => i.severity === "critical").length;
+  const unresolvedCount = INCIDENTS.filter((i) => !i.resolved).length;
+  const withResponse   = INCIDENTS.filter((i) => i.responseTimeSec > 0);
+  const avgResponse    = (withResponse.reduce((s, i) => s + i.responseTimeSec, 0) / withResponse.length).toFixed(1);
+
+  const totalCounted   = useCountUp(INCIDENTS.length, 700);
+  const criticalCounted = useCountUp(criticalCount, 700);
+
+  return (
+    <div className="flex flex-col gap-4 p-4 lg:p-5">
+
+      {/* ── Header ──────────────────────────────────────────────────────── */}
+      <div
+        className="flex items-center gap-3"
+        style={{ animation: "var(--anim-fade-in)" }}
+      >
+        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back to fleet overview">
+          <IconArrowLeft className="h-4 w-4" />
+        </Button>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl font-bold tracking-tight">Incident Review</h1>
+            <span className="inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
+              Last 24h
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            SF Metro · {VEHICLES.length} vehicles · {INCIDENTS.length} recorded events
+          </p>
+        </div>
+        {unresolvedCount > 0 && (
+          <span
+            className="shrink-0 text-[10px] font-bold bg-destructive/15 text-destructive px-2.5 py-1 rounded-full"
+            style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)", animationFillMode: "both" }}
+          >
+            {unresolvedCount} unresolved
+          </span>
+        )}
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 gap-3 @3xl/main:grid-cols-4">
-        {STATS.map((s, i) => {
-          const Icon = s.icon;
+      {/* ── KPI row ──────────────────────────────────────────────────────── */}
+      <div
+        className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+        style={{
+          animation: "var(--anim-slide-up-in)",
+          animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)",
+          animationFillMode: "both",
+        }}
+      >
+        {[
+          { label: "Total Events",     value: Math.round(totalCounted),    unit: "",   icon: IconChartBar,     delta: "Last 24 hours"          },
+          { label: "Critical",         value: Math.round(criticalCounted), unit: "",   icon: IconAlertTriangle, delta: `${unresolvedCount} unresolved` },
+          { label: "Avg Response",     value: avgResponse,                 unit: "s",  icon: IconClock,         delta: "Autonomy to safe-stop"  },
+          { label: "Safety Score",     value: "94.2",                      unit: "/100", icon: IconShield,      delta: "+1.3 vs yesterday"      },
+        ].map((kpi, i) => {
+          const Icon = kpi.icon;
           return (
-            <Card key={s.label} style={{
-              animation: "var(--anim-slide-up-in)",
-              animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 1})`,
-              animationFillMode: "both",
-            }}>
-              <CardHeader className="pb-4">
-                <Icon className="h-4 w-4 text-muted-foreground mb-2" />
-                <CardTitle className="text-2xl font-bold tabular-nums">{s.value}</CardTitle>
-                <CardDescription className="text-xs">{s.label}</CardDescription>
-                <p className="text-[11px] text-muted-foreground/70 mt-0.5">{s.delta}</p>
-              </CardHeader>
-            </Card>
+            <div
+              key={kpi.label}
+              className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
+              style={{
+                animation: "var(--anim-slide-up-in)",
+                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 2})`,
+                animationFillMode: "both",
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-[10px] text-muted-foreground/60 truncate ml-1 text-right leading-tight">{kpi.delta}</span>
+              </div>
+              <div>
+                <div className="text-2xl font-bold tabular-nums tracking-tight leading-none">
+                  {kpi.value}<span className="text-sm font-medium text-muted-foreground ml-0.5">{kpi.unit}</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">{kpi.label}</p>
+              </div>
+            </div>
           );
         })}
       </div>
 
-      {/* Fleet map */}
-      <div style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 5)",
-        animationFillMode: "both",
-      }}>
-        <FleetMap vehicles={VEHICLES} selectedId={selectedVehicle} onSelect={setSelectedVehicle} />
-      </div>
-
-      {/* Chart + Alerts */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_380px]" style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
-        animationFillMode: "both",
-      }}>
-        {/* Trips over time */}
+      {/* ── Timeline chart + Category breakdown ─────────────────────────── */}
+      <div
+        className="grid gap-4 lg:grid-cols-[1fr_260px]"
+        style={{
+          animation: "var(--anim-slide-up-in)",
+          animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)",
+          animationFillMode: "both",
+        }}
+      >
+        {/* Stacked bar timeline */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold">Trips Today</CardTitle>
-            <CardDescription className="text-xs">Hourly trip volume</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold">Incident Timeline</CardTitle>
+            <CardDescription className="text-xs">Distribution across 6-hour windows</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={tripChartConfig} className="h-[240px] w-full">
-              <AreaChart data={TRIP_DATA}>
+            <ChartContainer config={incidentChartConfig} className="h-[180px] w-full">
+              <BarChart data={INCIDENT_TIMELINE} barSize={32}>
                 <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="hour"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(v) => v.replace(" ", "")}
-                  className="text-[10px]"
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  className="text-[10px]"
-                />
+                <XAxis dataKey="window" tickLine={false} axisLine={false} tickMargin={8} className="text-[10px]" />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-[10px]" allowDecimals={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Area
-                  dataKey="trips"
-                  type="natural"
-                  fill="var(--color-trips)"
-                  fillOpacity={0.2}
-                  stroke="var(--color-trips)"
-                  strokeWidth={2}
-                  animationDuration={cssMs("--motion-duration-slow")}
-                  animationEasing={cssCurve("--motion-curve-decelerate-max")}
-                />
-              </AreaChart>
+                <Bar dataKey="disengagement"  stackId="a" fill="var(--color-disengagement)"  radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Bar dataKey="emergency_stop" stackId="a" fill="var(--color-emergency_stop)" radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Bar dataKey="sensor_fault"   stackId="a" fill="var(--color-sensor_fault)"   radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Bar dataKey="geofence"       stackId="a" fill="var(--color-geofence)"       radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Bar dataKey="comm_loss"      stackId="a" fill="var(--color-comm_loss)"      radius={[4,4,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
 
-        {/* Alerts feed */}
-        <Card className="flex flex-col">
+        {/* Category breakdown */}
+        <Card>
           <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Recent Alerts</CardTitle>
-              <IconShield className="h-4 w-4 text-muted-foreground" />
-            </div>
+            <CardTitle className="text-sm font-semibold">By Category</CardTitle>
+            <CardDescription className="text-xs">Event type distribution</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 pt-0">
-            <Tabs value={alertTab} onValueChange={(v) => setAlertTab(v as "all" | AlertSeverity)}>
-              <TabsList className="w-full mb-3">
-                <TabsTrigger value="all" className="text-xs flex-1">All</TabsTrigger>
-                <TabsTrigger value="critical" className="text-xs flex-1">Critical</TabsTrigger>
-                <TabsTrigger value="warning" className="text-xs flex-1">Warning</TabsTrigger>
-              </TabsList>
-
-              <div className="space-y-1 max-h-[240px] overflow-y-auto">
-                {filteredAlerts.map((alert, i) => {
-                  const style = ALERT_STYLE[alert.severity];
-                  return (
+          <CardContent className="pt-0 space-y-3">
+            {(Object.entries(INCIDENT_TYPE_META) as [IncidentType, typeof INCIDENT_TYPE_META[IncidentType]][]).map(([type, meta], i) => {
+              const count = INCIDENTS.filter((inc) => inc.type === type).length;
+              const pct = Math.round((count / INCIDENTS.length) * 100);
+              const Icon = meta.icon;
+              return (
+                <div
+                  key={type}
+                  className="space-y-1"
+                  style={{
+                    animation: "var(--anim-fade-in)",
+                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                    animationFillMode: "both",
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`flex items-center gap-1.5 text-[11px] font-medium ${meta.color}`}>
+                      <Icon className="h-3 w-3" />
+                      {meta.label}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground">{count}</span>
+                  </div>
+                  <div className="h-1 rounded-full bg-muted overflow-hidden">
                     <div
-                      key={i}
-                      className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted/60 transition-colors"
-                      style={{
-                        animation: "var(--anim-fade-in)",
-                        animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
-                        animationFillMode: "both",
-                      }}
-                    >
-                      <IconAlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs leading-snug">{alert.message}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant={style.badge} className="text-[9px] h-4 px-1.5">{alert.vehicle}</Badge>
-                          <span className="text-[10px] text-muted-foreground">{alert.time}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </Tabs>
+                      className="h-full rounded-full transition-[width] duration-700"
+                      style={{ width: `${pct}%`, background: `currentColor` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       </div>
 
-      {/* Fleet health + Response queue + Zone activity */}
-      <div className="grid gap-3 sm:grid-cols-3" style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 7)",
-        animationFillMode: "both",
-      }}>
-        {/* Fleet status breakdown */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Fleet Health</CardTitle>
-              <IconActivity className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
-            {STATUS_BREAKDOWN.map((s) => (
-              <div key={s.label}>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[11px] text-muted-foreground">{s.label}</p>
-                  <span className="text-[11px] font-semibold tabular-nums ml-2 shrink-0">{s.count}</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className={`h-full rounded-full ${s.barClass}`} style={{ width: `${s.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Response queue */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Response Queue</CardTitle>
-              <IconFlame className="h-3.5 w-3.5 text-orange-500" />
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0 px-2 pb-2">
-            {RESPONSE_QUEUE.map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors">
-                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${FLEET_PRIORITY_COLOR[item.priority]}`}>
-                  {item.priority}
-                </span>
-                <p className="flex-1 text-xs truncate">{item.label}</p>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-muted-foreground">{item.due}</span>
-                  <span className="font-mono text-[10px] text-muted-foreground">{item.vehicle}</span>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Zone activity */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Zone Activity</CardTitle>
-              <IconMap className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0 px-3 pb-3 space-y-2.5">
-            {ZONE_ACTIVITY.map((z) => (
-              <div key={z.label}>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[11px] text-muted-foreground truncate">{z.label}</p>
-                  <span className="text-[11px] font-semibold tabular-nums ml-2 shrink-0">{z.trips}</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${z.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Vehicle status table */}
-      <Card style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 8)",
-        animationFillMode: "both",
-      }}>
-        <CardHeader>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* ── Incident event log ───────────────────────────────────────────── */}
+      <Card
+        style={{
+          animation: "var(--anim-slide-up-in)",
+          animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
+          animationFillMode: "both",
+        }}
+      >
+        <CardHeader className="pb-0">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <CardTitle className="text-sm font-semibold">Vehicle Status</CardTitle>
-              <CardDescription className="text-xs">{VEHICLES.length} vehicles in fleet</CardDescription>
+              <CardTitle className="text-sm font-semibold">Event Log</CardTitle>
+              <CardDescription className="text-xs">{filtered.length} events {typeFilter !== "all" ? `· ${INCIDENT_TYPE_META[typeFilter].label}` : ""}</CardDescription>
             </div>
-            <div className="relative w-full sm:w-64">
-              <IconSearch className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search vehicles..."
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-8 h-8 text-xs"
-              />
-            </div>
+            <button
+              onClick={() => setUnresolvedOnly((v) => !v)}
+              className={`text-[10px] font-medium px-2.5 py-1 rounded-full border transition-colors cursor-pointer ${
+                unresolvedOnly
+                  ? "bg-destructive/15 text-destructive border-destructive/30"
+                  : "text-muted-foreground hover:text-foreground border-transparent hover:border-border"
+              }`}
+            >
+              {unresolvedOnly ? "Unresolved only" : "All events"}
+            </button>
+          </div>
+          {/* Type filter tabs */}
+          <div className="flex gap-1 mt-3 flex-wrap">
+            {(["all", "disengagement", "emergency_stop", "sensor_fault", "geofence", "comm_loss"] as const).map((tab) => {
+              const isAll = tab === "all";
+              const label = isAll ? "All" : INCIDENT_TYPE_META[tab].label;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setTypeFilter(tab)}
+                  className={`text-[10px] px-2.5 py-1 rounded-full border cursor-pointer transition-colors font-medium ${
+                    typeFilter === tab
+                      ? "bg-foreground text-background border-foreground"
+                      : "text-muted-foreground hover:text-foreground border-border"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="rounded-md border overflow-hidden">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-xs">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row, rowIdx) => (
-                    <TableRow
-                      key={row.id}
-                      className="cursor-pointer"
-                      onClick={() => onSelectVehicle(row.original.id)}
-                      style={{
-                        animation: "var(--anim-fade-in)",
-                        animationDelay: `calc(var(--motion-duration-ultra-fast) * ${rowIdx})`,
-                        animationFillMode: "both",
-                      }}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="py-2.5">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center text-sm text-muted-foreground">
-                      No vehicles found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          {/* Fleet summary */}
-          <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-            {FLEET_SUMMARY.map(({ icon: Icon, label, count }) => (
-              <span key={label} className="flex items-center gap-1.5">
-                <Icon className="h-3 w-3" />
-                {count} {label}
-              </span>
-            ))}
-          </div>
+        <CardContent className="pt-4 space-y-1">
+          {filtered.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-8">No events match the current filter</p>
+          ) : (
+            filtered.map((incident, i) => {
+              const meta = INCIDENT_TYPE_META[incident.type];
+              const TypeIcon = meta.icon;
+              const severityDot =
+                incident.severity === "critical" ? "bg-destructive" :
+                incident.severity === "warning"  ? "bg-orange-500"  : "bg-muted-foreground";
+              return (
+                <div
+                  key={incident.id}
+                  className="flex items-start gap-3 rounded-lg px-3 py-3 hover:bg-muted/40 transition-colors"
+                  style={{
+                    animation: "var(--anim-fade-in)",
+                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.3})`,
+                    animationFillMode: "both",
+                  }}
+                >
+                  {/* Severity indicator */}
+                  <div className="mt-1 flex flex-col items-center gap-1.5 shrink-0">
+                    <span className={`h-2 w-2 rounded-full ${severityDot}`} />
+                    <TypeIcon className={`h-3.5 w-3.5 ${meta.color}`} />
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className="font-mono text-[11px] font-bold text-muted-foreground">{incident.id}</span>
+                      <span className={`text-[10px] font-medium ${meta.color}`}>{meta.label}</span>
+                      <span className="text-[10px] text-muted-foreground/50 ml-auto shrink-0">{incident.time}</span>
+                    </div>
+                    <p className="text-xs leading-snug mt-0.5 text-foreground">{incident.description}</p>
+                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground font-mono">
+                        <IconCarSuv className="h-3 w-3" />
+                        {incident.vehicle}
+                      </span>
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <IconMapPin className="h-3 w-3" />
+                        {incident.location}
+                      </span>
+                      {incident.responseTimeSec > 0 && (
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <IconClock className="h-3 w-3" />
+                          {incident.responseTimeSec}s response
+                        </span>
+                      )}
+                      <span className={`flex items-center gap-1 text-[10px] font-medium ${incident.resolved ? "text-green-500" : "text-destructive"}`}>
+                        {incident.resolved
+                          ? <IconCircleCheck className="h-3 w-3" />
+                          : <IconCircleX className="h-3 w-3" />
+                        }
+                        {incident.resolved ? "Resolved" : "Open"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ─── Sub-pages ──────────────────────────────────────────────────────────────
+
+function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehicle: (id: string) => void; onGoToIncidents: () => void }) {
+  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [alertFilter, setAlertFilter] = useState<"all" | AlertSeverity>("all");
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  const selectedV = selectedVehicle ? VEHICLES.find((v) => v.id === selectedVehicle) ?? null : null;
+
+  return (
+    <div className="flex flex-col gap-4 p-4 lg:p-5">
+
+      {/* Header — compact single line */}
+      <div
+        className="flex items-center justify-between"
+        style={{ animation: "var(--anim-fade-in)" }}
+      >
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">Fleet Operations</h1>
+          <p className="text-xs text-muted-foreground">San Francisco · {VEHICLES.length} vehicles</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onGoToIncidents}
+            className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground border border-transparent hover:border-border rounded-full px-2.5 py-1 transition-colors cursor-pointer"
+          >
+            <IconAlertTriangle className="h-3 w-3" />
+            Incidents
+            <span className="font-mono text-destructive">
+              {INCIDENTS.filter((i) => i.severity === "critical").length}
+            </span>
+          </button>
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+          </span>
+          <span className="text-[10px] font-mono text-muted-foreground tracking-widest">LIVE</span>
+        </div>
+      </div>
+
+      {/* ── Hero row: Map + Stats ─────────────────────────────────────────── */}
+      <div
+        className="grid gap-4 lg:grid-cols-[1fr_340px]"
+        style={{
+          animation: "var(--anim-slide-up-in)",
+          animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)",
+          animationFillMode: "both",
+        }}
+      >
+        {/* Tactical map */}
+        <div className="h-[352px]">
+          <FleetMap vehicles={VEHICLES} selectedId={selectedVehicle} onSelect={setSelectedVehicle} />
+        </div>
+
+        {/* Right column: vehicle panel (top) + stat tiles (below) */}
+        <div className="flex flex-col gap-3">
+          {/* Vehicle panel — fixed height always, content never shifts layout */}
+          <div className="h-[148px] shrink-0 overflow-hidden">
+            {selectedV ? (
+              <VehicleMiniPanel
+                vehicle={selectedV}
+                onOpenDetail={() => onSelectVehicle(selectedV.id)}
+              />
+            ) : (
+              <div className="h-full rounded-lg border bg-muted/10 px-4 text-center flex flex-col items-center justify-center gap-2">
+                <IconNavigation className="h-5 w-5 text-muted-foreground/40" />
+                <p className="text-xs text-muted-foreground/60">Select a vehicle on the map</p>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 flex-1">
+            {STATS.map((s, i) => (
+              <StatTile key={s.label} stat={s} delay={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom row: Vehicle list + Alerts ────────────────────────────── */}
+      <div
+        className="grid gap-4 lg:grid-cols-[1fr_340px]"
+        style={{
+          animation: "var(--anim-slide-up-in)",
+          animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)",
+          animationFillMode: "both",
+          minHeight: "280px",
+        }}
+      >
+        <VehicleList
+          vehicles={VEHICLES}
+          selectedId={selectedVehicle}
+          onSelect={setSelectedVehicle}
+          onOpenDetail={onSelectVehicle}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <AlertsPanel
+          alerts={ALERTS}
+          filter={alertFilter}
+          onFilterChange={setAlertFilter}
+        />
+      </div>
     </div>
   );
 }
@@ -1062,7 +1351,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
 
 // ─── Root with page transitions ─────────────────────────────────────────────
 
-type FleetPage = "overview" | "detail";
+type FleetPage = "overview" | "detail" | "incidents";
 type Phase = "idle" | "exiting" | "entering";
 
 export function FleetOpsBlock() {
@@ -1094,7 +1383,8 @@ export function FleetOpsBlock() {
     navigate("detail");
   };
 
-  const goToOverview = () => navigate("overview");
+  const goToOverview   = () => navigate("overview");
+  const goToIncidents  = () => navigate("incidents");
 
   return (
     <div className="min-h-full overflow-hidden">
@@ -1109,10 +1399,9 @@ export function FleetOpsBlock() {
         }}
         onAnimationEnd={handleAnimationEnd}
       >
-        {displayPage === "overview"
-          ? <FleetOverviewPage onSelectVehicle={goToDetail} />
-          : <VehicleDetailPage vehicleId={detailVehicleId} onBack={goToOverview} />
-        }
+        {displayPage === "overview"   && <FleetOverviewPage onSelectVehicle={goToDetail} onGoToIncidents={goToIncidents} />}
+        {displayPage === "detail"     && <VehicleDetailPage vehicleId={detailVehicleId} onBack={goToOverview} />}
+        {displayPage === "incidents"  && <IncidentReviewPage onBack={goToOverview} />}
       </div>
     </div>
   );
