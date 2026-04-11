@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
-import { MapContainer, TileLayer, Circle, CircleMarker, Polygon, Tooltip, useMap } from "react-leaflet";
-import type { LatLngTuple } from "leaflet";
+import { CartesianGrid, XAxis, YAxis, Bar, BarChart, Line, LineChart, Area, AreaChart } from "recharts";
+import { MapContainer, TileLayer, Circle, CircleMarker, Marker, Polygon, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import { divIcon, type LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   IconCarSuv,
@@ -9,6 +9,7 @@ import {
   IconMapPin,
   IconClock,
   IconAlertTriangle,
+  IconAlertTriangleFilled,
   IconActivity,
   IconNavigation,
   IconGauge,
@@ -41,6 +42,8 @@ import {
 } from "@/components/ui/card";
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -62,7 +65,7 @@ interface Vehicle {
 }
 
 const STATUS_VARIANT: Record<VehicleStatus, "default" | "secondary" | "outline" | "destructive"> = {
-  Active:      "default",
+  Active:      "outline",
   Idle:        "secondary",
   Charging:    "outline",
   Maintenance: "outline",
@@ -83,6 +86,13 @@ const VEHICLES: Vehicle[] = [
   { id: "AV-011", status: "Active",      location: "Bellevue — Crossroads",     battery: 68, currentTrip: "TRP-4831", lastPing: "6s ago",  coords: [47.612,  -122.170] },
   { id: "AV-012", status: "Idle",        location: "Northgate — Roosevelt Way",  battery: 81, currentTrip: "—",        lastPing: "45s ago", coords: [47.686,  -122.320] },
   { id: "AV-013", status: "Active",      location: "Mercer Island — East Chnl", battery: 74, currentTrip: "TRP-4833", lastPing: "3s ago",  coords: [47.571,  -122.225] },
+  { id: "AV-014", status: "Active",      location: "Renton — Rainier Ave S",    battery: 77, currentTrip: "TRP-4835", lastPing: "7s ago",  coords: [47.481,  -122.217] },
+  { id: "AV-015", status: "Idle",        location: "Bothell — 405 Corridor",    battery: 63, currentTrip: "—",        lastPing: "2m ago",  coords: [47.762,  -122.205] },
+  { id: "AV-016", status: "Active",      location: "Everett — Colby Ave",       battery: 58, currentTrip: "TRP-4837", lastPing: "9s ago",  coords: [47.979,  -122.202] },
+  { id: "AV-017", status: "Charging",    location: "Depot D — Tacoma Bay 1",    battery: 18, currentTrip: "—",        lastPing: "5m ago",  coords: [47.252,  -122.444] },
+  { id: "AV-018", status: "Active",      location: "Issaquah — Front St N",     battery: 84, currentTrip: "TRP-4839", lastPing: "4s ago",  coords: [47.529,  -122.033] },
+  { id: "AV-019", status: "Active",      location: "Ballard — Market St",        battery: 71, currentTrip: "TRP-4841", lastPing: "2s ago",  coords: [47.668,  -122.383] },
+  { id: "AV-020", status: "Active",      location: "Columbia City — Rainier Ave", battery: 66, currentTrip: "TRP-4843", lastPing: "5s ago",  coords: [47.558,  -122.292] },
 ];
 
 type AlertSeverity = "critical" | "warning" | "info";
@@ -115,15 +125,15 @@ const ALERTS: Alert[] = [
 // ─── Fleet map ──────────────────────────────────────────────────────────────
 
 const STATUS_COLOR_HEX: Record<VehicleStatus, string> = {
-  Active:      "#22c55e",
-  Idle:        "#f59e0b",
-  Charging:    "#3b82f6",
-  Maintenance: "#a855f7",
-  Offline:     "#ef4444",
+  Active:      "#05df72",
+  Idle:        "#fbbf24",
+  Charging:    "#38bdf8",
+  Maintenance: "#c026d3",
+  Offline:     "#ff3333",
 };
 
-const MAP_CENTER: LatLngTuple = [47.635, -122.255];
-const MAP_ZOOM = 11;
+const MAP_CENTER: LatLngTuple = [47.600, -122.255];
+const MAP_ZOOM = 9.5;
 
 // Tile URLs — CartoDB Positron (light) and Dark Matter (dark)
 const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
@@ -155,7 +165,26 @@ const INCIDENT_COORDS: { id: string; coords: LatLngTuple; severity: AlertSeverit
   { id: "INC-0043", coords: [47.617,  -122.335], severity: "warning"  },  // Eastlake — no vehicle here
   { id: "INC-0044", coords: [47.630,  -122.341], severity: "warning"  },  // SLU north — no vehicle here
   { id: "INC-0048", coords: [47.565,  -122.219], severity: "critical" },  // Mercer Island south — no vehicle here
+  { id: "INC-0051", coords: [47.640,  -122.242], severity: "warning"  },  // SR-520 floating bridge mid-span
 ];
+
+// SR-520 Corridor traffic warning icon — filled triangle, amber-orange
+const SR520_ICON = divIcon({
+  html: `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="#f97316" stroke="none"><path d="M12 1.67c.955 0 1.845 .467 2.39 1.247l.105 .16l8.114 13.548a2.914 2.914 0 0 1 -2.307 4.363l-.195 .008h-16.225a2.914 2.914 0 0 1 -2.582 -4.2l.099 -.185l8.11 -13.538a2.914 2.914 0 0 1 2.491 -1.403zm.01 13.33l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -7a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z"/></svg>`,
+  className: "",
+  iconSize: [15, 15],
+  iconAnchor: [7, 7],
+  tooltipAnchor: [0, -8],
+});
+
+// Traffic warning icon — amber, for bridge incident markers
+const TRAFFIC_WARNING_ICON = divIcon({
+  html: `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M12 1.67c.955 0 1.845 .467 2.39 1.247l.105 .16l8.114 13.548a2.914 2.914 0 0 1 -2.307 4.363l-.195 .008h-16.225a2.914 2.914 0 0 1 -2.582 -4.2l.099 -.185l8.11 -13.538a2.914 2.914 0 0 1 2.491 -1.403zm.01 13.33l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007zm-.01 -7a1 1 0 0 0 -.993 .883l-.007 .117v4l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-4l-.007 -.117a1 1 0 0 0 -.993 -.883z"/></svg>`,
+  className: "",
+  iconSize: [15, 15],
+  iconAnchor: [7, 7],
+  tooltipAnchor: [0, -8],
+});
 
 /** Syncs tile layer when theme changes (react-leaflet doesn't re-render TileLayer on url change) */
 function TileSync({ isDark }: { isDark: boolean }) {
@@ -279,30 +308,62 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
         }
         .fleet-sonar-ring { animation: fleet-sonar 1.8s ease-out infinite; }
         @keyframes fleet-red-pulse {
-          0%, 100% { opacity: 0.85; }
-          50%       { opacity: 0.35; }
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.45; }
         }
-        .fleet-dot-offline     { animation: fleet-red-pulse 2s ease-in-out infinite; filter: drop-shadow(0 0 5px #ef4444); }
-        .fleet-dot-active      { filter: drop-shadow(0 0 5px #22c55e); }
-        .fleet-dot-idle        { filter: drop-shadow(0 0 4px #f59e0b); }
-        .fleet-dot-charging    { filter: drop-shadow(0 0 4px #3b82f6); }
-        .fleet-dot-maintenance { filter: drop-shadow(0 0 4px #a855f7); }
+        @keyframes fleet-critical-ring {
+          0%   { opacity: 0.75; }
+          65%  { opacity: 0.08; }
+          100% { opacity: 0; }
+        }
+        .fleet-critical-ring { animation: fleet-critical-ring 1.5s ease-out infinite; }
+        .fleet-dot-offline     { animation: fleet-red-pulse 1.6s ease-in-out infinite; filter: drop-shadow(0 0 9px #ff3333) drop-shadow(0 0 3px #ff3333); }
+        .fleet-dot-active      { filter: drop-shadow(0 0 7px #05df72); }
+        .fleet-dot-idle        { filter: drop-shadow(0 0 6px #fbbf24); }
+        .fleet-dot-charging    { filter: drop-shadow(0 0 6px #38bdf8); }
+        .fleet-dot-maintenance { filter: drop-shadow(0 0 6px #c026d3); }
+        .fleet-map .leaflet-control-zoom {
+          border: 1px solid var(--color-border) !important;
+          border-radius: 6px !important;
+          box-shadow: var(--shadow-md, 0 2px 6px rgba(0,0,0,0.12)) !important;
+          overflow: hidden;
+        }
+        .fleet-map .leaflet-control-zoom-in,
+        .fleet-map .leaflet-control-zoom-out {
+          background: var(--color-card) !important;
+          color: var(--color-foreground) !important;
+          border-bottom: 1px solid var(--color-border) !important;
+          width: 26px !important; height: 26px !important;
+          line-height: 26px !important;
+          font-size: 15px !important;
+          font-weight: 400 !important;
+          transition: background 0.15s;
+        }
+        .fleet-map .leaflet-control-zoom-out { border-bottom: none !important; }
+        .fleet-map .leaflet-control-zoom-in:hover,
+        .fleet-map .leaflet-control-zoom-out:hover { background: var(--color-muted) !important; }
       `}</style>
 
       <div className="fleet-map w-full h-full">
         <MapContainer
           center={MAP_CENTER}
           zoom={MAP_ZOOM}
+          minZoom={9}
+          maxZoom={14}
+          zoomSnap={0.5}
+          zoomDelta={0.5}
+          maxBounds={[[46.8, -123.2], [48.4, -121.0]]}
+          maxBoundsViscosity={0.85}
           zoomControl={false}
           attributionControl={true}
-          scrollWheelZoom={false}
-          dragging={false}
-          doubleClickZoom={false}
-          touchZoom={false}
+          scrollWheelZoom={true}
+          dragging={true}
+          doubleClickZoom={true}
           style={{ width: "100%", height: "100%" }}
         >
           <TileLayer url={dark ? TILE_DARK : TILE_LIGHT} attribution={TILE_ATTR} />
           <TileSync isDark={dark} />
+          <ZoomControl position="bottomright" />
 
           {/* Operational coverage zone — subtle boundary */}
           <Polygon
@@ -318,30 +379,75 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
 
           {/* Geofence zones */}
           {GEOFENCES.map((gf) => (
-            <Circle
-              key={gf.label}
-              center={gf.center}
-              radius={gf.radius}
-              pathOptions={{
-                color: gf.type === "restricted" ? restrictedColor : geofenceStroke,
-                weight: 0.8,
-                fillColor: gf.type === "restricted" ? restrictedColor : geofenceColor,
-                fillOpacity: gf.type === "restricted" ? 0.06 : 0.15,
-                dashArray: gf.type === "restricted" ? "3 2" : undefined,
-              }}
-            >
-              <Tooltip direction="center" permanent className="fleet-marker-tooltip">
-                <span style={{ fontSize: "7px", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  {gf.label}
-                </span>
-              </Tooltip>
-            </Circle>
+            <React.Fragment key={gf.label}>
+              {gf.type !== "restricted" && (
+                <Circle
+                  center={gf.center}
+                  radius={gf.radius}
+                  pathOptions={{
+                    color: geofenceStroke,
+                    weight: 0.8,
+                    fillColor: geofenceColor,
+                    fillOpacity: 0.15,
+                  }}
+                />
+              )}
+              {/* Location pin — hover target for label */}
+              {gf.label === "SR-520 Corridor" ? (
+                <Marker position={gf.center} icon={SR520_ICON}>
+                  <Tooltip direction="top" offset={[0, -6]} className="fleet-marker-tooltip">
+                    <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                      {gf.label}
+                    </span>
+                  </Tooltip>
+                </Marker>
+              ) : (
+                <CircleMarker
+                  center={gf.center}
+                  radius={4}
+                  pathOptions={{
+                    color: gf.type === "restricted"
+                      ? restrictedColor
+                      : (dark ? "rgba(200,200,230,0.6)" : "rgba(60,70,120,0.5)"),
+                    weight: 1.5,
+                    fillColor: gf.type === "restricted"
+                      ? restrictedColor
+                      : (dark ? "rgba(160,165,210,0.5)" : "rgba(100,110,170,0.35)"),
+                    fillOpacity: 1,
+                  }}
+                >
+                  <Tooltip direction="top" offset={[0, -6]} className="fleet-marker-tooltip">
+                    <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                      {gf.label}
+                    </span>
+                  </Tooltip>
+                </CircleMarker>
+              )}
+            </React.Fragment>
           ))}
 
           {/* Incident markers — clickable, selected state highlighted */}
           {INCIDENT_COORDS.map((inc) => {
             const isIncSelected = selectedIncidentId === inc.id;
             const incColor = inc.severity === "critical" ? "#ef4444" : "#f59e0b";
+            const tooltip = (
+              <Tooltip direction="top" offset={[0, -8]} className="fleet-marker-tooltip" permanent={isIncSelected}>
+                <span>{inc.id}</span>
+                {isIncSelected && <span style={{ marginLeft: 4, opacity: 0.55 }}>{inc.severity}</span>}
+              </Tooltip>
+            );
+            if (inc.id === "INC-0051") {
+              return (
+                <Marker
+                  key={inc.id}
+                  position={inc.coords}
+                  icon={TRAFFIC_WARNING_ICON}
+                  eventHandlers={{ click: () => onSelectIncident(isIncSelected ? null : inc.id) }}
+                >
+                  {tooltip}
+                </Marker>
+              );
+            }
             return (
               <CircleMarker
                 key={inc.id}
@@ -367,14 +473,30 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
 
           {/* Vehicle markers — on top of everything */}
           {vehicles.map((v) => {
-            const hasAlert = ALERTS.some(a => a.vehicle === v.id);
-            const color = hasAlert ? "#ef4444" : STATUS_COLOR_HEX[v.status];
+            const hasAlert = ALERTS.some(a => a.vehicle === v.id && a.severity === "critical");
+            const color = hasAlert ? STATUS_COLOR_HEX.Offline : STATUS_COLOR_HEX[v.status];
             const isSelected = selectedId === v.id;
             const isOffline = v.status === "Offline" || v.status === "Maintenance";
 
             return (
               <React.Fragment key={v.id}>
-              {/* Sonar pulse ring — selected only, smaller than before */}
+              {/* Permanent critical alert ring */}
+              {hasAlert && !isSelected && (
+                <CircleMarker
+                  center={v.coords}
+                  radius={14}
+                  interactive={false}
+                  pathOptions={{
+                    color: color,
+                    weight: 1.5,
+                    fillColor: color,
+                    fillOpacity: 0,
+                    opacity: 1,
+                    className: "fleet-critical-ring",
+                  }}
+                />
+              )}
+              {/* Sonar pulse ring — selected only */}
               {isSelected && (
                 <CircleMarker
                   center={v.coords}
@@ -392,7 +514,7 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
               )}
               <CircleMarker
                 center={v.coords}
-                radius={isSelected ? 9 : isOffline ? 5 : 7}
+                radius={isSelected ? 9 : hasAlert ? 8 : isOffline ? 5 : 7}
                 pathOptions={{
                   color: color,
                   stroke: !isSelected,
@@ -470,14 +592,25 @@ const FLEET_SUMMARY = [
 // ─── Vehicle detail data ────────────────────────────────────────────────────
 
 const VEHICLE_TRIPS = [
-  { hour: "6 AM", distance: 2.4 }, { hour: "7 AM", distance: 5.1 }, { hour: "8 AM", distance: 8.7 },
-  { hour: "9 AM", distance: 11.2 }, { hour: "10 AM", distance: 7.3 }, { hour: "11 AM", distance: 4.8 },
-  { hour: "12 PM", distance: 6.2 }, { hour: "1 PM", distance: 9.1 }, { hour: "2 PM", distance: 7.5 },
-  { hour: "3 PM", distance: 8.9 }, { hour: "4 PM", distance: 12.1 }, { hour: "5 PM", distance: 14.3 },
+  { hour: "6 AM",  distance: 2.4,  speed: 18, battery: 91, efficiency: 3.8 },
+  { hour: "7 AM",  distance: 5.1,  speed: 24, battery: 88, efficiency: 3.6 },
+  { hour: "8 AM",  distance: 8.7,  speed: 19, battery: 82, efficiency: 3.4 },
+  { hour: "9 AM",  distance: 11.2, speed: 31, battery: 74, efficiency: 3.5 },
+  { hour: "10 AM", distance: 7.3,  speed: 28, battery: 69, efficiency: 3.7 },
+  { hour: "11 AM", distance: 4.8,  speed: 22, battery: 66, efficiency: 3.9 },
+  { hour: "12 PM", distance: 6.2,  speed: 26, battery: 62, efficiency: 3.6 },
+  { hour: "1 PM",  distance: 9.1,  speed: 29, battery: 55, efficiency: 3.5 },
+  { hour: "2 PM",  distance: 7.5,  speed: 25, battery: 50, efficiency: 3.6 },
+  { hour: "3 PM",  distance: 8.9,  speed: 27, battery: 44, efficiency: 3.4 },
+  { hour: "4 PM",  distance: 12.1, speed: 21, battery: 37, efficiency: 3.3 },
+  { hour: "5 PM",  distance: 14.3, speed: 17, battery: 28, efficiency: 3.2 },
 ];
 
 const vehicleTripConfig = {
-  distance: { label: "Miles", color: "var(--chart-2)" },
+  distance:   { label: "Miles",       color: "var(--chart-2)" },
+  speed:      { label: "Speed (mph)", color: "var(--chart-1)" },
+  battery:    { label: "Battery %",   color: "var(--chart-3)" },
+  efficiency: { label: "mi / kWh",    color: "var(--chart-4)" },
 } satisfies ChartConfig;
 
 const SENSOR_DATA = [
@@ -585,9 +718,27 @@ function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }
   );
 }
 
+// ── Theme detection hook ─────────────────────────────────────────────────────
+
+function useTheme(): string {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute("data-theme") || "default"
+  );
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute("data-theme") || "default");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+  return theme;
+}
+
 // ─── Selected vehicle mini-panel ─────────────────────────────────────────────
 
 function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenDetail: () => void }) {
+  const hasCriticalAlert = ALERTS.some(a => a.vehicle === vehicle.id && a.severity === "critical");
+  const buttonColor = hasCriticalAlert ? STATUS_COLOR_HEX.Offline : STATUS_COLOR_HEX[vehicle.status];
   const batteryBg = vehicle.battery < 30 ? "bg-destructive" : vehicle.battery < 50 ? "bg-orange-500" : "bg-green-500";
   const batteryText = vehicle.battery < 30 ? "text-destructive" : vehicle.battery < 50 ? "text-orange-500" : "text-green-500";
 
@@ -603,8 +754,8 @@ function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenD
         </div>
         <button
           onClick={onOpenDetail}
-          className="flex items-center gap-1 text-[11px] font-semibold text-primary-foreground bg-primary hover:opacity-90 rounded-full px-3 py-1 cursor-pointer transition-all active:scale-95 shrink-0"
-          style={{ boxShadow: "0 0 10px 1px color-mix(in oklch, var(--destructive) 35%, transparent)" }}
+          className="flex items-center gap-1 text-[11px] font-semibold rounded-full px-3 py-1 cursor-pointer transition-all active:scale-95 hover:brightness-110 shrink-0"
+          style={{ backgroundColor: buttonColor, color: "rgba(0,0,0,0.72)" }}
         >
           View Details
           <IconArrowRight className="h-3 w-3" />
@@ -942,17 +1093,26 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
           </div>
           <div className="px-3 pb-3">
             <ChartContainer config={incidentChartConfig} className="h-[180px] w-full">
-              <BarChart data={INCIDENT_TIMELINE} barSize={32}>
-                <CartesianGrid vertical={false} />
+              <AreaChart data={INCIDENT_TIMELINE}>
+                <defs>
+                  {(["disengagement","emergency_stop","sensor_fault","geofence","comm_loss"] as const).map((key) => (
+                    <linearGradient key={key} id={`grad-${key}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor={`var(--color-${key})`} stopOpacity={0.35} />
+                      <stop offset="95%" stopColor={`var(--color-${key})`} stopOpacity={0.03} />
+                    </linearGradient>
+                  ))}
+                </defs>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="window" tickLine={false} axisLine={false} tickMargin={8} className="text-[10px]" />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-[10px]" allowDecimals={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="disengagement"  stackId="a" fill="var(--color-disengagement)"  radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
-                <Bar dataKey="emergency_stop" stackId="a" fill="var(--color-emergency_stop)" radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
-                <Bar dataKey="sensor_fault"   stackId="a" fill="var(--color-sensor_fault)"   radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
-                <Bar dataKey="geofence"       stackId="a" fill="var(--color-geofence)"       radius={[0,0,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
-                <Bar dataKey="comm_loss"      stackId="a" fill="var(--color-comm_loss)"      radius={[4,4,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
-              </BarChart>
+                <ChartLegend content={<ChartLegendContent />} />
+                <Area dataKey="disengagement"  type="monotone" stroke="var(--color-disengagement)"  strokeWidth={2} fill="url(#grad-disengagement)"  dot={{ r: 3, fill: "var(--color-disengagement)",  strokeWidth: 0 }} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Area dataKey="emergency_stop" type="monotone" stroke="var(--color-emergency_stop)" strokeWidth={2} fill="url(#grad-emergency_stop)" dot={{ r: 3, fill: "var(--color-emergency_stop)", strokeWidth: 0 }} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Area dataKey="sensor_fault"   type="monotone" stroke="var(--color-sensor_fault)"   strokeWidth={2} fill="url(#grad-sensor_fault)"   dot={{ r: 3, fill: "var(--color-sensor_fault)",   strokeWidth: 0 }} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Area dataKey="geofence"       type="monotone" stroke="var(--color-geofence)"       strokeWidth={2} fill="url(#grad-geofence)"       dot={{ r: 3, fill: "var(--color-geofence)",       strokeWidth: 0 }} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Area dataKey="comm_loss"      type="monotone" stroke="var(--color-comm_loss)"      strokeWidth={2} fill="url(#grad-comm_loss)"      dot={{ r: 3, fill: "var(--color-comm_loss)",      strokeWidth: 0 }} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+              </AreaChart>
             </ChartContainer>
           </div>
         </div>
@@ -1138,11 +1298,12 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
         <div className="flex items-center gap-3">
           <button
             onClick={onGoToIncidents}
-            className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest text-muted-foreground hover:text-foreground border border-transparent hover:border-border rounded-full px-3 py-1.5 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest text-destructive border rounded-full px-3 py-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95"
+            style={{ animation: "fleet-incident-pulse 2s ease-in-out infinite" }}
           >
             <span className="relative flex items-center">
-              <IconAlertTriangle className="h-3.5 w-3.5 text-destructive animate-ping absolute opacity-60" />
-              <IconAlertTriangle className="h-3.5 w-3.5 text-destructive relative" />
+              <IconAlertTriangleFilled className="h-4 w-4 text-destructive animate-ping absolute opacity-40" />
+              <IconAlertTriangleFilled className="h-4 w-4 text-destructive relative" style={{ animation: "fleet-icon-glow 2s ease-in-out infinite" }} />
             </span>
             INCIDENTS
             <span className="font-mono font-bold text-destructive">
@@ -1287,40 +1448,52 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         })}
       </div>
 
-      {/* Battery bar */}
-      <div className="rounded-lg border bg-muted/20 p-3" style={{
+      {/* Battery (vertical) + Performance chart */}
+      <div className="grid gap-4 lg:grid-cols-[160px_1fr]" style={{
         animation: "var(--anim-slide-up-in)",
         animationDelay: "calc(var(--motion-duration-ultra-fast) * 5)",
         animationFillMode: "both",
       }}>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Battery Level</span>
-          <span className={`text-sm font-bold tabular-nums ${batteryColor}`}>{vehicle.battery}%</span>
+        {/* Vertical battery card */}
+        <div className="rounded-lg border bg-muted/20 p-4 flex flex-col items-center gap-3 justify-center">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Battery</span>
+          {/* Battery icon shape */}
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="w-4 h-1.5 rounded-t bg-muted-foreground/25" />
+            <div className="relative w-10 h-28 rounded border-2 border-muted-foreground/30 bg-muted overflow-hidden">
+              {/* Fill from bottom */}
+              <div
+                className={`absolute bottom-0 left-0 right-0 ${batteryBg} transition-[height] duration-700`}
+                style={{ height: `${vehicle.battery}%` }}
+              />
+              {/* Tick marks at 10% intervals */}
+              {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((pct) => (
+                <div
+                  key={pct}
+                  className="absolute left-0 right-0 h-px bg-background/60 pointer-events-none"
+                  style={{ bottom: `${pct}%` }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="text-center">
+            <div className={`text-2xl font-bold tabular-nums leading-none ${batteryColor}`}>{vehicle.battery}%</div>
+            <p className="text-[10px] text-muted-foreground mt-1.5 leading-snug">
+              {vehicle.battery < 30 ? "~12 mi range" : vehicle.battery < 50 ? "~35 mi range" : `~${Math.round(vehicle.battery * 1.1)} mi range`}
+            </p>
+          </div>
         </div>
-        <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
-          <div className={`h-full rounded-full ${batteryBg} transition-[width] duration-500`} style={{ width: `${vehicle.battery}%` }} />
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          {vehicle.battery < 30 ? "Estimated range: ~12 mi" : vehicle.battery < 50 ? "Estimated range: ~35 mi" : `Estimated range: ~${Math.round(vehicle.battery * 1.1)} mi`}
-        </p>
-      </div>
 
-      {/* Distance chart + Sensor grid */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]" style={{
-        animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
-        animationFillMode: "both",
-      }}>
-        {/* Distance per hour */}
+        {/* Multi-series performance chart */}
         <div className="rounded-lg border bg-muted/20 overflow-hidden">
           <div className="px-3 pt-3 pb-1">
-            <p className="text-sm font-semibold">Distance by Hour</p>
-            <p className="text-xs text-muted-foreground">Miles driven today</p>
+            <p className="text-sm font-semibold">Performance — Today</p>
+            <p className="text-xs text-muted-foreground">Distance · Speed · Battery · Efficiency by hour</p>
           </div>
           <div className="px-3 pb-3">
             <ChartContainer config={vehicleTripConfig} className="h-[200px] w-full">
-              <BarChart data={VEHICLE_TRIPS}>
-                <CartesianGrid vertical={false} />
+              <LineChart data={VEHICLE_TRIPS}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis
                   dataKey="hour"
                   tickLine={false}
@@ -1331,48 +1504,50 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-[10px]" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar
-                  dataKey="distance"
-                  fill="var(--color-distance)"
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={cssMs("--motion-duration-slow")}
-                  animationEasing={cssCurve("--motion-curve-decelerate-max")}
-                />
-              </BarChart>
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line dataKey="distance"   type="monotone" stroke="var(--color-distance)"   strokeWidth={2} dot={false} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Line dataKey="speed"      type="monotone" stroke="var(--color-speed)"      strokeWidth={2} dot={false} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Line dataKey="battery"    type="monotone" stroke="var(--color-battery)"    strokeWidth={2} dot={false} strokeDasharray="5 3" animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+                <Line dataKey="efficiency" type="monotone" stroke="var(--color-efficiency)" strokeWidth={1.5} dot={false} strokeDasharray="2 2" animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
+              </LineChart>
             </ChartContainer>
           </div>
         </div>
+      </div>
 
-        {/* Sensor status grid */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
-          <div className="px-3 pt-3 pb-1">
-            <p className="text-sm font-semibold">Sensor Status</p>
-            <p className="text-xs text-muted-foreground">All systems operational</p>
-          </div>
-          <div className="px-3 pb-3">
-            <div className="grid grid-cols-2 gap-3">
-              {SENSOR_DATA.map((sensor, i) => {
-                const Icon = sensor.icon;
-                return (
-                  <div
-                    key={sensor.label}
-                    className="flex items-center gap-3 rounded-lg border px-3 py-2.5"
-                    style={{
-                      animation: "var(--anim-fade-in)",
-                      animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
-                      animationFillMode: "both",
-                    }}
-                  >
-                    <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium truncate">{sensor.label}</p>
-                      <p className="text-[11px] text-muted-foreground">{sensor.value}</p>
-                    </div>
-                    <span className="ml-auto h-2 w-2 rounded-full bg-green-500 shrink-0" />
+      {/* Sensor status grid */}
+      <div className="rounded-lg border bg-muted/20 overflow-hidden" style={{
+        animation: "var(--anim-slide-up-in)",
+        animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
+        animationFillMode: "both",
+      }}>
+        <div className="px-3 pt-3 pb-1">
+          <p className="text-sm font-semibold">Sensor Status</p>
+          <p className="text-xs text-muted-foreground">All systems operational</p>
+        </div>
+        <div className="px-3 pb-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {SENSOR_DATA.map((sensor, i) => {
+              const Icon = sensor.icon;
+              return (
+                <div
+                  key={sensor.label}
+                  className="flex items-center gap-3 rounded-lg border px-3 py-2.5"
+                  style={{
+                    animation: "var(--anim-fade-in)",
+                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                    animationFillMode: "both",
+                  }}
+                >
+                  <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium truncate">{sensor.label}</p>
+                    <p className="text-[11px] text-muted-foreground">{sensor.value}</p>
                   </div>
-                );
-              })}
-            </div>
+                  <span className="ml-auto h-2 w-2 rounded-full bg-green-500 shrink-0" />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1487,6 +1662,23 @@ export function FleetOpsBlock() {
 
   return (
     <div className="min-h-full overflow-hidden">
+      <style>{`
+        @keyframes fleet-incident-pulse {
+          0%, 100% {
+            box-shadow: 0 0 0 0 color-mix(in oklch, var(--destructive, #ef4444) 15%, transparent);
+            border-color: color-mix(in oklch, var(--destructive, #ef4444) 40%, transparent);
+          }
+          50% {
+            box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive, #ef4444) 10%, transparent),
+                        0 0 8px 1px color-mix(in oklch, var(--destructive, #ef4444) 15%, transparent);
+            border-color: color-mix(in oklch, var(--destructive, #ef4444) 75%, transparent);
+          }
+        }
+        @keyframes fleet-icon-glow {
+          0%, 100% { filter: drop-shadow(0 0 0px color-mix(in oklch, var(--destructive, #ef4444) 0%, transparent)); }
+          50%       { filter: drop-shadow(0 0 4px color-mix(in oklch, var(--destructive, #ef4444) 55%, transparent)); }
+        }
+      `}</style>
       <div
         key={displayPage}
         style={{
