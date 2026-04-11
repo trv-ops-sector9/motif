@@ -403,7 +403,7 @@ function DropdownMenuDemo() {
 type TabCount = "3" | "4" | "5" | "6" | "7";
 
 function TabsDemo() {
-  const [count, setCount] = useState<TabCount>("4");
+  const [count, setCount] = useState<TabCount>("7");
   const n = parseInt(count);
 
   const allTabs = [
@@ -568,7 +568,7 @@ function TooltipDemo() {
   return (
     <div className="flex flex-col flex-1 gap-8">
       <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="outline">Hover me</Button>

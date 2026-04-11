@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 import { MapContainer, TileLayer, Circle, CircleMarker, Polyline, Polygon, Tooltip, useMap } from "react-leaflet";
 import type { LatLngTuple } from "leaflet";
@@ -26,6 +26,7 @@ import {
   IconCircleX,
   IconChartBar,
   IconWifiOff,
+  IconArrowRight,
 } from "@tabler/icons-react";
 
 import { cssMs, cssCurve } from "@/lib/motion";
@@ -117,7 +118,7 @@ const STATUS_COLOR_HEX: Record<VehicleStatus, string> = {
   Offline:     "#ef4444",
 };
 
-const MAP_CENTER: LatLngTuple = [37.758, -122.405];
+const MAP_CENTER: LatLngTuple = [37.772, -122.408];
 const MAP_ZOOM = 13;
 
 // Tile URLs — CartoDB Positron (light) and Dark Matter (dark)
@@ -127,11 +128,31 @@ const TILE_ATTR  = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM
 
 // Projected route waypoints for active vehicles — longer paths that extend off-map
 const ACTIVE_ROUTES: Record<string, LatLngTuple[]> = {
-  "AV-001": [[37.7853, -122.4056], [37.7880, -122.4000], [37.7920, -122.3940], [37.7950, -122.3880]],
-  "AV-002": [[37.7699, -122.3933], [37.7660, -122.3900], [37.7620, -122.3860], [37.7580, -122.3820]],
-  "AV-004": [[37.7760, -122.3927], [37.7730, -122.3870], [37.7700, -122.3810], [37.7680, -122.3760]],
-  "AV-007": [[37.7660, -122.4020], [37.7630, -122.4060], [37.7590, -122.4110], [37.7550, -122.4150]],
-  "AV-009": [[37.7760, -122.4240], [37.7790, -122.4170], [37.7820, -122.4100], [37.7850, -122.4040]],
+  // Market St NW (diagonal street — natural non-grid shape)
+  "AV-001": [
+    [37.7853, -122.4056], [37.7857, -122.4095], [37.7862, -122.4140],
+    [37.7866, -122.4185], [37.7871, -122.4228], [37.7876, -122.4272],
+  ],
+  // Mission Bay → west on Mariposa → north on 7th → west on Market
+  "AV-002": [
+    [37.7699, -122.3933], [37.7699, -122.4005], [37.7699, -122.4068],
+    [37.7735, -122.4068], [37.7762, -122.4068], [37.7762, -122.4138],
+  ],
+  // Embarcadero north → curve to Market → west on Market
+  "AV-004": [
+    [37.7760, -122.3927], [37.7796, -122.3916], [37.7830, -122.3908],
+    [37.7852, -122.3942], [37.7852, -122.4005], [37.7852, -122.4065],
+  ],
+  // 16th St west → south on Mission → east on 24th
+  "AV-007": [
+    [37.7660, -122.4020], [37.7660, -122.4090], [37.7660, -122.4165],
+    [37.7625, -122.4165], [37.7592, -122.4165], [37.7592, -122.4095],
+  ],
+  // North on Octavia → east on McAllister → south on Larkin
+  "AV-009": [
+    [37.7760, -122.4240], [37.7800, -122.4240], [37.7832, -122.4240],
+    [37.7832, -122.4165], [37.7832, -122.4090], [37.7798, -122.4090],
+  ],
 };
 
 // Geofence zones — operational boundaries
@@ -266,6 +287,12 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
         }
         .fleet-marker-tooltip .leaflet-tooltip::before,
         .fleet-map .leaflet-tooltip::before { display: none; }
+        @keyframes fleet-sonar {
+          0%   { opacity: 0.7; }
+          70%  { opacity: 0.05; }
+          100% { opacity: 0; }
+        }
+        .fleet-sonar-ring { animation: fleet-sonar 1.6s ease-out infinite; }
       `}</style>
 
       <div className="fleet-map w-full h-full">
@@ -328,9 +355,9 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
                 positions={path}
                 pathOptions={{
                   color: STATUS_COLOR_HEX[vehicle.status],
-                  weight: isSelected ? 1.5 : 0.8,
-                  opacity: isSelected ? 0.6 : 0.25,
-                  dashArray: "5 3",
+                  weight: isSelected ? 2.5 : 1.8,
+                  opacity: isSelected ? 0.85 : 0.55,
+                  dashArray: "6 4",
                   lineCap: "round",
                 }}
               />
@@ -364,16 +391,32 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
             const isOffline = v.status === "Offline" || v.status === "Maintenance";
 
             return (
+              <React.Fragment key={v.id}>
+              {/* Sonar pulse ring — only rendered for selected vehicle */}
+              {isSelected && (
+                <CircleMarker
+                  center={v.coords}
+                  radius={26}
+                  interactive={false}
+                  pathOptions={{
+                    color: color,
+                    weight: 2,
+                    fillColor: color,
+                    fillOpacity: 0.08,
+                    opacity: 1,
+                    className: "fleet-sonar-ring",
+                  }}
+                />
+              )}
               <CircleMarker
-                key={v.id}
                 center={v.coords}
-                radius={isSelected ? 9 : isOffline ? 5 : 7}
+                radius={isSelected ? 13 : isOffline ? 5 : 7}
                 pathOptions={{
                   color: isSelected ? "white" : color,
-                  weight: isSelected ? 2 : 1,
+                  weight: isSelected ? 2.5 : 1,
                   fillColor: color,
                   fillOpacity: isOffline ? 0.25 : isSelected ? 1 : 0.85,
-                  opacity: isSelected ? 0.9 : 0.7,
+                  opacity: isSelected ? 1 : 0.7,
                 }}
                 eventHandlers={{
                   click: () => onSelect(isSelected ? null : v.id),
@@ -391,6 +434,7 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
                   )}
                 </Tooltip>
               </CircleMarker>
+              </React.Fragment>
             );
           })}
         </MapContainer>
@@ -573,12 +617,16 @@ function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenD
           <span className="font-mono text-sm font-bold">{vehicle.id}</span>
           <Badge variant={STATUS_VARIANT[vehicle.status]} className="text-[9px] h-4 px-1.5">{vehicle.status}</Badge>
         </div>
-        <button
-          onClick={onOpenDetail}
-          className="text-[10px] text-primary hover:underline cursor-pointer shrink-0"
-        >
-          Details →
-        </button>
+        <span className="relative inline-flex shrink-0">
+          <span className="absolute inset-0 rounded-full border border-primary animate-ping opacity-50" />
+          <button
+            onClick={onOpenDetail}
+            className="relative flex items-center gap-1 text-[11px] font-semibold text-primary border border-primary/50 hover:border-primary hover:bg-primary/10 rounded-full px-2.5 py-0.5 cursor-pointer transition-all active:scale-95"
+          >
+            View Details
+            <IconArrowRight className="h-3 w-3" />
+          </button>
+        </span>
       </div>
       <p className="text-[11px] text-muted-foreground flex items-center gap-1 truncate">
         <IconMapPin className="h-3 w-3 shrink-0" />
@@ -847,12 +895,12 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         }}
       >
         {/* Stacked bar timeline */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Incident Timeline</CardTitle>
-            <CardDescription className="text-xs">Distribution across 6-hour windows</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-1">
+            <p className="text-sm font-semibold">Incident Timeline</p>
+            <p className="text-xs text-muted-foreground">Distribution across 6-hour windows</p>
+          </div>
+          <div className="px-3 pb-3">
             <ChartContainer config={incidentChartConfig} className="h-[180px] w-full">
               <BarChart data={INCIDENT_TIMELINE} barSize={32}>
                 <CartesianGrid vertical={false} />
@@ -866,16 +914,16 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
                 <Bar dataKey="comm_loss"      stackId="a" fill="var(--color-comm_loss)"      radius={[4,4,0,0]} animationDuration={cssMs("--motion-duration-slow")} animationEasing={cssCurve("--motion-curve-decelerate-max")} />
               </BarChart>
             </ChartContainer>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Category breakdown */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">By Category</CardTitle>
-            <CardDescription className="text-xs">Event type distribution</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-3">
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-1">
+            <p className="text-sm font-semibold">By Category</p>
+            <p className="text-xs text-muted-foreground">Event type distribution</p>
+          </div>
+          <div className="px-3 pb-3 space-y-3">
             {(Object.entries(INCIDENT_TYPE_META) as [IncidentType, typeof INCIDENT_TYPE_META[IncidentType]][]).map(([type, meta], i) => {
               const count = INCIDENTS.filter((inc) => inc.type === type).length;
               const pct = Math.round((count / INCIDENTS.length) * 100);
@@ -906,23 +954,24 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
                 </div>
               );
             })}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* ── Incident event log ───────────────────────────────────────────── */}
-      <Card
+      <div
+        className="rounded-lg border bg-muted/20 overflow-hidden"
         style={{
           animation: "var(--anim-slide-up-in)",
           animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
           animationFillMode: "both",
         }}
       >
-        <CardHeader className="pb-0">
+        <div className="px-3 pt-3 pb-0">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <CardTitle className="text-sm font-semibold">Event Log</CardTitle>
-              <CardDescription className="text-xs">{filtered.length} events {typeFilter !== "all" ? `· ${INCIDENT_TYPE_META[typeFilter].label}` : ""}</CardDescription>
+              <p className="text-sm font-semibold">Event Log</p>
+              <p className="text-xs text-muted-foreground">{filtered.length} events {typeFilter !== "all" ? `· ${INCIDENT_TYPE_META[typeFilter].label}` : ""}</p>
             </div>
             <button
               onClick={() => setUnresolvedOnly((v) => !v)}
@@ -955,8 +1004,8 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
               );
             })}
           </div>
-        </CardHeader>
-        <CardContent className="pt-4 space-y-1">
+        </div>
+        <div className="px-3 pt-4 pb-3 space-y-1">
           {filtered.length === 0 ? (
             <p className="text-xs text-muted-foreground text-center py-8">No events match the current filter</p>
           ) : (
@@ -1018,8 +1067,8 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
               );
             })
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1166,45 +1215,41 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         ] as const).map((s, i) => {
           const Icon = s.icon;
           return (
-            <Card key={s.label} style={{
+            <div key={s.label} className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2" style={{
               animation: "var(--anim-slide-up-in)",
               animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 1})`,
               animationFillMode: "both",
             }}>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardDescription className="text-xs">{s.label}</CardDescription>
-                  <Icon className={`h-4 w-4 ${s.label === "Battery" ? batteryColor : "text-muted-foreground"}`} />
-                </div>
-                <CardTitle className="text-2xl font-bold tabular-nums">{s.value}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-xs text-muted-foreground">{s.sub}</p>
-              </CardContent>
-            </Card>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{s.label}</span>
+                <Icon className={`h-4 w-4 ${s.label === "Battery" ? batteryColor : "text-muted-foreground"}`} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold tabular-nums tracking-tight leading-none">{s.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{s.sub}</p>
+              </div>
+            </div>
           );
         })}
       </div>
 
       {/* Battery bar */}
-      <Card style={{
+      <div className="rounded-lg border bg-muted/20 p-3" style={{
         animation: "var(--anim-slide-up-in)",
         animationDelay: "calc(var(--motion-duration-ultra-fast) * 5)",
         animationFillMode: "both",
       }}>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Battery Level</span>
-            <span className={`text-sm font-bold tabular-nums ${batteryColor}`}>{vehicle.battery}%</span>
-          </div>
-          <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
-            <div className={`h-full rounded-full ${batteryBg} transition-[width] duration-500`} style={{ width: `${vehicle.battery}%` }} />
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            {vehicle.battery < 30 ? "Estimated range: ~12 mi" : vehicle.battery < 50 ? "Estimated range: ~35 mi" : `Estimated range: ~${Math.round(vehicle.battery * 1.1)} mi`}
-          </p>
-        </CardContent>
-      </Card>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium">Battery Level</span>
+          <span className={`text-sm font-bold tabular-nums ${batteryColor}`}>{vehicle.battery}%</span>
+        </div>
+        <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
+          <div className={`h-full rounded-full ${batteryBg} transition-[width] duration-500`} style={{ width: `${vehicle.battery}%` }} />
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          {vehicle.battery < 30 ? "Estimated range: ~12 mi" : vehicle.battery < 50 ? "Estimated range: ~35 mi" : `Estimated range: ~${Math.round(vehicle.battery * 1.1)} mi`}
+        </p>
+      </div>
 
       {/* Distance chart + Sensor grid */}
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]" style={{
@@ -1213,12 +1258,12 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         animationFillMode: "both",
       }}>
         {/* Distance per hour */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold">Distance by Hour</CardTitle>
-            <CardDescription className="text-xs">Miles driven today</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-1">
+            <p className="text-sm font-semibold">Distance by Hour</p>
+            <p className="text-xs text-muted-foreground">Miles driven today</p>
+          </div>
+          <div className="px-3 pb-3">
             <ChartContainer config={vehicleTripConfig} className="h-[200px] w-full">
               <BarChart data={VEHICLE_TRIPS}>
                 <CartesianGrid vertical={false} />
@@ -1241,16 +1286,16 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 />
               </BarChart>
             </ChartContainer>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Sensor status grid */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold">Sensor Status</CardTitle>
-            <CardDescription className="text-xs">All systems operational</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-1">
+            <p className="text-sm font-semibold">Sensor Status</p>
+            <p className="text-xs text-muted-foreground">All systems operational</p>
+          </div>
+          <div className="px-3 pb-3">
             <div className="grid grid-cols-2 gap-3">
               {SENSOR_DATA.map((sensor, i) => {
                 const Icon = sensor.icon;
@@ -1274,8 +1319,8 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 );
               })}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Event log + Vehicle alerts */}
@@ -1285,16 +1330,16 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         animationFillMode: "both",
       }}>
         {/* Event log */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold">Event Log</CardTitle>
-            <CardDescription className="text-xs">Recent vehicle activity</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-1">
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-2 border-b">
+            <p className="text-sm font-semibold">Event Log</p>
+            <p className="text-xs text-muted-foreground">Recent vehicle activity</p>
+          </div>
+          <div className="px-1 py-1 space-y-0.5">
             {VEHICLE_EVENTS.map((evt, i) => (
               <div
                 key={i}
-                className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted/60 transition-colors"
+                className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted/40 transition-colors"
                 style={{
                   animation: "var(--anim-fade-in)",
                   animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
@@ -1308,24 +1353,24 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Vehicle-specific alerts */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Alerts for {vehicle.id}</CardTitle>
-              <IconShield className="h-4 w-4 text-muted-foreground" />
+        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+          <div className="px-3 pt-3 pb-2 border-b flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold">Alerts for {vehicle.id}</p>
             </div>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-1">
+            <IconShield className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="px-1 py-1 space-y-0.5">
             {vehicleAlerts.length > 0 ? vehicleAlerts.map((alert, i) => {
               const style = ALERT_STYLE[alert.severity];
               return (
                 <div
                   key={i}
-                  className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted/60 transition-colors"
+                  className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted/40 transition-colors"
                   style={{
                     animation: "var(--anim-fade-in)",
                     animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
@@ -1342,8 +1387,8 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
             }) : (
               <p className="text-xs text-muted-foreground px-2.5 py-4 text-center">No alerts for this vehicle</p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
