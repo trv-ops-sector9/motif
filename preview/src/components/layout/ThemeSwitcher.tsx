@@ -121,7 +121,7 @@ export function SidebarModePicker() {
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "light"
               ? "bg-sidebar-primary text-sidebar-primary-foreground"
-              : "bg-sidebar text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
           <IconSun className="h-3.5 w-3.5" />
@@ -135,7 +135,7 @@ export function SidebarModePicker() {
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:z-10",
             mode === "dark"
               ? "bg-sidebar-primary text-sidebar-primary-foreground"
-              : "bg-sidebar text-sidebar-foreground transition-colors hover:bg-sidebar-accent",
+              : "bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent",
           )}
         >
           <IconMoon className="h-3.5 w-3.5" />

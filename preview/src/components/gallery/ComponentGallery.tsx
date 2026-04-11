@@ -24,10 +24,6 @@ import { cn } from "@/lib/utils";
 
 /* ── Shared layout helpers ── */
 
-// Consistent tighter padding for component cards (matches TokensView)
-const hdrCn = "px-4 pt-4 pb-3";
-const bodyCn = "px-4 pb-4 pt-1";
-
 function ControlGroup({ label, name, value, options, onChange }: {
   label: string;
   name: string;
@@ -36,13 +32,13 @@ function ControlGroup({ label, name, value, options, onChange }: {
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-start gap-4">
-      <span className="w-20 shrink-0 pt-0.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
-      <RadioGroup value={value} onValueChange={onChange} className="flex flex-wrap gap-x-4 gap-y-2">
+    <div className="flex items-center gap-4">
+      <span className="w-16 shrink-0 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">{label}</span>
+      <RadioGroup value={value} onValueChange={onChange} className="flex flex-wrap gap-x-3 gap-y-1">
         {options.map(opt => (
           <div key={opt.value} className="flex items-center gap-1.5">
-            <RadioGroupItem value={opt.value} id={`${name}-${opt.value}`} />
-            <Label htmlFor={`${name}-${opt.value}`} className="text-sm font-normal cursor-pointer">
+            <RadioGroupItem value={opt.value} id={`${name}-${opt.value}`} className="h-3 w-3" />
+            <Label htmlFor={`${name}-${opt.value}`} className="text-[11px] font-normal cursor-pointer">
               {opt.label}
             </Label>
           </div>
@@ -80,7 +76,7 @@ function ButtonDemo() {
           }
         </Button>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Variant" name="variant" value={variant}
           onChange={v => setVariant(v as BtnVariant)}
@@ -244,7 +240,7 @@ function CardDemo() {
           </Card>
         )}
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Layout" name="card-layout" value={layout}
           onChange={v => setLayout(v as CardLayout)}
@@ -347,7 +343,7 @@ function DialogDemo() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Size" name="dialog-size" value={size}
           onChange={v => setSize(v as DialogSize)}
@@ -435,7 +431,7 @@ function TabsDemo() {
           ))}
         </Tabs>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Tabs" name="tab-count" value={count}
           onChange={v => setCount(v as TabCount)}
@@ -504,7 +500,7 @@ function AccordionDemo() {
           </Accordion>
         )}
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Mode" name="accordion-mode" value={mode}
           onChange={v => setMode(v as AccordionMode)}
@@ -542,7 +538,7 @@ function ToastDemo() {
       <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/30 py-6 px-4 min-h-[120px]">
         <Button variant="outline" onClick={fireToast}>Fire toast</Button>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Type" name="toast-type" value={type}
           onChange={v => setType(v as ToastType)}
@@ -579,7 +575,7 @@ function TooltipDemo() {
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Side" name="tooltip-side" value={side}
           onChange={v => setSide(v as TooltipSide)}
@@ -636,7 +632,7 @@ function SwitchDemo() {
           </div>
         )}
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Layout" name="switch-layout" value={layout}
           onChange={v => setLayout(v as SwitchLayout)}
@@ -702,7 +698,7 @@ function InputDemo() {
           )}
         </div>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="State" name="input-state" value={state}
           onChange={v => setState(v as InputState)}
@@ -756,7 +752,7 @@ function SelectDemo() {
           </Select>
         </div>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="State" name="select-state" value={disabled}
           onChange={v => setDisabled(v as "enabled" | "disabled")}
@@ -804,7 +800,7 @@ function CheckboxDemo() {
           </div>
         )}
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Layout" name="checkbox-layout" value={layout}
           onChange={v => setLayout(v as CheckboxLayout)}
@@ -842,7 +838,7 @@ function BadgeDemo() {
           Badge
         </Badge>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Variant" name="badge-variant" value={variant}
           onChange={v => setVariant(v as BadgeVariant)}
@@ -900,7 +896,7 @@ function AvatarDemo() {
           </Avatar>
         </div>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Size" name="avatar-size" value={size}
           onChange={v => setSize(v as AvatarSize)}
@@ -943,7 +939,7 @@ function AlertDemo() {
           </AlertDescription>
         </Alert>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Variant" name="alert-variant" value={type}
           onChange={v => setType(v as AlertType)}
@@ -996,7 +992,7 @@ function DrawerDemo() {
           </DrawerContent>
         </Drawer>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Side" name="drawer-side" value={side}
           onChange={v => setSide(v as DrawerSide)}
@@ -1051,7 +1047,7 @@ function ToggleGroupDemo() {
           </ToggleGroup>
         )}
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Variant" name="toggle-variant" value={variant}
           onChange={v => setVariant(v as ToggleVariant)}
@@ -1109,7 +1105,7 @@ function ProgressDemo() {
           </div>
         </div>
       </div>
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-2">
         <ControlGroup
           label="Value" name="progress-value" value={String(value)}
           onChange={v => setValue(parseInt(v))}
@@ -1142,146 +1138,126 @@ function DemoCard({ title, description, children, className }: {
   className?: string;
 }) {
   return (
-    <Card className={cn("h-full", className)}>
-      <CardHeader className={hdrCn}>
-        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-        <CardDescription className="text-xs">{description}</CardDescription>
-      </CardHeader>
-      <CardContent className={cn(bodyCn, "flex-1 flex flex-col")}>
+    <div className={cn("flex flex-col", className)}>
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="text-xs text-muted-foreground mt-0.5 mb-3">{description}</p>
+      <div className="flex-1 flex flex-col pb-3">
         {children}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
 export function ComponentGallery() {
   return (
-    <div>
-      <div className="p-6 space-y-6 max-w-5xl">
-        {/* Page header */}
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Component Gallery</h1>
-          <p className="text-sm text-muted-foreground">
-            Interactive demos — every component wired to the active motion and color tokens.
-          </p>
-        </div>
+    <div className="p-6 space-y-6 max-w-5xl">
+      {/* Page header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight">Component Gallery</h1>
+        <p className="text-sm text-muted-foreground">
+          Interactive demos — every component wired to the active motion and color tokens.
+        </p>
+      </div>
 
-        <Separator />
+      <Separator />
 
-        {/* Row 1: Accordion (full width — wide content) */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard
-            title="Accordion"
-            description="Height animation — no spring curves, only smooth easing."
-            className="sm:col-span-2"
-          >
-            <AccordionDemo />
-          </DemoCard>
-        </div>
+      <DemoCard title="Accordion" description="Height animation — no spring curves, only smooth easing.">
+        <AccordionDemo />
+      </DemoCard>
 
-        {/* Row 2: Alert + Avatar */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Alert" description="Inline banners — info and destructive variants.">
-            <AlertDemo />
-          </DemoCard>
-          <DemoCard title="Avatar" description="Image or fallback initials at different sizes.">
-            <AvatarDemo />
-          </DemoCard>
-        </div>
+      <Separator />
 
-        {/* Row 3: Badge + Checkbox */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Badge" description="Inline status labels — all semantic color variants.">
-            <BadgeDemo />
-          </DemoCard>
-          <DemoCard title="Checkbox" description="Background and check transition via motion tokens.">
-            <CheckboxDemo />
-          </DemoCard>
-        </div>
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Alert" description="Inline banners — info and destructive variants.">
+          <AlertDemo />
+        </DemoCard>
+        <DemoCard title="Avatar" description="Image or fallback initials at different sizes.">
+          <AvatarDemo />
+        </DemoCard>
+      </div>
 
-        {/* Row 4: Button (full width — 4 control groups) */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard
-            title="Button"
-            description="All variants, sizes, and states — color transitions use motion token timing."
-            className="sm:col-span-2"
-          >
-            <ButtonDemo />
-          </DemoCard>
-        </div>
+      <Separator />
 
-        {/* Row 5: Card (full width — interactive demo) */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard
-            title="Card"
-            description="Shadow elevation — hover lift and press use motion token curves."
-            className="sm:col-span-2"
-          >
-            <CardDemo />
-          </DemoCard>
-        </div>
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Badge" description="Inline status labels — all semantic color variants.">
+          <BadgeDemo />
+        </DemoCard>
+        <DemoCard title="Checkbox" description="Background and check transition via motion tokens.">
+          <CheckboxDemo />
+        </DemoCard>
+      </div>
 
-        {/* Row 6: Dialog + Drawer */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Dialog" description="Modal overlay with fade-in and expand animation.">
-            <DialogDemo />
-          </DemoCard>
-          <DemoCard title="Drawer" description="Slides from any edge with motion tokens.">
-            <DrawerDemo />
-          </DemoCard>
-        </div>
+      <Separator />
 
-        {/* Row 7: Dropdown Menu + Input */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Dropdown Menu" description="Slide animation responds to motion theme.">
-            <DropdownMenuDemo />
-          </DemoCard>
-          <DemoCard title="Input" description="Text input with label, error state, and adornments.">
-            <InputDemo />
-          </DemoCard>
-        </div>
+      <DemoCard title="Button" description="All variants, sizes, and states — color transitions use motion token timing.">
+        <ButtonDemo />
+      </DemoCard>
 
-        {/* Row 8: Progress + Select */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Progress" description="Fill animates with motion token duration and easing.">
-            <ProgressDemo />
-          </DemoCard>
-          <DemoCard title="Select" description="Grouped options — uses slide animation tokens.">
-            <SelectDemo />
-          </DemoCard>
-        </div>
+      <Separator />
 
-        {/* Row 9: Switch + Toast */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Switch" description="Thumb slides with motion token timing.">
-            <SwitchDemo />
-          </DemoCard>
-          <DemoCard title="Toast" description="Sonner notifications — animate in and out.">
-            <ToastDemo />
-          </DemoCard>
-        </div>
+      <DemoCard title="Card" description="Shadow elevation — hover lift and press use motion token curves.">
+        <CardDemo />
+      </DemoCard>
 
-        {/* Row 10: Tabs (full width — wide content) */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard
-            title="Tabs"
-            description="Sliding pill indicator — more tabs means more travel for the animation."
-            className="sm:col-span-2"
-          >
-            <TabsDemo />
-          </DemoCard>
-        </div>
+      <Separator />
 
-        {/* Row 11: Toggle Group + Tooltip */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <DemoCard title="Toggle Group" description="Segmented toggles — color transitions use motion tokens.">
-            <ToggleGroupDemo />
-          </DemoCard>
-          <DemoCard title="Tooltip" description="Hover tooltip with configurable placement.">
-            <TooltipDemo />
-          </DemoCard>
-        </div>
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Dialog" description="Modal overlay with fade-in and expand animation.">
+          <DialogDemo />
+        </DemoCard>
+        <DemoCard title="Drawer" description="Slides from any edge with motion tokens.">
+          <DrawerDemo />
+        </DemoCard>
+      </div>
 
+      <Separator />
+
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Dropdown Menu" description="Slide animation responds to motion theme.">
+          <DropdownMenuDemo />
+        </DemoCard>
+        <DemoCard title="Input" description="Text input with label, error state, and adornments.">
+          <InputDemo />
+        </DemoCard>
+      </div>
+
+      <Separator />
+
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Progress" description="Fill animates with motion token duration and easing.">
+          <ProgressDemo />
+        </DemoCard>
+        <DemoCard title="Select" description="Grouped options — uses slide animation tokens.">
+          <SelectDemo />
+        </DemoCard>
+      </div>
+
+      <Separator />
+
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Switch" description="Thumb slides with motion token timing.">
+          <SwitchDemo />
+        </DemoCard>
+        <DemoCard title="Toast" description="Sonner notifications — animate in and out.">
+          <ToastDemo />
+        </DemoCard>
+      </div>
+
+      <Separator />
+
+      <DemoCard title="Tabs" description="Sliding pill indicator — more tabs means more travel for the animation.">
+        <TabsDemo />
+      </DemoCard>
+
+      <Separator />
+
+      <div className="grid sm:grid-cols-2 gap-8">
+        <DemoCard title="Toggle Group" description="Segmented toggles — color transitions use motion tokens.">
+          <ToggleGroupDemo />
+        </DemoCard>
+        <DemoCard title="Tooltip" description="Hover tooltip with configurable placement.">
+          <TooltipDemo />
+        </DemoCard>
       </div>
     </div>
   );

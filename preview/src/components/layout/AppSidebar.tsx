@@ -187,7 +187,7 @@ function NavButton({ item, active, collapsed, onClick }: NavButtonProps) {
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
         active
           ? "bg-sidebar-primary text-sidebar-primary-foreground"
-          : "text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         collapsed && "justify-center px-0"
       )}
     >
