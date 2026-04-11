@@ -422,7 +422,6 @@ function ConfigurePage({ onNavigate }: { onNavigate: () => void }) {
               ))}
             </div>
           </div>
-          </div>
 
           {/* Form area — stable height, no layout jump */}
           <div className="flex-1 flex flex-col min-h-[340px]">
