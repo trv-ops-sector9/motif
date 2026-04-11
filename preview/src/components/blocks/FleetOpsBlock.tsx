@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
+import { MapContainer, TileLayer, Circle, CircleMarker, Polyline, Polygon, Tooltip, useMap } from "react-leaflet";
+import type { LatLngTuple } from "leaflet";
+import "leaflet/dist/leaflet.css";
 import {
   IconCarSuv,
   IconBatteryCharging,
@@ -54,7 +57,7 @@ interface Vehicle {
   battery: number;
   currentTrip: string;
   lastPing: string;
-  coords: { x: number; y: number };
+  coords: LatLngTuple;
 }
 
 const STATUS_VARIANT: Record<VehicleStatus, "default" | "secondary" | "outline" | "destructive"> = {
@@ -66,16 +69,16 @@ const STATUS_VARIANT: Record<VehicleStatus, "default" | "secondary" | "outline" 
 };
 
 const VEHICLES: Vehicle[] = [
-  { id: "AV-001", status: "Active",      location: "Market St & 4th",     battery: 87, currentTrip: "TRP-4821", lastPing: "2s ago",  coords: { x: 38, y: 52 } },
-  { id: "AV-002", status: "Active",      location: "Mission Bay Loop",    battery: 64, currentTrip: "TRP-4819", lastPing: "5s ago",  coords: { x: 62, y: 72 } },
-  { id: "AV-003", status: "Charging",    location: "Depot A — Bay 3",    battery: 42, currentTrip: "—",        lastPing: "1m ago",  coords: { x: 78, y: 85 } },
-  { id: "AV-004", status: "Active",      location: "Embarcadero & King",  battery: 91, currentTrip: "TRP-4823", lastPing: "3s ago",  coords: { x: 72, y: 58 } },
-  { id: "AV-005", status: "Idle",        location: "Soma Standby Zone",   battery: 78, currentTrip: "—",        lastPing: "30s ago", coords: { x: 48, y: 62 } },
-  { id: "AV-006", status: "Maintenance", location: "Depot B — Bay 1",    battery: 55, currentTrip: "—",        lastPing: "12m ago", coords: { x: 22, y: 88 } },
-  { id: "AV-007", status: "Active",      location: "Potrero & 16th",     battery: 73, currentTrip: "TRP-4825", lastPing: "1s ago",  coords: { x: 55, y: 78 } },
-  { id: "AV-008", status: "Offline",     location: "Last: Depot A",       battery: 12, currentTrip: "—",        lastPing: "2h ago",  coords: { x: 80, y: 88 } },
-  { id: "AV-009", status: "Active",      location: "Hayes Valley",        battery: 82, currentTrip: "TRP-4827", lastPing: "4s ago",  coords: { x: 28, y: 42 } },
-  { id: "AV-010", status: "Charging",    location: "Depot A — Bay 7",    battery: 29, currentTrip: "—",        lastPing: "3m ago",  coords: { x: 82, y: 82 } },
+  { id: "AV-001", status: "Active",      location: "Market St & 4th",     battery: 87, currentTrip: "TRP-4821", lastPing: "2s ago",  coords: [37.7853, -122.4056] },
+  { id: "AV-002", status: "Active",      location: "Mission Bay Loop",    battery: 64, currentTrip: "TRP-4819", lastPing: "5s ago",  coords: [37.7699, -122.3933] },
+  { id: "AV-003", status: "Charging",    location: "Depot A — Bay 3",    battery: 42, currentTrip: "—",        lastPing: "1m ago",  coords: [37.7580, -122.3870] },
+  { id: "AV-004", status: "Active",      location: "Embarcadero & King",  battery: 91, currentTrip: "TRP-4823", lastPing: "3s ago",  coords: [37.7760, -122.3927] },
+  { id: "AV-005", status: "Idle",        location: "Soma Standby Zone",   battery: 78, currentTrip: "—",        lastPing: "30s ago", coords: [37.7785, -122.4020] },
+  { id: "AV-006", status: "Maintenance", location: "Depot B — Bay 1",    battery: 55, currentTrip: "—",        lastPing: "12m ago", coords: [37.7550, -122.4180] },
+  { id: "AV-007", status: "Active",      location: "Potrero & 16th",     battery: 73, currentTrip: "TRP-4825", lastPing: "1s ago",  coords: [37.7660, -122.4020] },
+  { id: "AV-008", status: "Offline",     location: "Last: Depot A",       battery: 12, currentTrip: "—",        lastPing: "2h ago",  coords: [37.7570, -122.3880] },
+  { id: "AV-009", status: "Active",      location: "Hayes Valley",        battery: 82, currentTrip: "TRP-4827", lastPing: "4s ago",  coords: [37.7760, -122.4240] },
+  { id: "AV-010", status: "Charging",    location: "Depot A — Bay 7",    battery: 29, currentTrip: "—",        lastPing: "3m ago",  coords: [37.7575, -122.3860] },
 ];
 
 type AlertSeverity = "critical" | "warning" | "info";
@@ -106,64 +109,72 @@ const ALERTS: Alert[] = [
 
 // ─── Fleet map ──────────────────────────────────────────────────────────────
 
-const STATUS_COLOR: Record<VehicleStatus, string> = {
-  Active:      "var(--chart-1)",
-  Idle:        "var(--chart-3)",
-  Charging:    "var(--chart-4)",
-  Maintenance: "var(--chart-5)",
-  Offline:     "var(--color-destructive, hsl(0 84% 60%))",
+const STATUS_COLOR_HEX: Record<VehicleStatus, string> = {
+  Active:      "#22c55e",
+  Idle:        "#f59e0b",
+  Charging:    "#3b82f6",
+  Maintenance: "#a855f7",
+  Offline:     "#ef4444",
 };
 
-function centroid(points: string): { cx: number; cy: number } {
-  const pts = points.split(" ").map((p) => p.split(",").map(Number));
-  return {
-    cx: pts.reduce((s, p) => s + p[0], 0) / pts.length,
-    cy: pts.reduce((s, p) => s + p[1], 0) / pts.length,
-  };
+const MAP_CENTER: LatLngTuple = [37.770, -122.405];
+const MAP_ZOOM = 13;
+
+// Tile URLs — CartoDB Positron (light) and Dark Matter (dark)
+const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const TILE_ATTR  = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>';
+
+// Projected route waypoints for active vehicles — longer paths that extend off-map
+const ACTIVE_ROUTES: Record<string, LatLngTuple[]> = {
+  "AV-001": [[37.7853, -122.4056], [37.7880, -122.4000], [37.7920, -122.3940], [37.7950, -122.3880]],
+  "AV-002": [[37.7699, -122.3933], [37.7660, -122.3900], [37.7620, -122.3860], [37.7580, -122.3820]],
+  "AV-004": [[37.7760, -122.3927], [37.7730, -122.3870], [37.7700, -122.3810], [37.7680, -122.3760]],
+  "AV-007": [[37.7660, -122.4020], [37.7630, -122.4060], [37.7590, -122.4110], [37.7550, -122.4150]],
+  "AV-009": [[37.7760, -122.4240], [37.7790, -122.4170], [37.7820, -122.4100], [37.7850, -122.4040]],
+};
+
+// Geofence zones — operational boundaries
+const GEOFENCES: { center: LatLngTuple; radius: number; label: string; type: "depot" | "restricted" | "operational" }[] = [
+  { center: [37.7575, -122.3870], radius: 250,  label: "Depot A",          type: "depot" },
+  { center: [37.7550, -122.4180], radius: 200,  label: "Depot B",          type: "depot" },
+  { center: [37.7820, -122.3930], radius: 180,  label: "Ferry Zone",       type: "restricted" },
+  { center: [37.7940, -122.3940], radius: 300,  label: "Pier 39 Zone",     type: "restricted" },
+];
+
+// Operational coverage polygon — approximate SF service area boundary
+const COVERAGE_ZONE: LatLngTuple[] = [
+  [37.7950, -122.4300], [37.7950, -122.3800], [37.7850, -122.3750],
+  [37.7700, -122.3780], [37.7500, -122.3800], [37.7480, -122.4200],
+  [37.7550, -122.4350], [37.7700, -122.4350], [37.7850, -122.4320],
+];
+
+// Incident locations derived from INCIDENTS data
+const INCIDENT_COORDS: { id: string; coords: LatLngTuple; severity: AlertSeverity }[] = [
+  { id: "INC-0041", coords: [37.7830, -122.4140], severity: "critical" },
+  { id: "INC-0042", coords: [37.7580, -122.3870], severity: "critical" },
+  { id: "INC-0043", coords: [37.7840, -122.4120], severity: "warning" },
+  { id: "INC-0044", coords: [37.7805, -122.3910], severity: "warning" },
+  { id: "INC-0048", coords: [37.7610, -122.4050], severity: "critical" },
+];
+
+/** Syncs tile layer when theme changes (react-leaflet doesn't re-render TileLayer on url change) */
+function TileSync({ isDark }: { isDark: boolean }) {
+  const map = useMap();
+  const prev = useRef(isDark);
+  useEffect(() => {
+    if (prev.current !== isDark) {
+      prev.current = isDark;
+      map.eachLayer((l) => {
+        if ("_url" in l) map.removeLayer(l);
+      });
+      import("leaflet").then((L) => {
+        L.tileLayer(isDark ? TILE_DARK : TILE_LIGHT, { attribution: TILE_ATTR }).addTo(map);
+      });
+    }
+  }, [isDark, map]);
+  return null;
 }
-
-// Zones — each gets a distinct chart color for topographic identity
-const ZONES = [
-  { id: "downtown",   points: "25,35 55,35 55,58 35,65 25,55",  label: "Downtown",    fill: "var(--chart-1)", activity: 0.10 },
-  { id: "soma",       points: "35,65 55,58 65,68 55,80 35,78",  label: "SoMa",        fill: "var(--chart-2)", activity: 0.08 },
-  { id: "missionbay", points: "55,58 75,50 85,65 75,78 65,68",  label: "Mission Bay", fill: "var(--chart-3)", activity: 0.08 },
-  { id: "potrero",    points: "45,78 55,80 60,90 40,92",         label: "Potrero",     fill: "var(--chart-4)", activity: 0.06 },
-  { id: "depot",      points: "70,78 88,78 88,92 70,92",         label: "Depot Zone",  fill: "var(--chart-5)", activity: 0.06 },
-].map((z) => ({ ...z, ...centroid(z.points) }));
-
-// Routes: primary (named, with arrows) + secondary grid
-const PRIMARY_ROUTES = [
-  { d: "M 18,32 L 72,62",          label: "Market St"    },
-  { d: "M 75,30 Q 92,45 88,70",    label: "Embarcadero"  },
-  { d: "M 15,55 L 90,55",          label: "Mission St"   },
-];
-const SECONDARY_ROUTES = [
-  "M 30,25 L 30,92", "M 50,25 L 50,92", "M 70,25 L 70,78",
-  "M 15,40 L 90,40", "M 15,70 L 90,70", "M 15,85 L 90,85",
-];
-
-// Per-vehicle heading in degrees (0 = north, clockwise)
-const VEHICLE_HEADING: Record<string, number> = {
-  "AV-001": 45,   // NE along Market
-  "AV-002": 170,  // S through Mission Bay
-  "AV-003": 0,    // at depot, pointing N
-  "AV-004": 120,  // SE toward Embarcadero
-  "AV-005": 260,  // W, idling
-  "AV-006": 0,    // at depot
-  "AV-007": 200,  // SW toward Potrero
-  "AV-008": 0,    // offline
-  "AV-009": 80,   // E through Hayes Valley
-  "AV-010": 0,    // charging at depot
-};
-
-// Projected route paths for active vehicles — curved SVG paths toward destination
-const ACTIVE_ROUTES: { id: string; path: string }[] = [
-  { id: "AV-001", path: "M 38,52 Q 52,44 68,34" },
-  { id: "AV-002", path: "M 62,72 Q 66,79 70,87" },
-  { id: "AV-004", path: "M 72,58 Q 79,65 83,73" },
-  { id: "AV-007", path: "M 55,78 Q 49,84 42,90" },
-  { id: "AV-009", path: "M 28,42 Q 40,39 53,36" },
-];
 
 // ── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -191,192 +202,194 @@ function FleetMap({ vehicles, selectedId, onSelect }: {
   selectedId: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const [dark, setDark] = useState(() => {
+    const theme = document.documentElement.getAttribute("data-theme") || "default";
+    return theme.includes("dark");
+  });
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const theme = document.documentElement.getAttribute("data-theme") || "default";
+      setDark(theme.includes("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const geofenceColor = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)";
+  const geofenceStroke = dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)";
+  const restrictedColor = "#ef4444";
+  const coverageStroke = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const coverageFill = dark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.01)";
+
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden border bg-[hsl(220,20%,6%)]">
+    <div className="relative w-full h-full rounded-lg overflow-hidden border">
       <style>{`
-        @keyframes fleet-march {
-          from { stroke-dashoffset: 14; }
-          to   { stroke-dashoffset: 0; }
+        .fleet-map .leaflet-container { background: var(--color-card, ${dark ? "#0a0a0f" : "#f8f9fa"}); }
+        .fleet-map .leaflet-tile-pane { filter: saturate(0) ${dark ? "brightness(0.85)" : "brightness(1.02)"}; }
+        .fleet-map .leaflet-control-attribution { font-size: 7px !important; opacity: 0.3; background: transparent !important; }
+        .fleet-map .leaflet-control-attribution a { color: inherit !important; }
+        .fleet-marker-tooltip .leaflet-tooltip,
+        .fleet-map .leaflet-tooltip {
+          background: ${dark ? "hsl(0 0% 8% / 0.88)" : "hsl(0 0% 98% / 0.92)"};
+          border: 1px solid ${dark ? "hsl(0 0% 18%)" : "hsl(0 0% 82%)"};
+          color: ${dark ? "hsl(0 0% 65%)" : "hsl(0 0% 40%)"};
+          font-size: 9px;
+          font-family: ui-monospace, monospace;
+          padding: 2px 5px;
+          border-radius: 3px;
+          box-shadow: 0 1px 4px ${dark ? "hsl(0 0% 0% / 0.4)" : "hsl(0 0% 0% / 0.06)"};
+          letter-spacing: 0.02em;
         }
-        @keyframes fleet-sonar {
-          from { transform: scale(1); opacity: 0.7; }
-          to   { transform: scale(3.2); opacity: 0; }
-        }
-        .fleet-route { animation: fleet-march 1.2s linear infinite; }
-        .fleet-sonar { animation: fleet-sonar 2.4s ease-out infinite; }
+        .fleet-marker-tooltip .leaflet-tooltip::before,
+        .fleet-map .leaflet-tooltip::before { display: none; }
       `}</style>
 
-      <svg viewBox="10 20 85 78" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <pattern id="tactical-dots" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="0.25" fill="white" fillOpacity="0.12" />
-          </pattern>
-          <filter id="glow-active" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="0.8" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="glow-selected" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="1.2" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-        </defs>
+      <div className="fleet-map w-full h-full">
+        <MapContainer
+          center={MAP_CENTER}
+          zoom={MAP_ZOOM}
+          zoomControl={false}
+          attributionControl={true}
+          scrollWheelZoom={false}
+          dragging={false}
+          doubleClickZoom={false}
+          touchZoom={false}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <TileLayer url={dark ? TILE_DARK : TILE_LIGHT} attribution={TILE_ATTR} />
+          <TileSync isDark={dark} />
 
-        {/* Full canvas dot grid */}
-        <rect x="0" y="0" width="100" height="100" fill="url(#tactical-dots)" />
-
-        {/* Zone glows — behind everything */}
-        {ZONES.map((zone) => (
-          <polygon
-            key={zone.id}
-            points={zone.points}
-            fill={zone.fill}
-            fillOpacity={0.05}
-            stroke={zone.fill}
-            strokeOpacity={0.12}
-            strokeWidth="0.3"
+          {/* Operational coverage zone — subtle boundary */}
+          <Polygon
+            positions={COVERAGE_ZONE}
+            pathOptions={{
+              color: coverageStroke,
+              weight: 1,
+              fillColor: coverageFill,
+              fillOpacity: 1,
+              dashArray: "4 3",
+            }}
           />
-        ))}
 
-        {/* Street grid — crisp thin lines */}
-        {SECONDARY_ROUTES.map((d, i) => (
-          <path key={i} d={d} stroke="white" strokeOpacity={0.055} strokeWidth="0.3" fill="none" strokeLinecap="round" />
-        ))}
+          {/* Geofence zones */}
+          {GEOFENCES.map((gf) => (
+            <Circle
+              key={gf.label}
+              center={gf.center}
+              radius={gf.radius}
+              pathOptions={{
+                color: gf.type === "restricted" ? restrictedColor : geofenceStroke,
+                weight: 0.8,
+                fillColor: gf.type === "restricted" ? restrictedColor : geofenceColor,
+                fillOpacity: gf.type === "restricted" ? 0.06 : 0.15,
+                dashArray: gf.type === "restricted" ? "3 2" : undefined,
+              }}
+            >
+              <Tooltip direction="center" permanent className="fleet-marker-tooltip">
+                <span style={{ fontSize: "7px", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  {gf.label}
+                </span>
+              </Tooltip>
+            </Circle>
+          ))}
 
-        {/* Primary arteries — slightly brighter */}
-        {PRIMARY_ROUTES.map((r) => (
-          <path key={r.label} d={r.d} stroke="white" strokeOpacity={0.14} strokeWidth="0.55" fill="none" strokeLinecap="round" />
-        ))}
+          {/* Route projections — thin dashed lines for active vehicles */}
+          {Object.entries(ACTIVE_ROUTES).map(([id, path]) => {
+            const vehicle = vehicles.find((v) => v.id === id);
+            if (!vehicle) return null;
+            const isSelected = selectedId === id;
+            return (
+              <Polyline
+                key={id}
+                positions={path}
+                pathOptions={{
+                  color: STATUS_COLOR_HEX[vehicle.status],
+                  weight: isSelected ? 1.5 : 0.8,
+                  opacity: isSelected ? 0.6 : 0.25,
+                  dashArray: "5 3",
+                  lineCap: "round",
+                }}
+              />
+            );
+          })}
 
-        {/* Active route projections — marching dashes in vehicle's status color */}
-        {ACTIVE_ROUTES.map((r) => {
-          const vehicle = vehicles.find((v) => v.id === r.id);
-          if (!vehicle) return null;
-          const color = STATUS_COLOR[vehicle.status];
-          const isSelected = selectedId === r.id;
-          return (
-            <path
-              key={r.id}
-              d={r.path}
-              stroke={color}
-              strokeOpacity={isSelected ? 0.9 : 0.45}
-              strokeWidth={isSelected ? 1.0 : 0.65}
-              strokeDasharray="3 2"
-              strokeLinecap="round"
-              fill="none"
-              className="fleet-route"
-              style={{ animationDelay: `${ACTIVE_ROUTES.indexOf(r) * 0.18}s` }}
-            />
-          );
-        })}
+          {/* Incident markers — small pulsing dots at incident locations */}
+          {INCIDENT_COORDS.map((inc) => (
+            <CircleMarker
+              key={inc.id}
+              center={inc.coords}
+              radius={inc.severity === "critical" ? 3 : 2}
+              pathOptions={{
+                color: inc.severity === "critical" ? "#ef4444" : "#f59e0b",
+                weight: 0.5,
+                fillColor: inc.severity === "critical" ? "#ef4444" : "#f59e0b",
+                fillOpacity: 0.4,
+                opacity: 0.6,
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -4]} className="fleet-marker-tooltip">
+                <span style={{ fontSize: "8px" }}>{inc.id}</span>
+              </Tooltip>
+            </CircleMarker>
+          ))}
 
-        {/* Zone labels */}
-        {ZONES.map((zone) => (
-          <text
-            key={zone.id}
-            x={zone.cx}
-            y={zone.cy}
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="white"
-            fillOpacity={0.2}
-            fontSize="2.2"
-            fontWeight="700"
-            className="select-none pointer-events-none"
-            style={{ letterSpacing: "0.08em" }}
-          >
-            {zone.label.toUpperCase()}
-          </text>
-        ))}
+          {/* Vehicle markers — on top of everything */}
+          {vehicles.map((v) => {
+            const color = STATUS_COLOR_HEX[v.status];
+            const isSelected = selectedId === v.id;
+            const isOffline = v.status === "Offline" || v.status === "Maintenance";
 
-        {/* Vehicle markers */}
-        {vehicles.map((v) => {
-          const color = STATUS_COLOR[v.status];
-          const isActive = v.status === "Active";
-          const isSelected = selectedId === v.id;
-          const isOffline = v.status === "Offline" || v.status === "Maintenance";
-          const heading = VEHICLE_HEADING[v.id] ?? 0;
-          const { x, y } = v.coords;
-
-          return (
-            <g key={v.id} className="cursor-pointer" onClick={() => onSelect(isSelected ? null : v.id)}>
-              {/* Hit area */}
-              <circle cx={x} cy={y} r={6} fill="transparent" />
-
-              {/* Sonar rings for active — scale from center via translated g */}
-              {isActive && (
-                <g transform={`translate(${x}, ${y})`}>
-                  <circle
-                    cx="0" cy="0" r="3"
-                    fill="none"
-                    stroke={color}
-                    strokeWidth="0.5"
-                    className="fleet-sonar"
-                    style={{ animationDelay: `${(parseInt(v.id.replace("AV-0", "")) * 0.37) % 2.4}s`, transformOrigin: "0px 0px" }}
-                  />
-                </g>
-              )}
-
-              {/* Selection ring — dashed orbit */}
-              {isSelected && (
-                <circle
-                  cx={x} cy={y} r="5.5"
-                  fill="none"
-                  stroke="white"
-                  strokeOpacity={0.5}
-                  strokeWidth="0.5"
-                  strokeDasharray="1.5 1.5"
-                />
-              )}
-
-              {/* Marker body */}
-              {isOffline ? (
-                <circle cx={x} cy={y} r="2" fill={color} fillOpacity={0.3} />
-              ) : (
-                <g
-                  transform={`rotate(${heading}, ${x}, ${y})`}
-                  filter={isActive ? "url(#glow-active)" : undefined}
-                >
-                  {/* Diamond/chevron: sharp forward point */}
-                  <path
-                    d={`M ${x},${y - 3.2} L ${x + 1.8},${y + 1.6} L ${x},${y + 0.6} L ${x - 1.8},${y + 1.6} Z`}
-                    fill={color}
-                    fillOpacity={isSelected ? 1 : 0.85}
-                  />
-                </g>
-              )}
-
-              {/* ID label */}
-              <text
-                x={x}
-                y={y - 5.5}
-                textAnchor="middle"
-                fill="white"
-                fillOpacity={isSelected ? 0.9 : 0.5}
-                fontSize="1.9"
-                fontWeight="700"
-                className="select-none pointer-events-none"
-                style={{ letterSpacing: "0.04em" }}
+            return (
+              <CircleMarker
+                key={v.id}
+                center={v.coords}
+                radius={isSelected ? 5 : isOffline ? 2.5 : 3.5}
+                pathOptions={{
+                  color: isSelected ? "white" : color,
+                  weight: isSelected ? 1.5 : 0.5,
+                  fillColor: color,
+                  fillOpacity: isOffline ? 0.25 : isSelected ? 1 : 0.85,
+                  opacity: isSelected ? 0.9 : 0.7,
+                }}
+                eventHandlers={{
+                  click: () => onSelect(isSelected ? null : v.id),
+                }}
               >
-                {v.id.replace("AV-0", "")}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+                <Tooltip
+                  direction="top"
+                  offset={[0, -6]}
+                  className="fleet-marker-tooltip"
+                  permanent={isSelected}
+                >
+                  <span>{v.id}</span>
+                  {isSelected && (
+                    <span style={{ marginLeft: 4, opacity: 0.5 }}>{v.status}</span>
+                  )}
+                </Tooltip>
+              </CircleMarker>
+            );
+          })}
+        </MapContainer>
+      </div>
 
       {/* Legend — bottom left overlay */}
-      <div className="absolute bottom-2.5 left-3 flex items-center gap-3">
+      <div className="absolute bottom-5 left-2 z-[1000] flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded px-2 py-1 border text-[8px]">
         {(["Active", "Idle", "Charging", "Offline"] as VehicleStatus[]).map((s) => (
-          <span key={s} className="flex items-center gap-1 text-[9px] text-white/40 font-medium">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_COLOR[s] }} />
+          <span key={s} className="flex items-center gap-1 text-muted-foreground font-medium">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_COLOR_HEX[s] }} />
             {s}
           </span>
         ))}
+        <span className="border-l pl-2 ml-0.5 flex items-center gap-1 text-muted-foreground font-medium">
+          <span className="h-1.5 w-1.5 rounded-full bg-destructive/60" />
+          Incident
+        </span>
       </div>
 
-      {/* Coordinates watermark */}
-      <div className="absolute top-2 right-3 text-[8px] text-white/20 font-mono tracking-wider">
-        37.7749° N · 122.4194° W
+      {/* Coordinates + vehicle count watermark */}
+      <div className="absolute top-2 right-2 z-[1000] text-[7px] text-muted-foreground/40 font-mono tracking-wider">
+        37.77°N · 122.41°W · {vehicles.filter((v) => v.status === "Active").length} active
       </div>
     </div>
   );
@@ -607,7 +620,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
                 animationFillMode: "both",
               }}
             >
-              <span className="h-2 w-2 rounded-full shrink-0" style={{ background: STATUS_COLOR[v.status] }} />
+              <span className="h-2 w-2 rounded-full shrink-0" style={{ background: STATUS_COLOR_HEX[v.status] }} />
               <span className="font-mono text-xs font-bold w-12 shrink-0">{v.id}</span>
               <span className="text-xs text-muted-foreground flex-1 truncate">{v.location}</span>
               <div className="flex items-center gap-1.5 shrink-0">
@@ -1024,7 +1037,7 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
 
       {/* ── Hero row: Map + Stats ─────────────────────────────────────────── */}
       <div
-        className="grid gap-4 lg:grid-cols-[1fr_300px]"
+        className="grid gap-4 lg:grid-cols-[1fr_340px]"
         style={{
           animation: "var(--anim-slide-up-in)",
           animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)",
@@ -1032,7 +1045,7 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
         }}
       >
         {/* Tactical map */}
-        <div style={{ minHeight: "320px" }}>
+        <div className="h-[280px]">
           <FleetMap vehicles={VEHICLES} selectedId={selectedVehicle} onSelect={setSelectedVehicle} />
         </div>
 
@@ -1060,7 +1073,7 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
 
       {/* ── Bottom row: Vehicle list + Alerts ────────────────────────────── */}
       <div
-        className="grid gap-4 lg:grid-cols-[1fr_360px]"
+        className="grid gap-4 lg:grid-cols-[1fr_340px]"
         style={{
           animation: "var(--anim-slide-up-in)",
           animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)",
