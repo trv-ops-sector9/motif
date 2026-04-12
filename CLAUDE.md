@@ -6,6 +6,8 @@ Motif is a **motion token system for Tailwind CSS v4**. It provides four named m
 
 The core deliverable is the `tokens/` directory — four CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
 
+**Live:** https://trv-ops-sector9.github.io/motif/
+
 ---
 
 ## Project structure
@@ -23,10 +25,10 @@ preview/
 │   ├── App.tsx                         # Root layout, lazy-loaded view routing
 │   ├── components/
 │   │   ├── layout/                     # AppSidebar, ThemeSwitcher
-│   │   ├── gallery/                    # ComponentGallery — interactive token demo
-│   │   ├── blocks/                     # Dashboard, Settings, Auth, Marketing pages
+│   │   ├── gallery/                    # ComponentGallery, TokensView
+│   │   ├── blocks/                     # FleetOpsBlock, MarketingBlock
 │   │   └── ui/                         # shadcn/ui components with motion wiring
-│   └── themes/                         # 12 color theme CSS files (OkLCh) — 6 pairs (light + dark)
+│   └── themes/                         # 6 color theme CSS files (OkLCh) — 3 pairs (light + dark)
 ```
 
 ---
@@ -51,14 +53,15 @@ preview/
 
 ## Color theme architecture
 
-**3 theme pairs** (light + dark each) in `preview/src/themes/`. All colors in OkLCh. Activated via `data-theme` attribute.
+**3 theme pairs** (light + dark each) in `preview/src/themes/`. All colors in OkLCh. Activated via `data-theme` attribute. **Graphite Dark is the default on load.**
 
 | Theme | Mood | Radius | Shadows | Font | Border | Tracking |
 |-------|------|--------|---------|------|--------|----------|
-| **Default** | Neutral baseline | `0.625rem` | Standard | System sans | `1px` | `0em` |
-| **Dark Default** | Vercel/Linear dev-tool calm | `0.375rem` | Dark sharp | Inter | `1px` | `-0.011em` |
+| **Graphite** | Design-tool neutral, Figma/Cursor feel | `0.5rem` | Soft luminance-driven | Inter | `1px` | `-0.011em` |
 | **Guchi** | Luxury fashion house | `1.25rem` | Warm diffused | DM Sans | `0.5px` | `0.02em` |
 | **Tactical** | FUI command-and-control | `0.125rem` | None | Quantico | `1px` | `0.02em` |
+
+**Graphite** uses borders that match surface fills — cards feel embedded, elevation comes from luminance steps and shadows rather than strokes. Faint cool-blue undertone (oklch chroma 0.004, hue 260) across all surfaces. Desaturated blue primary accent.
 
 **Design tokens per theme** (beyond color):
 - `--radius` — border-radius scale anchor
@@ -90,6 +93,7 @@ Components use semantic intent variables, never theme-specific ones. The bridge 
 - **shadcn/ui:** Edit the `ui/` file directly. Motion wiring lives in the component, not callsite props.
 - **`!important`:** Only for overriding third-party hardcoded values (Sonner). Not for general use.
 - **No JS token system.** CSS only. The portability of plain CSS is intentional.
+- **Theme naming:** The dark counterpart of Default is called "Default Dark", not "Dark Minimal" (internal CSS selector `dark-minimal` is legacy).
 
 ---
 
@@ -103,11 +107,12 @@ Components use semantic intent variables, never theme-specific ones. The bridge 
 | Primitives | Radix UI |
 | Components | shadcn/ui + motion wiring |
 | Charts | Recharts |
+| Maps | Leaflet + CartoDB tiles |
 | Toasts | Sonner |
 | Tables | TanStack Table |
 | Drag & Drop | dnd-kit |
-| Icons | Lucide React + Tabler Icons |
-| Fonts | Google Fonts: Outfit, Space Mono, DM Sans, JetBrains Mono, Plus Jakarta Sans |
+| Icons | Tabler Icons |
+| Fonts | Google Fonts: Inter, DM Sans, JetBrains Mono, Quantico, Rajdhani |
 | Build | Vite |
 | Framework | React 19 |
 | Lint | ESLint (flat config) + TypeScript strict |
