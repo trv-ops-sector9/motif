@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { IconDownload, IconCheck, IconRotate } from "@tabler/icons-react";
+import { IconDownload, IconCheck } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -58,131 +58,34 @@ const DURATION_TOKENS = [
   { name: "--motion-duration-ultra-slow", label: "Ultra Slow" },
 ];
 
-/** Shared range input styles — custom track + thumb for theme consistency */
-const rangeTrackCn = cn(
-  "flex-1 cursor-pointer appearance-none rounded-full h-1.5",
-  "bg-muted",
-  /* webkit thumb */
-  "[&::-webkit-slider-thumb]:appearance-none",
-  "[&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5",
-  "[&::-webkit-slider-thumb]:rounded-full",
-  "[&::-webkit-slider-thumb]:bg-primary",
-  "[&::-webkit-slider-thumb]:cursor-pointer",
-  "[&::-webkit-slider-thumb]:transition-transform",
-  "[&::-webkit-slider-thumb]:hover:scale-125",
-  "[&::-webkit-slider-thumb]:shadow-sm",
-  /* firefox thumb */
-  "[&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5",
-  "[&::-moz-range-thumb]:rounded-full",
-  "[&::-moz-range-thumb]:border-0",
-  "[&::-moz-range-thumb]:bg-primary",
-  "[&::-moz-range-thumb]:cursor-pointer",
-);
-
 function DurationSection() {
   const { getCSSVar } = useTokenValues();
-  const [overrides, setOverrides] = useState<Record<string, number>>({});
-
-  // Detect motion theme changes and clear all overrides
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      for (const token of DURATION_TOKENS) {
-        document.documentElement.style.removeProperty(token.name);
-      }
-      setOverrides({});
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-motion-theme"],
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  const handleChange = (tokenName: string, ms: number) => {
-    document.documentElement.style.setProperty(tokenName, `${ms}ms`);
-    setOverrides((prev) => ({ ...prev, [tokenName]: ms }));
-  };
-
-  const resetOne = (tokenName: string) => {
-    document.documentElement.style.removeProperty(tokenName);
-    setOverrides((prev) => {
-      const next = { ...prev };
-      delete next[tokenName];
-      return next;
-    });
-  };
-
-  const resetAll = () => {
-    for (const token of DURATION_TOKENS) {
-      document.documentElement.style.removeProperty(token.name);
-    }
-    setOverrides({});
-  };
-
-  const hasOverrides = Object.keys(overrides).length > 0;
 
   return (
     <div className="bg-muted/30 rounded-lg px-4 pt-4 pb-6">
       <div className="flex items-center justify-between gap-3 mb-1">
         <h3 className="text-sm font-semibold">Duration scale</h3>
-        <button
-          onClick={resetAll}
-          className={cn(
-            "flex items-center gap-1 shrink-0 rounded px-2 py-1 text-[11px] font-medium transition-colors cursor-pointer",
-            "text-muted-foreground hover:text-foreground hover:bg-muted",
-            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-            !hasOverrides && "invisible",
-          )}
-          title="Reset all durations to theme defaults"
-        >
-          <IconRotate className="h-3 w-3" />
-          Reset all
-        </button>
       </div>
       <p className="text-xs text-muted-foreground mb-4">
-        Drag to override — changes propagate live across all components
+        7 duration stops — values vary per motion theme
       </p>
       <div className="space-y-2.5">
         {DURATION_TOKENS.map((token) => {
-          const isOverridden = token.name in overrides;
-          // Use React state for overridden values (instant), CSS query for defaults
-          const ms = isOverridden
-            ? overrides[token.name]
-            : parseInt(getCSSVar(token.name)) || 0;
+          const ms = parseInt(getCSSVar(token.name)) || 0;
           const pct = Math.round(((ms - 10) / (1000 - 10)) * 100);
 
           return (
             <div key={token.name} className="flex items-center gap-3">
               <span className="w-20 shrink-0 text-xs text-muted-foreground">{token.label}</span>
-              <input
-                type="range"
-                min={10}
-                max={1000}
-                step={10}
-                value={ms}
-                onChange={(e) => handleChange(token.name, Number(e.target.value))}
-                className={rangeTrackCn}
-                style={{
-                  background: `linear-gradient(to right, var(--primary) ${pct}%, var(--muted) ${pct}%)`,
-                }}
-              />
-              <div className="flex items-center gap-1.5 w-16 shrink-0 justify-end">
-                <code className={cn(
-                  "text-xs font-mono tabular-nums",
-                  isOverridden ? "text-primary font-semibold" : "text-muted-foreground",
-                )}>
-                  {ms}ms
-                </code>
-                {isOverridden && (
-                  <button
-                    onClick={() => resetOne(token.name)}
-                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-sm"
-                    title="Reset to theme default"
-                  >
-                    <IconRotate className="h-3 w-3" />
-                  </button>
-                )}
+              <div className="flex-1 rounded-full h-1.5 bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width] duration-300"
+                  style={{ width: `${pct}%` }}
+                />
               </div>
+              <code className="text-xs font-mono tabular-nums text-muted-foreground w-16 shrink-0 text-right">
+                {ms}ms
+              </code>
             </div>
           );
         })}
