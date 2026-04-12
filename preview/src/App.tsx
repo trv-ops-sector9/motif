@@ -36,6 +36,23 @@ function useActiveThemes() {
   return themes;
 }
 
+function MotiifMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth={3}
+      strokeLinecap="round"
+      className={className}
+    >
+      <path d="M3 18 C6 18, 6 6, 12 6 S18 18, 21 18" fill="none" />
+      <circle cx={3} cy={18} r={2} stroke="none" />
+      <circle cx={21} cy={18} r={2} stroke="none" />
+    </svg>
+  );
+}
+
 function TopBar({ sidebarCollapsed, onToggleSidebar }: { sidebarCollapsed: boolean; onToggleSidebar: () => void }) {
   const { motion: motionTheme, color: colorTheme } = useActiveThemes();
 
@@ -52,12 +69,15 @@ function TopBar({ sidebarCollapsed, onToggleSidebar }: { sidebarCollapsed: boole
           <IconLayoutSidebarLeftCollapse className="h-4 w-4" />
         )}
       </button>
-      <span
-        className="select-none text-base font-bold tracking-wide text-foreground"
-        style={{ fontFamily: "var(--font-brand)" }}
-      >
-        Motif
-      </span>
+      <div className="flex items-center gap-1.5">
+        <MotiifMark className="h-5 w-5 text-primary" />
+        <span
+          className="select-none text-base font-bold tracking-wide text-foreground"
+          style={{ fontFamily: "var(--font-brand)" }}
+        >
+          Motiif
+        </span>
+      </div>
       <div className="ml-auto flex items-center gap-2">
         <span className="hidden sm:inline-flex items-center rounded-full border bg-background px-2.5 py-0.5 text-[11px] font-medium text-foreground">
           motion-{motionTheme.charAt(0).toUpperCase() + motionTheme.slice(1)}
@@ -98,24 +118,25 @@ function SplashOverlay({ onSelect }: { onSelect: (view: View) => void }) {
       style={{ animation: "var(--anim-fade-in)" }}
     >
       <div
-        className="w-full max-w-lg mx-4 rounded-xl border bg-card p-8 shadow-xl"
+        className="w-full max-w-lg mx-4 rounded-xl border bg-card p-8"
         style={{ animation: "var(--anim-expand-in)" }}
       >
         <div className="mb-6">
-          <h1
-            className="text-2xl font-bold tracking-wide text-foreground"
-            style={{ fontFamily: "var(--font-brand)" }}
-          >
-            Motif
-          </h1>
+          <div className="flex items-center gap-2">
+            <MotiifMark className="h-7 w-7 text-primary" />
+            <h1
+              className="text-2xl font-bold tracking-wide text-foreground"
+              style={{ fontFamily: "var(--font-brand)" }}
+            >
+              Motiif
+            </h1>
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground/70">by Traver Phillips</p>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             A pure CSS token system for motion and visual identity. Four motion themes and three design themes ship out of the box — swap either live and everything updates instantly. Built to be expanded with new themes. Use the sidebar to switch.
           </p>
           <p className="mt-1.5 text-xs text-muted-foreground/60">
             Motion Token Generator coming soon — create themes from a guided Q&amp;A flow.
-          </p>
-          <p className="mt-3 text-xs text-muted-foreground/70">
-            by Traver Phillips
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3">
