@@ -574,7 +574,7 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
       {/* Per-theme tint overlay — matches map tone to the background palette */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: tintColor, zIndex: 450 }}
+        style={{ background: tintColor, zIndex: 250 }}
       />
 
       {/* Legend — bottom left overlay */}
