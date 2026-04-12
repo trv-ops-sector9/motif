@@ -518,8 +518,8 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
                     fillColor: color,
                     fillOpacity: 0,
                     opacity: 1,
-                    className: "fleet-critical-ring",
                   }}
+                  eventHandlers={{ add: (e) => { (e.target as any)._path?.classList.add("fleet-critical-ring"); } }}
                 />
               )}
               {/* Sonar pulse ring — selected only */}
@@ -534,8 +534,8 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
                     fillColor: color,
                     fillOpacity: 0,
                     opacity: 1,
-                    className: "fleet-sonar-ring",
                   }}
+                  eventHandlers={{ add: (e) => { (e.target as any)._path?.classList.add("fleet-sonar-ring"); } }}
                 />
               )}
               <CircleMarker
@@ -548,10 +548,13 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
                   fillColor: color,
                   fillOpacity: isOffline ? 0.3 : isSelected ? 1 : 0.85,
                   opacity: 1,
-                  className: hasAlert ? "fleet-dot-offline" : `fleet-dot-${v.status.toLowerCase()}`,
                 }}
                 eventHandlers={{
                   click: () => onSelect(isSelected ? null : v.id),
+                  add: (e) => {
+                    const cls = hasAlert ? "fleet-dot-offline" : `fleet-dot-${v.status.toLowerCase()}`;
+                    (e.target as any)._path?.classList.add(cls);
+                  },
                 }}
               >
                 <Tooltip
