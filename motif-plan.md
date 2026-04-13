@@ -2,9 +2,7 @@
 
 ## Context
 
-Motiif is a motion token system for Tailwind v4, prepared as a portfolio piece targeting Waabi (Senior Product Designer, Driverless Ops). Ships 4 motion themes and 3 color theme pairs (Graphite, Guchi, Tactical). **Live:** https://trv-ops-sector9.github.io/motif/
-
-**Deadline: 2026-04-12 (today)**
+Motiif is a motion token system for Tailwind v4, prepared as a portfolio piece targeting Waabi (Senior Product Designer, Driverless Ops). Ships 4 motion themes and 3 color theme pairs (Graphite, Guchi, Tactical). **Live:** https://trv-ops-sector9.github.io/motiif/
 
 ---
 
@@ -41,30 +39,46 @@ Motiif is a motion token system for Tailwind v4, prepared as a portfolio piece t
 - [x] Splash page — modal overlay with section cards, logo mark (PR #25)
 - [x] Rename to Motiif + MotiifMark logo (PR #26)
 - [x] Choose vehicle from list → centers on map
+- [x] Fleet Ops + Brand page polish (PR #27)
+- [x] Audit fixes — a11y, reduced motion, map labels, Graphite light (PR #28)
+- [x] Favicon + browser tab rename (PR #29)
+- [x] Fix map dot glow/pulse on prod — Leaflet SVGAnimatedString prevented pathOptions.className; switched to classList.add via add eventHandler
+- [x] Token page — removed draggable sliders, replaced with read-only progress bars; fixed 0ms display bug (Tailwind minifies 100ms→.1s in build; fixed with parseDurationMs helper)
+- [x] Repo renamed motif → motiif; Vite base path + remote URL updated
+- [x] Portfolio screenshots captured (fleet-ops-graphite-dark, fleet-ops-tactical, tokens-graphite-dark, brand-guchi, components-graphite-dark)
 
 ---
 
-## Today's focus — in order
+## In progress — Portfolio case study screenshots
 
-### 1. Fleet Ops polish (Waabi-relevant — do first)
+- [x] Fleet Ops — Graphite Dark, vehicle selected (`fleet-ops-graphite-dark.png`)
+- [x] Fleet Ops — Tactical theme (`fleet-ops-tactical.png`)
+- [ ] Token page — Graphite Dark, duration bars + easing curves visible
+- [ ] Brand demo — car hero, full bleed
+- [ ] Component gallery or splash modal
 
-- [ ] **Event log stagger + refresh fix** — staggered entry animation on new event feed items
-- [ ] **Vehicle card transition** — animate out/in when selecting a new vehicle
+---
 
-### 2. Brand page design pass (weakest view — needs attention)
+## Next — Motiif polish (post-portfolio)
 
-- [ ] **Brand page revision** — design audit + polish so it holds up next to Fleet Ops. Use ui-ux-pro-max skill.
+- [ ] **Collapsed sidebar controls** — dark/light mode icon in collapsed state, popout dropdown for theme controls (users on narrow screens can't switch themes)
+- [ ] **VehicleList/AlertsPanel keyboard a11y** — clickable rows need `role="button"` + keyboard handlers
+- [ ] **Fleet Ops status colors as theme tokens** — hardcoded hex for vehicle status colors, should adapt per theme
+- [ ] **Tailwind built-in animations → motion tokens** — `animate-ping` (LIVE dot), `animate-spin` (loading spinner) don't respect motion theme system
+- [ ] **Graphite dark lightness** — may need further bump toward true Figma/Cursor canvas values
+- [ ] **Brand inner page gallery** — image gallery on configure page
+- [ ] **Higher-res car hero image** — current image pixelates at full-bleed on wide screens
 
-### 3. Quick audit (if time)
+## Portfolio (outside this repo)
 
-- [ ] **Component design & motion audit** — fast sweep across all views for visual issues
-
-### Skip today
-
-- Collapsed sidebar controls — nice-to-have, not interview-relevant
-- Graphite dark lightness — good enough
-- Brand inner page gallery, landing strip, incident page link — scope creep
-- Portfolio items (LinkedIn, case study, etc.) — outside this repo
+- [ ] **Screen recording of Motiif** — 2min Loom walkthrough: Fleet Ops, theme switching, token system
+- [ ] **Case study page** — long-scroll on portfolio site, hook + Loom + screenshots + token system callout + Waabi connection
+- [ ] **Update LinkedIn profile**
+- [ ] **Rewrite F2 case study** — frame around fleet management + code-first workflow
+- [ ] **Add note about 3D video work**
+- [ ] **Motion Token Generator under Experiments (if time)**
+- [ ] **CV-style message in About**
+- [ ] **Work history**
 
 ---
 

@@ -1,12 +1,12 @@
-# Motif — AI Assistant Context
+# Motiif — AI Assistant Context
 
 ## What this project is
 
-Motif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Standard, Dense, Expressive, Precision) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
+Motiif is a **motion token system for Tailwind CSS v4**. It provides four named motion themes (Standard, Dense, Expressive, Precision) as pure CSS files, plus a live preview app that demonstrates all tokens across interactive components and full-page application mock-ups.
 
 The core deliverable is the `tokens/` directory — four CSS files that can be dropped into any Tailwind v4 project. The `preview/` app is a demonstration artifact built in React 19 + Vite.
 
-**Live:** https://trv-ops-sector9.github.io/motif/
+**Live:** https://trv-ops-sector9.github.io/motiif/
 
 ---
 
