@@ -118,13 +118,11 @@ const ALERTS: Alert[] = [
 
 // ─── Fleet map ──────────────────────────────────────────────────────────────
 
-const STATUS_COLOR_HEX: Record<VehicleStatus, string> = {
-  Active:      "#05df72",
-  Idle:        "#fbbf24",
-  Charging:    "#38bdf8",
-  Maintenance: "#c026d3",
-  Offline:     "#ff3333",
-};
+function getStatusColor(status: VehicleStatus): string {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(`--status-${status.toLowerCase()}`)
+    .trim();
+}
 
 const MAP_CENTER: LatLngTuple = [47.610, -122.280];
 const MAP_ZOOM = 10.5;
@@ -353,11 +351,11 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
           100% { opacity: 0; }
         }
         .fleet-critical-ring { animation: fleet-critical-ring 1.5s ease-out infinite; }
-        .fleet-dot-offline     { animation: fleet-red-pulse 1.6s ease-in-out infinite; filter: drop-shadow(0 0 9px #ff3333) drop-shadow(0 0 3px #ff3333); }
-        .fleet-dot-active      { filter: drop-shadow(0 0 7px #05df72); }
-        .fleet-dot-idle        { filter: drop-shadow(0 0 6px #fbbf24); }
-        .fleet-dot-charging    { filter: drop-shadow(0 0 6px #38bdf8); }
-        .fleet-dot-maintenance { filter: drop-shadow(0 0 6px #c026d3); }
+        .fleet-dot-offline     { animation: fleet-red-pulse 1.6s ease-in-out infinite; filter: drop-shadow(0 0 9px var(--status-offline)) drop-shadow(0 0 3px var(--status-offline)); }
+        .fleet-dot-active      { filter: drop-shadow(0 0 7px var(--status-active)); }
+        .fleet-dot-idle        { filter: drop-shadow(0 0 6px var(--status-idle)); }
+        .fleet-dot-charging    { filter: drop-shadow(0 0 6px var(--status-charging)); }
+        .fleet-dot-maintenance { filter: drop-shadow(0 0 6px var(--status-maintenance)); }
         .fleet-map .leaflet-control-zoom {
           border: 1px solid var(--color-border) !important;
           border-radius: 6px !important;
@@ -513,7 +511,7 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
           {/* Vehicle markers — on top of everything */}
           {vehicles.map((v) => {
             const hasAlert = ALERTS.some(a => a.vehicle === v.id && a.severity === "critical");
-            const color = hasAlert ? STATUS_COLOR_HEX.Offline : STATUS_COLOR_HEX[v.status];
+            const color = hasAlert ? getStatusColor("Offline") : getStatusColor(v.status);
             const isSelected = selectedId === v.id;
             const isOffline = v.status === "Offline" || v.status === "Maintenance";
 
@@ -598,7 +596,7 @@ function FleetMap({ vehicles, selectedId, onSelect, selectedIncidentId, onSelect
       <div className="absolute bottom-5 left-2 z-[1000] flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded px-2 py-1 border text-[8px]">
         {(["Active", "Idle", "Charging", "Offline"] as VehicleStatus[]).map((s) => (
           <span key={s} className="flex items-center gap-1 text-muted-foreground font-medium">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_COLOR_HEX[s] }} />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: getStatusColor(s) }} />
             {s}
           </span>
         ))}
@@ -764,7 +762,7 @@ function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }
 
 function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenDetail: () => void }) {
   const hasCriticalAlert = ALERTS.some(a => a.vehicle === vehicle.id && a.severity === "critical");
-  const buttonColor = hasCriticalAlert ? STATUS_COLOR_HEX.Offline : STATUS_COLOR_HEX[vehicle.status];
+  const buttonColor = hasCriticalAlert ? getStatusColor("Offline") : getStatusColor(vehicle.status);
   const batteryBg = vehicle.battery < 30 ? "bg-destructive" : vehicle.battery < 50 ? "bg-orange-500" : "bg-green-500";
   const batteryText = vehicle.battery < 30 ? "text-destructive" : vehicle.battery < 50 ? "text-orange-500" : "text-green-500";
 
@@ -856,7 +854,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
                 animationFillMode: "both",
               }}
             >
-              <span className="h-2 w-2 rounded-full shrink-0" style={{ background: STATUS_COLOR_HEX[v.status] }} />
+              <span className="h-2 w-2 rounded-full shrink-0" style={{ background: getStatusColor(v.status) }} />
               <span className="font-mono text-xs font-bold w-12 shrink-0">{v.id}</span>
               <span className="text-xs text-muted-foreground flex-1 truncate">{v.location}</span>
               <div className="flex items-center gap-1.5 shrink-0">

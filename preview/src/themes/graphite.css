@@ -46,5 +46,10 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.07), 0 8px 16px rgba(0, 0, 0, 0.04);
+  --status-active:      oklch(0.52 0.20 152);
+  --status-idle:        oklch(0.58 0.18 86);
+  --status-charging:    oklch(0.50 0.16 220);
+  --status-maintenance: oklch(0.46 0.22 305);
+  --status-offline:     oklch(0.50 0.22 27);
   color-scheme: light;
 }

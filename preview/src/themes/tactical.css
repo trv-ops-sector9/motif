@@ -47,5 +47,10 @@
   --shadow-md: none;
   --shadow-lg: none;
   --shadow-xl: none;
+  --status-active:      oklch(0.45 0.22 152);
+  --status-idle:        oklch(0.52 0.20 86);
+  --status-charging:    oklch(0.44 0.18 220);
+  --status-maintenance: oklch(0.42 0.23 305);
+  --status-offline:     oklch(0.48 0.24 27);
   color-scheme: light;
 }
