@@ -2,7 +2,7 @@
 
 A runtime motion and design token system for Tailwind CSS v4. Pure CSS, theme-switchable, reduced-motion aware. No JavaScript runtime, no build step for the tokens themselves.
 
-**[Live demo](https://trv-ops-sector9.github.io/motif/)**
+**[Live demo](https://trv-ops-sector9.github.io/motiif/)**
 
 ---
 
@@ -38,7 +38,7 @@ Three design theme pairs (light + dark each), varying far more than hue — radi
 The preview app demonstrates all tokens across interactive components and full-page application views:
 
 - **Component Gallery** — every shadcn/ui primitive with motion wiring and variant controls
-- **Tokens** — live reference of every active duration, curve, and alias. Duration sliders propagate changes across the entire app in real time
+- **Tokens** — live reference of every active duration, curve, and alias, updating as you switch motion themes
 - **Fleet Ops** — mission control dashboard with Leaflet map, vehicle detail pages, incident review. Built as a portfolio piece for autonomous vehicle fleet management roles
 - **Brand** — product landing page and configurator demonstrating page transitions and theme adaptation
 
@@ -119,4 +119,4 @@ Token CSS files in `tokens/` have no build step — import directly:
 
 ## Repository
 
-[github.com/trv-ops-sector9/motif](https://github.com/trv-ops-sector9/motif)
+[github.com/trv-ops-sector9/motiif](https://github.com/trv-ops-sector9/motiif)
