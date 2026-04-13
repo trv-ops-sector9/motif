@@ -142,6 +142,9 @@
   --motion-curve-ease-in:     cubic-bezier(0.4, 0, 1, 1);         /* exits — clean accelerate   */
   --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);           /* uniform motion             */
 
+  /* Stagger step — base interval for cascading entrance delays */
+  --motion-stagger-step:      50ms;
+
   /* Focus control — blur + overlay depth */
   --motion-blur-radius:       2px;
   --motion-overlay-opacity:   0.5;

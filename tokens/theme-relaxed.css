@@ -23,24 +23,25 @@
   to   { opacity: 0; }
 }
 
+/* Slide up/down — fade only in Relaxed. Spatial motion is X-axis only. */
 @keyframes relaxed-slide-up-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes relaxed-slide-up-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-6px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 @keyframes relaxed-slide-down-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes relaxed-slide-down-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(6px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 /* Expand/collapse — fade only, no spatial displacement */
@@ -145,6 +146,9 @@
   --motion-curve-ease-out:    cubic-bezier(0.25, 0, 0.0, 1);    /* enters — cinematic decelerate  */
   --motion-curve-ease-in:     cubic-bezier(0.55, 0, 1, 0.45);   /* exits — gentle accelerate      */
   --motion-curve-ease-in-out: cubic-bezier(0.37, 0, 0.63, 1);   /* state changes — symmetric      */
+
+  /* Stagger step — comfortable interval, not rushed */
+  --motion-stagger-step:      60ms;
 
   /* Focus control */
   --motion-blur-radius:       3px;

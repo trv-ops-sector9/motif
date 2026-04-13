@@ -143,6 +143,7 @@ function LandingPage({ onNavigate }: { onNavigate: () => void }) {
           aria-hidden="true"
           draggable={false}
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ animation: "var(--anim-fade-in)", animationFillMode: "both" }}
         />
 
         {/* Scrim — heavier on the left where text sits, lighter on the right to show the car */}
@@ -195,26 +196,33 @@ function LandingPage({ onNavigate }: { onNavigate: () => void }) {
             </div>
           </div>
 
-          {/* Headline block — flush left */}
-          <div className="max-w-xl" style={{ animation: "var(--anim-fade-in)" }}>
-            <p className="text-[10px] font-semibold tracking-[0.28em] uppercase text-primary mb-5">
+          {/* Headline block — flush left, each element staggered */}
+          <div className="max-w-xl">
+            <p
+              className="text-[10px] font-semibold tracking-[0.28em] uppercase text-primary mb-5"
+              style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-stagger-step) * 1)", animationFillMode: "both" }}
+            >
               Series I · 2026
             </p>
             <h1
               className="font-bold leading-[0.9] tracking-[-0.04em] text-foreground mb-7"
-              style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)" }}
+              style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-stagger-step) * 2)", animationFillMode: "both" }}
             >
               Amplified.<br />
               Electric.<br />
               Uncompromised.
             </h1>
-            <p className="text-[13px] text-muted-foreground max-w-xs leading-relaxed mb-10">
+            <p
+              className="text-[13px] text-muted-foreground max-w-xs leading-relaxed mb-10"
+              style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-stagger-step) * 3)", animationFillMode: "both" }}
+            >
               0–60 in 1.4 seconds. 147 produced.<br />
               Ground-effect aerodynamics.<br />
               The Volant One exists for those who require more.
             </p>
             <button
               onClick={onNavigate}
+              style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-stagger-step) * 4)", animationFillMode: "both" }}
               className={cn(
                 "group inline-flex items-center gap-3 cursor-pointer",
                 "text-[13px] font-semibold tracking-wide text-foreground",
@@ -243,7 +251,7 @@ function LandingPage({ onNavigate }: { onNavigate: () => void }) {
               style={{
                 gridTemplateColumns: "72px 1fr",
                 animation: "var(--anim-slide-up-in)",
-                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 1})`,
+                animationDelay: `calc(var(--motion-stagger-step) * ${i + 1})`,
                 animationFillMode: "both",
               }}
             >
@@ -353,7 +361,7 @@ function ConfigurePage({ onNavigate }: { onNavigate: () => void }) {
 
           <div className="space-y-10">
             {/* Powertrain */}
-            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)", animationFillMode: "both" }}>
+            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-stagger-step) * 2)", animationFillMode: "both" }}>
               <legend className="text-[10px] font-semibold tracking-[0.22em] uppercase text-muted-foreground mb-3">
                 Powertrain
               </legend>
@@ -370,7 +378,7 @@ function ConfigurePage({ onNavigate }: { onNavigate: () => void }) {
             </fieldset>
 
             {/* Exterior */}
-            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-duration-ultra-fast) * 3)", animationFillMode: "both" }}>
+            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-stagger-step) * 3)", animationFillMode: "both" }}>
               <legend className="text-[10px] font-semibold tracking-[0.22em] uppercase text-muted-foreground mb-3">
                 Exterior
               </legend>
@@ -387,7 +395,7 @@ function ConfigurePage({ onNavigate }: { onNavigate: () => void }) {
             </fieldset>
 
             {/* Interior */}
-            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)", animationFillMode: "both" }}>
+            <fieldset style={{ animation: "var(--anim-slide-up-in)", animationDelay: "calc(var(--motion-stagger-step) * 4)", animationFillMode: "both" }}>
               <legend className="text-[10px] font-semibold tracking-[0.22em] uppercase text-muted-foreground mb-3">
                 Interior
               </legend>

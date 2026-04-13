@@ -142,6 +142,9 @@
   --motion-curve-ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);  /* rare state transitions         */
   --motion-curve-linear:      cubic-bezier(0, 0, 1, 1);      /* progress bars, uniform motion  */
 
+  /* Stagger step — tight, matches Dense's compressed pace */
+  --motion-stagger-step:      25ms;
+
   /* Focus control — blur + overlay depth */
   --motion-blur-radius:       0;
   --motion-overlay-opacity:   0.5;

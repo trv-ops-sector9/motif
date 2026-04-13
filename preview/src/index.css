@@ -12,6 +12,7 @@
 
 :root,
 [data-motion-theme="standard"] {
+  --motion-stagger-step:         50ms;
   --motion-curve-press-release:  var(--motion-curve-ease-out);
   --motion-curve-navigation:     var(--motion-curve-ease-out);
   --motion-curve-expand-in:      var(--motion-curve-ease-out);
@@ -42,6 +43,7 @@
 }
 
 [data-motion-theme="dense"] {
+  --motion-stagger-step:         25ms;
   --motion-curve-press-release:  var(--motion-curve-snap);
   --motion-curve-navigation:     var(--motion-curve-snap);
   --motion-curve-expand-in:      var(--motion-curve-snap);
@@ -72,6 +74,7 @@
 }
 
 [data-motion-theme="expressive"] {
+  --motion-stagger-step:         70ms;
   --motion-curve-press-release:  var(--motion-curve-bounce);
   --motion-curve-navigation:     var(--motion-curve-spring);
   --motion-curve-expand-in:      var(--motion-curve-spring-tight);
@@ -102,6 +105,7 @@
 }
 
 [data-motion-theme="relaxed"] {
+  --motion-stagger-step:         60ms;
   --motion-curve-press-release:  var(--motion-curve-ease-out);
   --motion-curve-navigation:     var(--motion-curve-ease-in-out);
   --motion-curve-expand-in:      var(--motion-curve-ease-out);

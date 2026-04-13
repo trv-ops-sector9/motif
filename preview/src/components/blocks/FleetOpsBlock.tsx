@@ -742,7 +742,7 @@ function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }
       className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
       style={{
         animation: "var(--anim-slide-up-in)",
-        animationDelay: `calc(var(--motion-duration-ultra-fast) * ${delay + 2})`,
+        animationDelay: `calc(var(--motion-stagger-step) * ${delay + 2})`,
         animationFillMode: "both",
       }}
     >
@@ -850,7 +850,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
               onClick={() => onSelect(isSelected ? null : v.id)}
               style={{
                 animation: "var(--anim-fade-in)",
-                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.4})`,
+                animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.4})`,
                 animationFillMode: "both",
               }}
             >
@@ -933,7 +933,7 @@ function AlertsPanel({ alerts, filter, onFilterChange, onSelectVehicle }: {
               className="flex items-start gap-2.5 px-3 py-2.5 hover:bg-muted transition-colors cursor-pointer"
               style={{
                 animation: "var(--anim-fade-in)",
-                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.4})`,
+                animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.4})`,
                 animationFillMode: "both",
               }}
             >
@@ -984,7 +984,7 @@ function IncidentListCard({ selectedId, onSelect }: {
               className={`flex items-start gap-2.5 px-3 py-2.5 cursor-pointer transition-colors ${isSelected ? "bg-secondary" : "hover:bg-muted"}`}
               style={{
                 animation: "var(--anim-fade-in)",
-                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.4})`,
+                animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.4})`,
                 animationFillMode: "both",
               }}
             >
@@ -1054,7 +1054,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         {unresolvedCount > 0 && (
           <span
             className="shrink-0 text-[10px] font-bold bg-destructive/15 text-destructive px-2.5 py-1 rounded-full"
-            style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)", animationFillMode: "both" }}
+            style={{ animation: "var(--anim-fade-in)", animationDelay: "calc(var(--motion-stagger-step) * 2)", animationFillMode: "both" }}
           >
             {unresolvedCount} unresolved
           </span>
@@ -1066,7 +1066,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
         style={{
           animation: "var(--anim-slide-up-in)",
-          animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)",
+          animationDelay: "calc(var(--motion-stagger-step) * 2)",
           animationFillMode: "both",
         }}
       >
@@ -1083,7 +1083,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
               className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
               style={{
                 animation: "var(--anim-slide-up-in)",
-                animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 2})`,
+                animationDelay: `calc(var(--motion-stagger-step) * ${i + 2})`,
                 animationFillMode: "both",
               }}
             >
@@ -1107,7 +1107,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         className="grid gap-4 lg:grid-cols-[1fr_260px]"
         style={{
           animation: "var(--anim-slide-up-in)",
-          animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)",
+          animationDelay: "calc(var(--motion-stagger-step) * 4)",
           animationFillMode: "both",
         }}
       >
@@ -1160,7 +1160,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
                   className="space-y-1"
                   style={{
                     animation: "var(--anim-fade-in)",
-                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                    animationDelay: `calc(var(--motion-stagger-step) * ${i})`,
                     animationFillMode: "both",
                   }}
                 >
@@ -1189,7 +1189,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         className="rounded-lg border bg-muted/20 overflow-hidden"
         style={{
           animation: "var(--anim-slide-up-in)",
-          animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
+          animationDelay: "calc(var(--motion-stagger-step) * 6)",
           animationFillMode: "both",
         }}
       >
@@ -1247,7 +1247,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
                   className="flex items-start gap-3 rounded-lg px-3 py-3 hover:bg-muted transition-colors"
                   style={{
                     animation: "var(--anim-fade-in)",
-                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i * 0.3})`,
+                    animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.3})`,
                     animationFillMode: "both",
                   }}
                 >
@@ -1344,7 +1344,7 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
         className="grid gap-4 lg:grid-cols-[1fr_340px]"
         style={{
           animation: "var(--anim-slide-up-in)",
-          animationDelay: "calc(var(--motion-duration-ultra-fast) * 2)",
+          animationDelay: "calc(var(--motion-stagger-step) * 2)",
           animationFillMode: "both",
         }}
       >
@@ -1390,7 +1390,7 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
         className="grid gap-4 lg:grid-cols-3"
         style={{
           animation: "var(--anim-slide-up-in)",
-          animationDelay: "calc(var(--motion-duration-ultra-fast) * 4)",
+          animationDelay: "calc(var(--motion-stagger-step) * 4)",
           animationFillMode: "both",
           minHeight: "280px",
         }}
@@ -1455,7 +1455,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
           return (
             <div key={s.label} className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2" style={{
               animation: "var(--anim-slide-up-in)",
-              animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i + 1})`,
+              animationDelay: `calc(var(--motion-stagger-step) * ${i + 1})`,
               animationFillMode: "both",
             }}>
               <div className="flex items-center justify-between">
@@ -1474,7 +1474,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
       {/* Battery (vertical) + Performance chart */}
       <div className="grid gap-4 lg:grid-cols-[160px_1fr]" style={{
         animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 5)",
+        animationDelay: "calc(var(--motion-stagger-step) * 5)",
         animationFillMode: "both",
       }}>
         {/* Vertical battery card */}
@@ -1541,7 +1541,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
       {/* Sensor status grid */}
       <div className="rounded-lg border bg-muted/20 overflow-hidden" style={{
         animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 6)",
+        animationDelay: "calc(var(--motion-stagger-step) * 6)",
         animationFillMode: "both",
       }}>
         <div className="px-3 pt-3 pb-1">
@@ -1558,7 +1558,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                   className="flex items-center gap-3 rounded-lg border px-3 py-2.5"
                   style={{
                     animation: "var(--anim-fade-in)",
-                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                    animationDelay: `calc(var(--motion-stagger-step) * ${i})`,
                     animationFillMode: "both",
                   }}
                 >
@@ -1578,7 +1578,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
       {/* Event log + Vehicle alerts */}
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]" style={{
         animation: "var(--anim-slide-up-in)",
-        animationDelay: "calc(var(--motion-duration-ultra-fast) * 7)",
+        animationDelay: "calc(var(--motion-stagger-step) * 7)",
         animationFillMode: "both",
       }}>
         {/* Event log */}
@@ -1594,7 +1594,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted transition-colors"
                 style={{
                   animation: "var(--anim-fade-in)",
-                  animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                  animationDelay: `calc(var(--motion-stagger-step) * ${i})`,
                   animationFillMode: "both",
                 }}
               >
@@ -1625,7 +1625,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                   className="flex items-start gap-2.5 rounded-lg px-2.5 py-2 hover:bg-muted transition-colors"
                   style={{
                     animation: "var(--anim-fade-in)",
-                    animationDelay: `calc(var(--motion-duration-ultra-fast) * ${i})`,
+                    animationDelay: `calc(var(--motion-stagger-step) * ${i})`,
                     animationFillMode: "both",
                   }}
                 >

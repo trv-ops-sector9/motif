@@ -149,6 +149,9 @@
   --motion-curve-ease-in:     cubic-bezier(0.55, 0.055, 0.675, 0.19);  /* exits — fast out of the way               */
   --motion-curve-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);          /* state transitions — punchy                */
 
+  /* Stagger step — slightly longer to let spring settle between items */
+  --motion-stagger-step:      70ms;
+
   /* Focus control — blur + overlay depth */
   --motion-blur-radius:       4px;
   --motion-overlay-opacity:   0.4;
