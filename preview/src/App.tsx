@@ -114,29 +114,29 @@ const SPLASH_CARDS: { view: View; icon: React.ComponentType<{ className?: string
 function SplashOverlay({ onSelect }: { onSelect: (view: View) => void }) {
   return (
     <div
-      className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-      style={{ animation: "var(--anim-fade-in)" }}
+      className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md"
+      style={{ animation: "var(--anim-fade-in)", animationDuration: "var(--motion-duration-slow)" }}
     >
       <div
         className="w-full max-w-lg mx-4 rounded-xl border bg-card p-8"
-        style={{ animation: "var(--anim-expand-in)" }}
+        style={{ animation: "var(--anim-fade-in)", animationDuration: "var(--motion-duration-slow)", animationDelay: "60ms", boxShadow: "var(--shadow-md)" }}
       >
-        <div className="mb-6">
-          <div className="flex items-center gap-2">
-            <MotiifMark className="h-7 w-7 text-primary" />
+        <div className="pb-6 mb-6 border-b border-border">
+          <div className="flex items-center gap-2.5">
+            <MotiifMark className="h-9 w-9 text-primary" />
             <h1
-              className="text-2xl font-bold tracking-wide text-foreground"
+              className="text-3xl font-bold tracking-wide text-foreground"
               style={{ fontFamily: "var(--font-brand)" }}
             >
               Motiif
             </h1>
           </div>
-          <p className="mt-0.5 text-xs text-muted-foreground/70">by Traver Phillips</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            A pure CSS token system for motion and visual identity. Four motion themes and three design themes ship out of the box — swap either live and everything updates instantly. Built to be expanded with new themes. Use the sidebar to switch.
+          <p className="mt-1 text-xs text-muted-foreground/70">by Traver Phillips</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            A pure CSS token system for motion and visual identity. Four motion themes and three design themes ship out of the box. Swap either live and everything updates instantly. Built to be expanded with new themes. Use the sidebar to switch.
           </p>
-          <p className="mt-1.5 text-xs text-muted-foreground/60">
-            Motion Token Generator coming soon — create themes from a guided Q&amp;A flow.
+          <p className="mt-3 text-xs text-muted-foreground/60 border-l-2 border-primary/40 pl-3">
+            Export motion and design theme tokens as drop-in CSS, ready for any Tailwind v4 project.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3">

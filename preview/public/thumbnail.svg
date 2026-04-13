@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#18181b"/>
+
+  <!-- Subtle radial glow behind logo -->
+  <radialGradient id="glow" cx="50%" cy="50%" r="35%">
+    <stop offset="0%" stop-color="#4a5fc4" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#18181b" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Icon group — centered horizontally with wordmark -->
+  <!-- Icon: wave arc, 72px tall, proportional to favicon -->
+  <g transform="translate(348, 267)">
+    <!-- Wave path — scaled up from favicon (5,24 → 16,8 → 27,24) to ~120px wide -->
+    <path
+      d="M0 96 C36 96, 36 0, 72 0 S108 96, 144 96"
+      stroke="#5b73c4"
+      stroke-width="10"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- End dots -->
+    <circle cx="0"   cy="96" r="7" fill="#5b73c4"/>
+    <circle cx="144" cy="96" r="7" fill="#5b73c4"/>
+  </g>
+
+  <!-- Wordmark: "Motiif" -->
+  <text
+    x="528"
+    y="318"
+    font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="88"
+    font-weight="600"
+    letter-spacing="-2"
+    fill="#fafafa"
+    dominant-baseline="middle"
+    text-anchor="start"
+  >Motiif</text>
+</svg>
