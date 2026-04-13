@@ -154,9 +154,10 @@ const THEME_CURVES: Record<string, { name: string; label: string; category: stri
     { name: "--motion-curve-ease-in",     label: "ease-in",     category: "Supporting" },
     { name: "--motion-curve-ease-in-out", label: "ease-in-out", category: "Supporting" },
   ],
-  precision: [
-    { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Core"    },
-    { name: "--motion-curve-linear",      label: "linear",      category: "Utility" },
+  relaxed: [
+    { name: "--motion-curve-ease-out",    label: "ease-out",    category: "Enter"   },
+    { name: "--motion-curve-ease-in",     label: "ease-in",     category: "Exit"    },
+    { name: "--motion-curve-ease-in-out", label: "ease-in-out", category: "Transit" },
   ],
 };
 
@@ -253,7 +254,7 @@ function CurvesSection() {
     standard:   "3 curves — clean ease-out, no personality",
     dense:      "3 curves — snap-first, minimal ceremony",
     expressive: "5 curves — spring + bounce overshoot",
-    precision:  "2 curves — fade only, sub-100ms",
+    relaxed:    "3 curves — smooth ease-in-out, X-axis navigation",
   };
 
   return (
@@ -399,12 +400,12 @@ const MOTION_PRINCIPLES = [
     philosophy: "Feels alive. Spring curves overshoot on enter, giving components physical weight. Exits are fast and clean — personality on the way in, efficiency on the way out.",
   },
   {
-    theme: "Precision",
-    curves: 2,
-    personality: "Fade only, no transforms, sub-100ms — pure state changes.",
-    durations: "50ms – 80ms",
-    transforms: "None — every archetype is a pure opacity crossfade",
-    philosophy: "For interfaces where motion must never distract. Focus control via blur radius and overlay opacity. No spatial movement, no scale, no overshoot. State changes happen; they don't perform.",
+    theme: "Relaxed",
+    curves: 3,
+    personality: "Smooth and cinematic — longer fades, horizontal navigation, no springs.",
+    durations: "100ms – 700ms",
+    transforms: "8px Y slides for content, 20px X for page transitions — consistent plane",
+    philosophy: "For interfaces that should feel unhurried and considered. Navigation moves on the horizontal axis only, maintaining a consistent spatial plane. Expand and collapse are pure fades. No scale, no springs, no overshoot — just smooth.",
   },
 ];
 

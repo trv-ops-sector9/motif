@@ -135,7 +135,7 @@ const MOTION_THEMES = [
   { value: "standard", label: "Standard" },
   { value: "dense", label: "Dense" },
   { value: "expressive", label: "Expressive" },
-  { value: "precision", label: "Precision" },
+  { value: "relaxed", label: "Relaxed" },
   { value: "reduced", label: "Reduced" },
 ] as const;
 
