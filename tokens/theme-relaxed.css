@@ -1,0 +1,295 @@
+/* ============================================================
+   theme-relaxed.css
+   Smooth and cinematic — longer fades, horizontal X-axis page
+   transitions, no springs, no scale. Ease-in-out throughout.
+   Layer 1: Primitive tokens — raw values
+   Layer 2: Alias tokens — Tailwind v4 animate-* utilities
+   ============================================================ */
+
+
+/* ----------------------------------------------------------
+   @keyframes — relaxed prefix (safe for multi-theme coexistence)
+   No scale anywhere. Page/panel transitions on the X axis.
+   Expand/collapse: fade only — no spatial displacement.
+   ---------------------------------------------------------- */
+
+@keyframes relaxed-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes relaxed-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Slide — X-axis only. No Y movement in Relaxed. */
+@keyframes relaxed-slide-up-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes relaxed-slide-up-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(10px); }
+}
+
+@keyframes relaxed-slide-down-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes relaxed-slide-down-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-10px); }
+}
+
+/* Expand/collapse — fade only, no spatial displacement */
+@keyframes relaxed-expand-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes relaxed-expand-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(6px); }
+}
+
+@keyframes relaxed-collapse-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes relaxed-collapse-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-6px); }
+}
+
+/* Page — horizontal axis only, consistent shared plane */
+@keyframes relaxed-page-enter {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes relaxed-page-exit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(16px); }
+}
+
+/* Full-panel drawer slides */
+@keyframes relaxed-slide-left-in {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes relaxed-slide-left-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-100%); }
+}
+@keyframes relaxed-slide-right-in {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes relaxed-slide-right-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(100%); }
+}
+@keyframes relaxed-slide-top-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes relaxed-slide-top-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes relaxed-slide-bottom-in {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes relaxed-slide-bottom-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+
+/* Overlay — backdrop blur + dim */
+@keyframes relaxed-overlay-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+}
+@keyframes relaxed-overlay-out {
+  from { opacity: 1; backdrop-filter: blur(var(--motion-blur-radius)); }
+  to   { opacity: 0; backdrop-filter: blur(0); }
+}
+
+@keyframes relaxed-reduced-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ----------------------------------------------------------
+   Layer 1 — Primitive tokens
+   Longer durations. 3 curves — smooth decelerate, gentle
+   accelerate, and symmetric ease-in-out for state transitions.
+   ---------------------------------------------------------- */
+
+[data-motion-theme="relaxed"] {
+  /* Duration scale — unhurried, cinematic */
+  --motion-duration-ultra-fast: 100ms;
+  --motion-duration-fast:       200ms;
+  --motion-duration-normal:     300ms;
+  --motion-duration-moderate:   400ms;
+  --motion-duration-slow:       500ms;
+  --motion-duration-slower:     600ms;
+  --motion-duration-ultra-slow: 700ms;
+
+  /* Easing curves — smooth, no overshoot */
+  --motion-curve-ease-out:    cubic-bezier(0.25, 0, 0.0, 1);    /* enters — cinematic decelerate  */
+  --motion-curve-ease-in:     cubic-bezier(0.55, 0, 1, 0.45);   /* exits — gentle accelerate      */
+  --motion-curve-ease-in-out: cubic-bezier(0.37, 0, 0.63, 1);   /* state changes — symmetric      */
+
+  /* Stagger step — comfortable interval, not rushed */
+  --motion-stagger-step:      90ms;
+
+  /* Focus control */
+  --motion-blur-radius:       3px;
+  --motion-overlay-opacity:   0.5;
+
+  /* ── Alias tokens — vanilla CSS (no Tailwind required) ──────────────────
+     Use directly: animation: var(--animate-relaxed-fade-in)
+     Tailwind v4 users get these via @theme below — both are equivalent.    */
+  --animate-relaxed-fade-in:          relaxed-fade-in          var(--motion-duration-fast)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-fade-out:         relaxed-fade-out         var(--motion-duration-ultra-fast) var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-up-in:      relaxed-slide-up-in      var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-up-out:     relaxed-slide-up-out     var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-down-in:    relaxed-slide-down-in    var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-down-out:   relaxed-slide-down-out   var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+  --animate-relaxed-expand-in:        relaxed-expand-in        var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-expand-out:       relaxed-expand-out       var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+  --animate-relaxed-collapse-in:      relaxed-collapse-in      var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-collapse-out:     relaxed-collapse-out     var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+  --animate-relaxed-page-enter:       relaxed-page-enter       var(--motion-duration-moderate)  var(--motion-curve-ease-in-out) both;
+  --animate-relaxed-page-exit:        relaxed-page-exit        var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-left-in:    relaxed-slide-left-in    var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-left-out:   relaxed-slide-left-out   var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-right-in:   relaxed-slide-right-in   var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-right-out:  relaxed-slide-right-out  var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-top-in:     relaxed-slide-top-in     var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-top-out:    relaxed-slide-top-out    var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-bottom-in:  relaxed-slide-bottom-in  var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-bottom-out: relaxed-slide-bottom-out var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-overlay-in:       relaxed-overlay-in       var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-overlay-out:      relaxed-overlay-out      var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+}
+
+
+/* ----------------------------------------------------------
+   Layer 2 — Alias tokens → Tailwind v4 animate-* utilities
+   Enters: ease-out  |  Exits: ease-in  |  Page: ease-in-out
+   ---------------------------------------------------------- */
+
+@theme {
+  /* Fade */
+  --animate-relaxed-fade-in:          relaxed-fade-in          var(--motion-duration-fast)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-fade-out:         relaxed-fade-out         var(--motion-duration-ultra-fast) var(--motion-curve-ease-in)     both;
+
+  /* Slide up */
+  --animate-relaxed-slide-up-in:      relaxed-slide-up-in      var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-up-out:     relaxed-slide-up-out     var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+
+  /* Slide down */
+  --animate-relaxed-slide-down-in:    relaxed-slide-down-in    var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-down-out:   relaxed-slide-down-out   var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+
+  /* Expand — fade only */
+  --animate-relaxed-expand-in:        relaxed-expand-in        var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-expand-out:       relaxed-expand-out       var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+
+  /* Collapse — fade only */
+  --animate-relaxed-collapse-in:      relaxed-collapse-in      var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-collapse-out:     relaxed-collapse-out     var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+
+  /* Page — horizontal axis */
+  --animate-relaxed-page-enter:       relaxed-page-enter       var(--motion-duration-moderate)  var(--motion-curve-ease-in-out) both;
+  --animate-relaxed-page-exit:        relaxed-page-exit        var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+
+  /* Drawer slides */
+  --animate-relaxed-slide-left-in:    relaxed-slide-left-in    var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-left-out:   relaxed-slide-left-out   var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-right-in:   relaxed-slide-right-in   var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-right-out:  relaxed-slide-right-out  var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-top-in:     relaxed-slide-top-in     var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-top-out:    relaxed-slide-top-out    var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+  --animate-relaxed-slide-bottom-in:  relaxed-slide-bottom-in  var(--motion-duration-slow)      var(--motion-curve-ease-out)    both;
+  --animate-relaxed-slide-bottom-out: relaxed-slide-bottom-out var(--motion-duration-normal)    var(--motion-curve-ease-in)     both;
+
+  /* Overlay */
+  --animate-relaxed-overlay-in:       relaxed-overlay-in       var(--motion-duration-normal)    var(--motion-curve-ease-out)    both;
+  --animate-relaxed-overlay-out:      relaxed-overlay-out      var(--motion-duration-fast)      var(--motion-curve-ease-in)     both;
+}
+
+
+/* ----------------------------------------------------------
+   Reduced motion
+   All durations → 1ms, fade only
+   ---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-theme="relaxed"] {
+    --motion-duration-ultra-fast: 1ms;
+    --motion-duration-fast:       1ms;
+    --motion-duration-normal:     1ms;
+    --motion-duration-moderate:   1ms;
+    --motion-duration-slow:       1ms;
+    --motion-duration-slower:     1ms;
+    --motion-duration-ultra-slow: 1ms;
+    --motion-blur-radius:         0;
+
+    --animate-relaxed-fade-in:          relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-fade-out:         relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-up-in:      relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-up-out:     relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-down-in:    relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-down-out:   relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-expand-in:        relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-expand-out:       relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-collapse-in:      relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-collapse-out:     relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-page-enter:       relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-page-exit:        relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-left-in:    relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-left-out:   relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-right-in:   relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-right-out:  relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-top-in:     relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-top-out:    relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-bottom-in:  relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-slide-bottom-out: relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-overlay-in:       relaxed-reduced-fade 1ms linear both;
+    --animate-relaxed-overlay-out:      relaxed-reduced-fade 1ms linear both;
+  }
+}
+
+[data-motion-theme="reduced"] {
+  --animate-relaxed-fade-in:          relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-fade-out:         relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-up-in:      relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-up-out:     relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-down-in:    relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-down-out:   relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-expand-in:        relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-expand-out:       relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-collapse-in:      relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-collapse-out:     relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-page-enter:       relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-page-exit:        relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-left-in:    relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-left-out:   relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-right-in:   relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-right-out:  relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-top-in:     relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-top-out:    relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-bottom-in:  relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-slide-bottom-out: relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-overlay-in:       relaxed-reduced-fade 1ms linear both;
+  --animate-relaxed-overlay-out:      relaxed-reduced-fade 1ms linear both;
+}

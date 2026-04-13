@@ -3,7 +3,7 @@
 @import "../../tokens/theme-standard.css";
 @import "../../tokens/theme-dense.css";
 @import "../../tokens/theme-expressive.css";
-@import "../../tokens/theme-precision.css";
+@import "../../tokens/theme-relaxed.css";
 
 /* ── Motion bridge ──────────────────────────────────────────────────────── */
 /* Maps --anim-* to the active theme so components stay theme-agnostic.     */
@@ -12,6 +12,7 @@
 
 :root,
 [data-motion-theme="standard"] {
+  --motion-stagger-step:         50ms;
   --motion-curve-press-release:  var(--motion-curve-ease-out);
   --motion-curve-navigation:     var(--motion-curve-ease-out);
   --motion-curve-expand-in:      var(--motion-curve-ease-out);
@@ -42,6 +43,7 @@
 }
 
 [data-motion-theme="dense"] {
+  --motion-stagger-step:         25ms;
   --motion-curve-press-release:  var(--motion-curve-snap);
   --motion-curve-navigation:     var(--motion-curve-snap);
   --motion-curve-expand-in:      var(--motion-curve-snap);
@@ -72,6 +74,7 @@
 }
 
 [data-motion-theme="expressive"] {
+  --motion-stagger-step:         70ms;
   --motion-curve-press-release:  var(--motion-curve-bounce);
   --motion-curve-navigation:     var(--motion-curve-spring);
   --motion-curve-expand-in:      var(--motion-curve-spring-tight);
@@ -101,34 +104,35 @@
   --anim-overlay-out:       var(--animate-expressive-overlay-out);
 }
 
-[data-motion-theme="precision"] {
+[data-motion-theme="relaxed"] {
+  --motion-stagger-step:         90ms;
   --motion-curve-press-release:  var(--motion-curve-ease-out);
-  --motion-curve-navigation:     var(--motion-curve-ease-out);
+  --motion-curve-navigation:     var(--motion-curve-ease-in-out);
   --motion-curve-expand-in:      var(--motion-curve-ease-out);
-  --motion-curve-expand-out:     var(--motion-curve-ease-out);
-  --motion-curve-accordion:      var(--motion-curve-ease-out);
-  --anim-fade-in:           var(--animate-precision-fade-in);
-  --anim-fade-out:          var(--animate-precision-fade-out);
-  --anim-slide-up-in:       var(--animate-precision-slide-up-in);
-  --anim-slide-up-out:      var(--animate-precision-slide-up-out);
-  --anim-slide-down-in:     var(--animate-precision-slide-down-in);
-  --anim-slide-down-out:    var(--animate-precision-slide-down-out);
-  --anim-slide-left-in:     var(--animate-precision-slide-left-in);
-  --anim-slide-left-out:    var(--animate-precision-slide-left-out);
-  --anim-slide-right-in:    var(--animate-precision-slide-right-in);
-  --anim-slide-right-out:   var(--animate-precision-slide-right-out);
-  --anim-slide-top-in:      var(--animate-precision-slide-top-in);
-  --anim-slide-top-out:     var(--animate-precision-slide-top-out);
-  --anim-slide-bottom-in:   var(--animate-precision-slide-bottom-in);
-  --anim-slide-bottom-out:  var(--animate-precision-slide-bottom-out);
-  --anim-expand-in:         var(--animate-precision-expand-in);
-  --anim-expand-out:        var(--animate-precision-expand-out);
-  --anim-collapse-in:       var(--animate-precision-collapse-in);
-  --anim-collapse-out:      var(--animate-precision-collapse-out);
-  --anim-page-enter:        var(--animate-precision-page-enter);
-  --anim-page-exit:         var(--animate-precision-page-exit);
-  --anim-overlay-in:        var(--animate-precision-overlay-in);
-  --anim-overlay-out:       var(--animate-precision-overlay-out);
+  --motion-curve-expand-out:     var(--motion-curve-ease-in);
+  --motion-curve-accordion:      var(--motion-curve-ease-in-out);
+  --anim-fade-in:           var(--animate-relaxed-fade-in);
+  --anim-fade-out:          var(--animate-relaxed-fade-out);
+  --anim-slide-up-in:       var(--animate-relaxed-slide-up-in);
+  --anim-slide-up-out:      var(--animate-relaxed-slide-up-out);
+  --anim-slide-down-in:     var(--animate-relaxed-slide-down-in);
+  --anim-slide-down-out:    var(--animate-relaxed-slide-down-out);
+  --anim-slide-left-in:     var(--animate-relaxed-slide-left-in);
+  --anim-slide-left-out:    var(--animate-relaxed-slide-left-out);
+  --anim-slide-right-in:    var(--animate-relaxed-slide-right-in);
+  --anim-slide-right-out:   var(--animate-relaxed-slide-right-out);
+  --anim-slide-top-in:      var(--animate-relaxed-slide-top-in);
+  --anim-slide-top-out:     var(--animate-relaxed-slide-top-out);
+  --anim-slide-bottom-in:   var(--animate-relaxed-slide-bottom-in);
+  --anim-slide-bottom-out:  var(--animate-relaxed-slide-bottom-out);
+  --anim-expand-in:         var(--animate-relaxed-expand-in);
+  --anim-expand-out:        var(--animate-relaxed-expand-out);
+  --anim-collapse-in:       var(--animate-relaxed-collapse-in);
+  --anim-collapse-out:      var(--animate-relaxed-collapse-out);
+  --anim-page-enter:        var(--animate-relaxed-page-enter);
+  --anim-page-exit:         var(--animate-relaxed-page-exit);
+  --anim-overlay-in:        var(--animate-relaxed-overlay-in);
+  --anim-overlay-out:       var(--animate-relaxed-overlay-out);
 }
 
 [data-motion-theme="reduced"] {

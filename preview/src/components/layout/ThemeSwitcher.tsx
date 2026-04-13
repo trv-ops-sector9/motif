@@ -135,7 +135,7 @@ const MOTION_THEMES = [
   { value: "standard", label: "Standard" },
   { value: "dense", label: "Dense" },
   { value: "expressive", label: "Expressive" },
-  { value: "precision", label: "Precision" },
+  { value: "relaxed", label: "Relaxed" },
   { value: "reduced", label: "Reduced" },
 ] as const;
 
@@ -144,10 +144,13 @@ type MotionThemeValue = (typeof MOTION_THEMES)[number]["value"];
 export function SidebarMotionPicker() {
   const [motionTheme, setMotionTheme] = useState<MotionThemeValue>("standard");
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-motion-theme", motionTheme);
+  }, [motionTheme]);
+
   const handleChange = (value: string) => {
     const t = value as MotionThemeValue;
     setMotionTheme(t);
-    document.documentElement.setAttribute("data-motion-theme", t);
   };
 
   const currentLabel = MOTION_THEMES.find((t) => t.value === motionTheme)?.label ?? "Standard";
