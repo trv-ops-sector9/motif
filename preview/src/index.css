@@ -105,7 +105,7 @@
 }
 
 [data-motion-theme="relaxed"] {
-  --motion-stagger-step:         60ms;
+  --motion-stagger-step:         90ms;
   --motion-curve-press-release:  var(--motion-curve-ease-out);
   --motion-curve-navigation:     var(--motion-curve-ease-in-out);
   --motion-curve-expand-in:      var(--motion-curve-ease-out);

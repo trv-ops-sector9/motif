@@ -143,7 +143,7 @@ function LandingPage({ onNavigate }: { onNavigate: () => void }) {
           aria-hidden="true"
           draggable={false}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ animation: "var(--anim-fade-in)", animationFillMode: "both" }}
+          style={{ animation: "var(--anim-fade-in)", animationDuration: "var(--motion-duration-slower)", animationFillMode: "both" }}
         />
 
         {/* Scrim — heavier on the left where text sits, lighter on the right to show the car */}

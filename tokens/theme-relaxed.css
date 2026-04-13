@@ -73,7 +73,7 @@
 
 @keyframes relaxed-page-exit {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 0; transform: translateX(-16px); }
 }
 
 /* Full-panel drawer slides */
@@ -148,7 +148,7 @@
   --motion-curve-ease-in-out: cubic-bezier(0.37, 0, 0.63, 1);   /* state changes — symmetric      */
 
   /* Stagger step — comfortable interval, not rushed */
-  --motion-stagger-step:      60ms;
+  --motion-stagger-step:      90ms;
 
   /* Focus control */
   --motion-blur-radius:       3px;
