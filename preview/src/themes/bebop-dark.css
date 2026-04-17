@@ -34,10 +34,21 @@
   --chart-4: oklch(0.668 0.178 330);
   --chart-5: oklch(0.632 0.205 255);
   --radius: 0.5rem;
-  --spacing: 0.25rem;
+  --spacing: 0.28rem;
+  /* Bebop spacing ramp — Spotify Encore spacer scale */
+  --space-4:   0.25rem;
+  --space-8:   0.5rem;
+  --space-12:  0.75rem;
+  --space-16:  1rem;
+  --space-24:  1.5rem;
+  --space-32:  2rem;
+  --space-48:  3rem;
+  --space-64:  4rem;
+  --space-96:  6rem;
+  --space-128: 8rem;
   --border-width: 1px;
-  --letter-spacing: 0em;
-  --font-weight-heading: 600;
+  --letter-spacing: -0.005em;
+  --font-weight-heading: 700;
   --font-weight-body: 400;
   --font-sans: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;

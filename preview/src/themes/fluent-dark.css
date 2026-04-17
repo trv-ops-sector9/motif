@@ -34,9 +34,21 @@
   --chart-4: oklch(0.628 0.158 290.0);
   --chart-5: oklch(0.608 0.148 20.0);
   --radius: 0.25rem;
-  --spacing: 0.25rem;
+  --spacing: 0.22rem;
+  /* Fluent 2 spacing ramp — Microsoft webDarkTheme */
+  --space-none:    0;
+  --space-xxs:     0.125rem;
+  --space-xs:      0.25rem;
+  --space-s-nudge: 0.375rem;
+  --space-s:       0.5rem;
+  --space-m-nudge: 0.625rem;
+  --space-m:       0.75rem;
+  --space-l:       1rem;
+  --space-xl:      1.25rem;
+  --space-xxl:     1.5rem;
+  --space-xxxl:    2rem;
   --border-width: 1px;
-  --letter-spacing: 0em;
+  --letter-spacing: -0.005em;
   --font-weight-heading: 600;
   --font-weight-body: 400;
   --font-sans: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;

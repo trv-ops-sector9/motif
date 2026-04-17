@@ -42,7 +42,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -828,18 +828,18 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
-        <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Vehicles</h2>
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 border-b px-4 py-3 shrink-0">
+        <CardTitle className="text-sm">Vehicles</CardTitle>
         <div className="relative">
-          <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+          <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             placeholder="Search..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-6 h-6 text-xs w-32"
+            className="pl-7 h-7 text-xs w-36"
           />
         </div>
-      </div>
+      </CardHeader>
       <div className="overflow-y-auto flex-1 divide-y">
         {filtered.map((v, i) => {
           const isSelected = selectedId === v.id;
@@ -847,7 +847,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
           return (
             <div
               key={v.id}
-              className={`flex items-center gap-2.5 px-3 py-2 cursor-pointer transition-colors hover:bg-muted ${isSelected ? "bg-secondary" : ""}`}
+              className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted ${isSelected ? "bg-secondary" : ""}`}
               onClick={() => onSelect(isSelected ? null : v.id)}
               style={{
                 animation: "var(--anim-fade-in)",
@@ -856,18 +856,18 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
               }}
             >
               <span className="h-2 w-2 rounded-full shrink-0" style={{ background: getStatusColor(v.status) }} />
-              <span className="font-mono text-xs font-bold w-12 shrink-0">{v.id}</span>
-              <span className="text-xs text-muted-foreground flex-1 truncate">{v.location}</span>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <div className="w-8 h-1 rounded-full bg-muted overflow-hidden">
+              <span className="font-mono text-sm font-bold w-14 shrink-0">{v.id}</span>
+              <span className="text-sm text-muted-foreground flex-1 truncate">{v.location}</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-10 h-1 rounded-full bg-muted overflow-hidden">
                   <div className={`h-full rounded-full ${batteryBg}`} style={{ width: `${v.battery}%` }} />
                 </div>
-                <span className="text-[10px] text-muted-foreground tabular-nums w-6 text-right">{v.battery}%</span>
+                <span className="text-xs text-muted-foreground tabular-nums w-8 text-right">{v.battery}%</span>
               </div>
               {isSelected && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onOpenDetail(v.id); }}
-                  className="text-[10px] text-primary hover:underline shrink-0 cursor-pointer"
+                  className="text-sm text-primary hover:underline shrink-0 cursor-pointer"
                 >
                   →
                 </button>
@@ -876,13 +876,13 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
           );
         })}
       </div>
-      <div className="flex items-center gap-4 px-3 py-2 border-t bg-muted/20 shrink-0">
+      <CardFooter className="flex items-center gap-4 border-t px-4 py-2 shrink-0">
         {FLEET_SUMMARY.map(({ icon: Icon, label, count }) => (
-          <span key={label} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <Icon className="h-3 w-3" />{count} {label}
+          <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Icon className="h-3.5 w-3.5" />{count} {label}
           </span>
         ))}
-      </div>
+      </CardFooter>
     </Card>
   );
 }
@@ -900,23 +900,23 @@ function AlertsPanel({ alerts, filter, onFilterChange, onSelectVehicle }: {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 border-b px-4 py-3 shrink-0">
         <div className="flex items-center gap-2">
-          <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Alerts</h2>
+          <CardTitle className="text-sm">Alerts</CardTitle>
           {criticalCount > 0 && (
-            <span className="text-[9px] font-bold bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full">
+            <span className="text-xs font-semibold bg-destructive/15 text-destructive px-2 py-0.5 rounded-full">
               {criticalCount} critical
             </span>
           )}
         </div>
-        <IconShield className="h-3.5 w-3.5 text-muted-foreground" />
-      </div>
+        <IconShield className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
       <div className="flex border-b shrink-0">
         {(["all", "critical", "warning", "info"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => onFilterChange(tab)}
-            className={`flex-1 text-[10px] py-1.5 font-medium transition-colors capitalize cursor-pointer ${
+            className={`flex-1 text-xs py-2 font-medium transition-colors capitalize cursor-pointer ${
               filter === tab ? "text-foreground border-b border-primary" : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -931,19 +931,19 @@ function AlertsPanel({ alerts, filter, onFilterChange, onSelectVehicle }: {
             <div
               key={i}
               onClick={() => onSelectVehicle(alert.vehicle)}
-              className="flex items-start gap-2.5 px-3 py-2.5 hover:bg-muted transition-colors cursor-pointer"
+              className="flex items-start gap-3 px-4 py-3 hover:bg-muted transition-colors cursor-pointer"
               style={{
                 animation: "var(--anim-fade-in)",
                 animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.4})`,
                 animationFillMode: "both",
               }}
             >
-              <IconAlertTriangle className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${style.icon}`} />
+              <IconAlertTriangle className={`h-4 w-4 mt-0.5 shrink-0 ${style.icon}`} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs leading-snug">{alert.message}</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="font-mono text-[10px] text-muted-foreground">{alert.vehicle}</span>
-                  <span className="text-[10px] text-muted-foreground/50">{alert.time}</span>
+                <p className="text-sm leading-snug">{alert.message}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="font-mono text-xs text-muted-foreground">{alert.vehicle}</span>
+                  <span className="text-xs text-muted-foreground/60">{alert.time}</span>
                 </div>
               </div>
             </div>
@@ -963,15 +963,15 @@ function IncidentListCard({ selectedId, onSelect }: {
   const active = INCIDENTS.filter((i) => !i.resolved || i.severity === "critical").slice(0, 6);
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 border-b px-4 py-3 shrink-0">
         <div className="flex items-center gap-2">
-          <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Incidents</h2>
-          <span className="text-[9px] font-bold bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full">
+          <CardTitle className="text-sm">Incidents</CardTitle>
+          <span className="text-xs font-semibold bg-destructive/15 text-destructive px-2 py-0.5 rounded-full">
             {INCIDENTS.filter((i) => !i.resolved).length} open
           </span>
         </div>
-        <IconAlertTriangle className="h-3.5 w-3.5 text-muted-foreground" />
-      </div>
+        <IconAlertTriangle className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
       <div className="overflow-y-auto flex-1 divide-y">
         {active.map((inc, i) => {
           const isSelected = selectedId === inc.id;
@@ -982,25 +982,25 @@ function IncidentListCard({ selectedId, onSelect }: {
             <div
               key={inc.id}
               onClick={() => onSelect(isSelected ? null : inc.id)}
-              className={`flex items-start gap-2.5 px-3 py-2.5 cursor-pointer transition-colors ${isSelected ? "bg-secondary" : "hover:bg-muted"}`}
+              className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors ${isSelected ? "bg-secondary" : "hover:bg-muted"}`}
               style={{
                 animation: "var(--anim-fade-in)",
                 animationDelay: `calc(var(--motion-stagger-step) * ${i * 0.4})`,
                 animationFillMode: "both",
               }}
             >
-              <span className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${dotColor}`} />
+              <span className={`mt-2 h-1.5 w-1.5 rounded-full shrink-0 ${dotColor}`} />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <TypeIcon className={`h-3 w-3 shrink-0 ${meta.color}`} />
-                  <span className="font-mono text-[10px] font-bold text-muted-foreground">{inc.id}</span>
-                  <span className="text-[10px] text-muted-foreground/50 ml-auto">{inc.time}</span>
+                <div className="flex items-center gap-2">
+                  <TypeIcon className={`h-3.5 w-3.5 shrink-0 ${meta.color}`} />
+                  <span className="font-mono text-xs font-bold text-muted-foreground">{inc.id}</span>
+                  <span className="text-xs text-muted-foreground/60 ml-auto">{inc.time}</span>
                 </div>
-                <p className="text-[11px] leading-snug mt-0.5 truncate">{inc.description}</p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="font-mono text-[10px] text-muted-foreground">{inc.vehicle}</span>
+                <p className="text-sm leading-snug mt-1 truncate">{inc.description}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="font-mono text-xs text-muted-foreground">{inc.vehicle}</span>
                   {!inc.resolved && (
-                    <span className="text-[9px] font-bold text-destructive">OPEN</span>
+                    <span className="text-xs font-semibold text-destructive">OPEN</span>
                   )}
                 </div>
               </div>

@@ -579,9 +579,41 @@ function ShadowsSection() {
 
 // ── Spacing token ────────────────────────────────────────────────────────────
 
+const FLUENT_RAMP = [
+  { name: "--space-none",    label: "none" },
+  { name: "--space-xxs",     label: "xxs" },
+  { name: "--space-xs",      label: "xs" },
+  { name: "--space-s-nudge", label: "s-nudge" },
+  { name: "--space-s",       label: "s" },
+  { name: "--space-m-nudge", label: "m-nudge" },
+  { name: "--space-m",       label: "m" },
+  { name: "--space-l",       label: "l" },
+  { name: "--space-xl",      label: "xl" },
+  { name: "--space-xxl",     label: "xxl" },
+  { name: "--space-xxxl",    label: "xxxl" },
+];
+
+const BEBOP_RAMP = [
+  { name: "--space-4",   label: "4" },
+  { name: "--space-8",   label: "8" },
+  { name: "--space-12",  label: "12" },
+  { name: "--space-16",  label: "16" },
+  { name: "--space-24",  label: "24" },
+  { name: "--space-32",  label: "32" },
+  { name: "--space-48",  label: "48" },
+  { name: "--space-64",  label: "64" },
+  { name: "--space-96",  label: "96" },
+  { name: "--space-128", label: "128" },
+];
+
 function SpacingSection() {
   const { getCSSVar } = useTokenValues();
   const spacing = getCSSVar("--spacing");
+  const colorTheme = document.documentElement.getAttribute("data-theme") || "";
+  const isFluent = colorTheme.startsWith("fluent");
+  const isBebop = colorTheme.startsWith("bebop");
+  const ramp = isFluent ? FLUENT_RAMP : isBebop ? BEBOP_RAMP : null;
+  const rampLabel = isFluent ? "Fluent 2 — Microsoft webTheme" : "Spotify Encore spacers";
   const steps = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16];
 
   return (
@@ -604,6 +636,28 @@ function SpacingSection() {
           </div>
         ))}
       </div>
+
+      {ramp && (
+        <div className="mt-5">
+          <h4 className="text-xs font-semibold">Named ramp</h4>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{rampLabel}</p>
+          <div className="mt-2 space-y-1.5">
+            {ramp.map(({ name, label }) => {
+              const value = getCSSVar(name);
+              return (
+                <div key={name} className="flex items-center gap-3">
+                  <code className="w-16 shrink-0 text-right text-xs font-mono text-muted-foreground">{label}</code>
+                  <div
+                    className="h-3 rounded bg-primary/20 border border-primary/30"
+                    style={{ width: value || "0" }}
+                  />
+                  <span className="text-[10px] text-muted-foreground font-mono">{value || "0"}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

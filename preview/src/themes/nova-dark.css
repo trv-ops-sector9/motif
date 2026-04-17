@@ -35,11 +35,11 @@
   --chart-4: oklch(0.62 0.12 270);
   --chart-5: oklch(0.60 0.10 230);
   --radius: 0.625rem;
-  --spacing: 0.25rem;
-  --border-width: 1px;
+  --spacing: 0.28rem;
+  --border-width: 0.75px;
   --letter-spacing: -0.011em;
   --font-weight-heading: 600;
-  --font-weight-body: 400;
+  --font-weight-body: 450;
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --glow-sm: 0 0 8px oklch(0.72 0.16 210 / 0.35);
