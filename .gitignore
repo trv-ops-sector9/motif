@@ -27,5 +27,8 @@ Thumbs.db
 CURSOR_PROMPT.md
 SUMMARY.md
 
+# Reference dumps (scraped markup, design specs, etc.)
+**/_reference/
+
 # Lock files at root (preview/ has its own)
 /package-lock.json

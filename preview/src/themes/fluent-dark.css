@@ -1,0 +1,54 @@
+/* Fluent 2 Dark — Microsoft webDarkTheme. Dark blue-gray background (hue 264.5),
+   brighter blue primary for dark surface contrast, same 4px Fluent geometry. */
+[data-theme="fluent-dark"] {
+  --background: oklch(0.258 0.006 264.5);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.208 0.006 264.5);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.208 0.006 264.5);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.578 0.162 247.3);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.318 0.008 264.5);
+  --secondary-foreground: oklch(0.895 0.004 264.5);
+  --muted: oklch(0.288 0.008 264.5);
+  --muted-foreground: oklch(0.845 0.005 264.5);
+  --accent: oklch(0.578 0.162 247.3);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.548 0.195 20.5);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.388 0.008 264.5);
+  --input: oklch(0.388 0.008 264.5);
+  --ring: oklch(0.578 0.162 247.3);
+  --sidebar: oklch(0.218 0.006 264.5);
+  --sidebar-foreground: oklch(0.895 0.004 264.5);
+  --sidebar-primary: oklch(0.578 0.162 247.3);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.298 0.008 247.3);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.348 0.006 264.5);
+  --sidebar-ring: oklch(0.578 0.162 247.3);
+  --chart-1: oklch(0.578 0.162 247.3);
+  --chart-2: oklch(0.608 0.148 160.0);
+  --chart-3: oklch(0.678 0.168 50.0);
+  --chart-4: oklch(0.628 0.158 290.0);
+  --chart-5: oklch(0.608 0.148 20.0);
+  --radius: 0.25rem;
+  --spacing: 0.25rem;
+  --border-width: 1px;
+  --letter-spacing: 0em;
+  --font-weight-heading: 600;
+  --font-weight-body: 400;
+  --font-sans: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", ui-monospace, Consolas, monospace;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.16);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.28), 0 2px 4px rgba(0, 0, 0, 0.20);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.32), 0 4px 8px rgba(0, 0, 0, 0.24);
+  --shadow-xl: 0 16px 28px rgba(0, 0, 0, 0.38), 0 8px 16px rgba(0, 0, 0, 0.28);
+  --status-active:      oklch(0.78 0.22 152);
+  --status-idle:        oklch(0.82 0.17 86);
+  --status-charging:    oklch(0.74 0.14 220);
+  --status-maintenance: oklch(0.58 0.24 305);
+  --status-offline:     oklch(0.63 0.23 27);
+  color-scheme: dark;
+}

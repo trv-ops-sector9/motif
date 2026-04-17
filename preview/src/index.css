@@ -210,6 +210,12 @@
 @import "./themes/tactical-dark.css";
 @import "./themes/graphite.css";
 @import "./themes/graphite-dark.css";
+@import "./themes/bebop.css";
+@import "./themes/bebop-dark.css";
+@import "./themes/fluent.css";
+@import "./themes/fluent-dark.css";
+@import "./themes/nova.css";
+@import "./themes/nova-dark.css";
 
 @theme inline {
   --color-background: var(--background);

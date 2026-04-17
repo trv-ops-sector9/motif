@@ -14,6 +14,9 @@ const THEMES = [
   { value: "graphite", label: "Graphite", light: "graphite", dark: "graphite-dark" },
   { value: "guchi", label: "Guchi", light: "guchi", dark: "guchi-dark" },
   { value: "tactical", label: "Tactical", light: "tactical", dark: "tactical-dark" },
+  { value: "bebop", label: "Bebop", light: "bebop", dark: "bebop-dark" },
+  { value: "fluent", label: "Fluent 2", light: "fluent", dark: "fluent-dark" },
+  { value: "nova", label: "Nova", light: "nova", dark: "nova-dark" },
 ] as const;
 
 type ThemeValue = (typeof THEMES)[number]["value"];

@@ -42,6 +42,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -738,8 +739,8 @@ function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }
     : Math.round(counted) + suffix;
 
   return (
-    <div
-      className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
+    <Card
+      className="p-3 justify-between gap-2"
       style={{
         animation: "var(--anim-slide-up-in)",
         animationDelay: `calc(var(--motion-stagger-step) * ${delay + 2})`,
@@ -754,7 +755,7 @@ function StatTile({ stat, delay }: { stat: typeof STATS[number]; delay: number }
         <div className="text-2xl font-bold tabular-nums tracking-tight leading-none">{display}</div>
         <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">{stat.label}</p>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -767,8 +768,8 @@ function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenD
   const batteryText = vehicle.battery < 30 ? "text-destructive" : vehicle.battery < 50 ? "text-orange-500" : "text-green-500";
 
   return (
-    <div
-      className="h-full rounded-lg border bg-muted/20 p-3 space-y-2 overflow-hidden"
+    <Card
+      className="h-full p-3 gap-2 overflow-hidden"
       style={{ animation: "var(--anim-expand-in)", animationFillMode: "both" }}
     >
       <div className="flex items-center justify-between">
@@ -805,7 +806,7 @@ function VehicleMiniPanel({ vehicle, onOpenDetail }: { vehicle: Vehicle; onOpenD
           <span className="text-muted-foreground/50">· {vehicle.lastPing}</span>
         </p>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -826,7 +827,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
   );
 
   return (
-    <div className="rounded-lg border overflow-hidden flex flex-col">
+    <Card className="overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
         <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Vehicles</h2>
         <div className="relative">
@@ -882,7 +883,7 @@ function VehicleList({ vehicles, selectedId, onSelect, onOpenDetail, globalFilte
           </span>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -898,7 +899,7 @@ function AlertsPanel({ alerts, filter, onFilterChange, onSelectVehicle }: {
   const criticalCount = alerts.filter((a) => a.severity === "critical").length;
 
   return (
-    <div className="rounded-lg border overflow-hidden flex flex-col">
+    <Card className="overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
         <div className="flex items-center gap-2">
           <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Alerts</h2>
@@ -949,7 +950,7 @@ function AlertsPanel({ alerts, filter, onFilterChange, onSelectVehicle }: {
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -961,7 +962,7 @@ function IncidentListCard({ selectedId, onSelect }: {
 }) {
   const active = INCIDENTS.filter((i) => !i.resolved || i.severity === "critical").slice(0, 6);
   return (
-    <div className="rounded-lg border overflow-hidden flex flex-col">
+    <Card className="overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2.5 border-b bg-muted shrink-0">
         <div className="flex items-center gap-2">
           <h2 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Incidents</h2>
@@ -1007,7 +1008,7 @@ function IncidentListCard({ selectedId, onSelect }: {
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -1078,9 +1079,9 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         ].map((kpi, i) => {
           const Icon = kpi.icon;
           return (
-            <div
+            <Card
               key={kpi.label}
-              className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2"
+              className="p-3 justify-between gap-2"
               style={{
                 animation: "var(--anim-slide-up-in)",
                 animationDelay: `calc(var(--motion-stagger-step) * ${i + 2})`,
@@ -1097,7 +1098,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">{kpi.label}</p>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>
@@ -1112,7 +1113,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
         }}
       >
         {/* Stacked bar timeline */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="px-3 pt-3 pb-1">
             <p className="text-sm font-semibold">Incident Timeline</p>
             <p className="text-xs text-muted-foreground">Distribution across 6-hour windows</p>
@@ -1141,10 +1142,10 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
               </AreaChart>
             </ChartContainer>
           </div>
-        </div>
+        </Card>
 
         {/* Category breakdown */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="px-3 pt-3 pb-1">
             <p className="text-sm font-semibold">By Category</p>
             <p className="text-xs text-muted-foreground">Event type distribution</p>
@@ -1181,12 +1182,12 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
               );
             })}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* ── Incident event log ───────────────────────────────────────────── */}
-      <div
-        className="rounded-lg border bg-muted/20 overflow-hidden"
+      <Card
+        className="overflow-hidden"
         style={{
           animation: "var(--anim-slide-up-in)",
           animationDelay: "calc(var(--motion-stagger-step) * 6)",
@@ -1294,7 +1295,7 @@ function IncidentReviewPage({ onBack }: { onBack: () => void }) {
             })
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -1370,10 +1371,10 @@ function FleetOverviewPage({ onSelectVehicle, onGoToIncidents }: { onSelectVehic
                 onOpenDetail={() => onSelectVehicle(selectedV.id)}
               />
             ) : (
-              <div className="h-full rounded-lg border bg-muted/10 px-4 text-center flex flex-col items-center justify-center gap-2">
+              <Card className="h-full px-4 text-center items-center justify-center gap-2">
                 <IconNavigation className="h-5 w-5 text-muted-foreground/40" />
                 <p className="text-xs text-muted-foreground/60">Select a vehicle on the map</p>
-              </div>
+              </Card>
             )}
           </div>
 
@@ -1453,7 +1454,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         ] as const).map((s, i) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="rounded-lg border bg-muted/20 p-3 flex flex-col justify-between gap-2" style={{
+            <Card key={s.label} className="p-3 justify-between gap-2" style={{
               animation: "var(--anim-slide-up-in)",
               animationDelay: `calc(var(--motion-stagger-step) * ${i + 1})`,
               animationFillMode: "both",
@@ -1466,7 +1467,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                 <p className="text-2xl font-bold tabular-nums tracking-tight leading-none">{s.value}</p>
                 <p className="text-xs text-muted-foreground mt-1">{s.sub}</p>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>
@@ -1478,7 +1479,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         animationFillMode: "both",
       }}>
         {/* Vertical battery card */}
-        <div className="rounded-lg border bg-muted/20 p-4 flex flex-col items-center gap-3 justify-center">
+        <Card className="p-4 items-center gap-3 justify-center">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Battery</span>
           {/* Battery icon shape */}
           <div className="flex flex-col items-center gap-0.5">
@@ -1505,10 +1506,10 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
               {vehicle.battery < 30 ? "~12 mi range" : vehicle.battery < 50 ? "~35 mi range" : `~${Math.round(vehicle.battery * 1.1)} mi range`}
             </p>
           </div>
-        </div>
+        </Card>
 
         {/* Multi-series performance chart */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="px-3 pt-3 pb-1">
             <p className="text-sm font-semibold">Performance — Today</p>
             <p className="text-xs text-muted-foreground">Distance · Speed · Battery · Efficiency by hour</p>
@@ -1535,11 +1536,11 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
               </LineChart>
             </ChartContainer>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Sensor status grid */}
-      <div className="rounded-lg border bg-muted/20 overflow-hidden" style={{
+      <Card className="overflow-hidden" style={{
         animation: "var(--anim-slide-up-in)",
         animationDelay: "calc(var(--motion-stagger-step) * 6)",
         animationFillMode: "both",
@@ -1553,9 +1554,9 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
             {SENSOR_DATA.map((sensor, i) => {
               const Icon = sensor.icon;
               return (
-                <div
+                <Card
                   key={sensor.label}
-                  className="flex items-center gap-3 rounded-lg border px-3 py-2.5"
+                  className="flex-row items-center gap-3 px-3 py-2.5"
                   style={{
                     animation: "var(--anim-fade-in)",
                     animationDelay: `calc(var(--motion-stagger-step) * ${i})`,
@@ -1568,12 +1569,12 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
                     <p className="text-[11px] text-muted-foreground">{sensor.value}</p>
                   </div>
                   <span className="ml-auto h-2 w-2 rounded-full bg-green-500 shrink-0" />
-                </div>
+                </Card>
               );
             })}
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Event log + Vehicle alerts */}
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]" style={{
@@ -1582,7 +1583,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
         animationFillMode: "both",
       }}>
         {/* Event log */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="px-3 pt-3 pb-2 border-b">
             <p className="text-sm font-semibold">Event Log</p>
             <p className="text-xs text-muted-foreground">Recent vehicle activity</p>
@@ -1606,10 +1607,10 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Vehicle-specific alerts */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="px-3 pt-3 pb-2 border-b flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold">Alerts for {vehicle.id}</p>
@@ -1640,7 +1641,7 @@ function VehicleDetailPage({ vehicleId, onBack }: { vehicleId: string; onBack: (
               <p className="text-xs text-muted-foreground px-2.5 py-4 text-center">No alerts for this vehicle</p>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
